@@ -1,0 +1,28 @@
+# Source files
+src/
+*.test.ts
+*.spec.ts
+
+# Configuration files
+tsconfig.json
+vitest.config.ts
+eslint.config.js
+.release-it.json
+
+# Development files
+example.html
+.vscode/
+.idea/
+.claude/
+
+# Git files
+.git/
+.gitignore
+
+# Build artifacts
+*.tsbuildinfo
+coverage/
+
+# Misc
+.DS_Store
+*.log

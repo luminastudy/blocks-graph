@@ -1,0 +1,262 @@
+# @luminastudy/blocks-graph
+
+Framework-agnostic Web Component for visualizing Lumina Study block schemas.
+
+## Features
+
+- **Framework-agnostic**: Built as a native Web Component, works with any framework or vanilla JavaScript
+- **Schema versioning**: Built-in adaptors for different schema versions (currently supports v0.1)
+- **Bilingual support**: Displays content in Hebrew and English
+- **Relationship visualization**: Shows both prerequisite and parent relationships between blocks
+- **Customizable**: Configure layout, styling, and behavior through attributes and API
+- **TypeScript**: Full TypeScript support with type definitions
+
+## Installation
+
+```bash
+pnpm add @luminastudy/blocks-graph
+```
+
+## Usage
+
+### HTML (Direct)
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="module">
+    import '@luminastudy/blocks-graph';
+  </script>
+</head>
+<body>
+  <blocks-graph
+    id="graph"
+    language="en"
+    show-prerequisites="true"
+    show-parents="true">
+  </blocks-graph>
+
+  <script type="module">
+    const graph = document.getElementById('graph');
+
+    // Load from JSON
+    const blocks = [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "title": {
+          "he_text": "מבוא למתמטיקה",
+          "en_text": "Introduction to Mathematics"
+        },
+        "prerequisites": [],
+        "parents": []
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440001",
+        "title": {
+          "he_text": "אלגברה ליניארית",
+          "en_text": "Linear Algebra"
+        },
+        "prerequisites": ["550e8400-e29b-41d4-a716-446655440000"],
+        "parents": ["550e8400-e29b-41d4-a716-446655440000"]
+      }
+    ];
+
+    graph.loadFromJson(JSON.stringify(blocks), 'v0.1');
+  </script>
+</body>
+</html>
+```
+
+### JavaScript/TypeScript
+
+```typescript
+import { BlocksGraph } from '@luminastudy/blocks-graph';
+
+// The element is automatically registered
+const graph = document.querySelector('blocks-graph');
+
+// Load from URL
+await graph.loadFromUrl('https://example.com/blocks.json', 'v0.1');
+
+// Or load from JSON string
+graph.loadFromJson(jsonString, 'v0.1');
+
+// Or set blocks directly (using internal format)
+import { schemaV01Adaptor } from '@luminastudy/blocks-graph';
+const blocks = schemaV01Adaptor.adaptFromJson(jsonString);
+graph.setBlocks(blocks);
+```
+
+### React
+
+```tsx
+import { useEffect, useRef } from 'react';
+import '@luminastudy/blocks-graph';
+
+function App() {
+  const graphRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (graphRef.current) {
+      const graph = graphRef.current as any;
+      graph.loadFromUrl('https://example.com/blocks.json', 'v0.1');
+    }
+  }, []);
+
+  return (
+    <blocks-graph
+      ref={graphRef}
+      language="en"
+      show-prerequisites="true"
+      show-parents="true"
+      style={{ width: '100%', height: '600px' }}
+    />
+  );
+}
+```
+
+### Vue
+
+```vue
+<template>
+  <blocks-graph
+    ref="graph"
+    language="en"
+    show-prerequisites="true"
+    show-parents="true"
+  />
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import '@luminastudy/blocks-graph';
+
+const graph = ref(null);
+
+onMounted(async () => {
+  await graph.value.loadFromUrl('https://example.com/blocks.json', 'v0.1');
+});
+</script>
+```
+
+## Attributes
+
+| Attribute | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `language` | `'en' \| 'he'` | `'en'` | Language to display block titles |
+| `show-prerequisites` | `boolean` | `true` | Show prerequisite relationships |
+| `show-parents` | `boolean` | `true` | Show parent relationships |
+| `node-width` | `number` | `200` | Width of each block node in pixels |
+| `node-height` | `number` | `80` | Height of each block node in pixels |
+| `horizontal-spacing` | `number` | `80` | Horizontal spacing between nodes |
+| `vertical-spacing` | `number` | `100` | Vertical spacing between levels |
+
+## API Methods
+
+### `setBlocks(blocks: Block[]): void`
+
+Set blocks data directly using the internal block format.
+
+### `loadFromJson(json: string, schemaVersion?: 'v0.1'): void`
+
+Load blocks from a JSON string with the specified schema version.
+
+### `loadFromUrl(url: string, schemaVersion?: 'v0.1'): Promise<void>`
+
+Load blocks from a URL with the specified schema version.
+
+## Events
+
+### `blocks-rendered`
+
+Fired when the graph has been successfully rendered.
+
+```javascript
+graph.addEventListener('blocks-rendered', (event) => {
+  console.log(`Rendered ${event.detail.blockCount} blocks`);
+});
+```
+
+## Schema Versions
+
+### v0.1
+
+The v0.1 schema expects blocks in the following format:
+
+```typescript
+{
+  "id": "uuid-string",
+  "title": {
+    "he_text": "Hebrew title",
+    "en_text": "English title"
+  },
+  "prerequisites": ["uuid-1", "uuid-2"],  // Optional
+  "parents": ["uuid-3"]                    // Optional
+}
+```
+
+## Advanced Usage
+
+### Using the Core API
+
+For more control, you can use the underlying engine and renderer directly:
+
+```typescript
+import { GraphEngine, GraphRenderer, schemaV01Adaptor } from '@luminastudy/blocks-graph';
+
+// Adapt schema data
+const blocks = schemaV01Adaptor.adaptFromJson(jsonString);
+
+// Create engine with custom layout config
+const engine = new GraphEngine({
+  nodeWidth: 250,
+  nodeHeight: 100,
+  horizontalSpacing: 100,
+  verticalSpacing: 120,
+});
+
+// Process blocks
+const { graph, positioned } = engine.process(blocks);
+
+// Create renderer with custom config
+const renderer = new GraphRenderer({
+  language: 'he',
+  blockStyle: {
+    fill: '#f0f0f0',
+    stroke: '#333',
+    strokeWidth: 2,
+    cornerRadius: 10,
+  },
+});
+
+// Render to SVG
+const svg = renderer.render(graph, positioned);
+document.body.appendChild(svg);
+```
+
+## Development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run tests
+pnpm test
+
+# Run tests with UI
+pnpm test:ui
+
+# Build
+pnpm build
+
+# Lint
+pnpm lint
+
+# Type check
+pnpm typecheck
+```
+
+## License
+
+MIT

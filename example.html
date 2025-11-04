@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@luminastudy/blocks-graph - Demo</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .controls {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 4px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .controls label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .controls button {
+      padding: 8px 16px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .controls button:hover {
+      background: #357abd;
+    }
+
+    blocks-graph {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .info {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      border-radius: 4px;
+    }
+
+    .info h3 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>@luminastudy/blocks-graph Demo</h1>
+
+    <div class="controls">
+      <label>
+        <span>Language:</span>
+        <select id="language">
+          <option value="en">English</option>
+          <option value="he">Hebrew</option>
+        </select>
+      </label>
+
+      <label>
+        <input type="checkbox" id="show-prerequisites" checked>
+        <span>Show Prerequisites</span>
+      </label>
+
+      <label>
+        <input type="checkbox" id="show-parents" checked>
+        <span>Show Parents</span>
+      </label>
+
+      <button id="load-example">Load Example Data</button>
+      <button id="load-from-url">Load from URL</button>
+    </div>
+
+    <blocks-graph
+      id="graph"
+      language="en"
+      show-prerequisites="true"
+      show-parents="true">
+    </blocks-graph>
+
+    <div class="info">
+      <h3>Instructions</h3>
+      <p>
+        This is a demonstration of the <code>@luminastudy/blocks-graph</code> Web Component.
+      </p>
+      <ul>
+        <li>Click "Load Example Data" to see sample blocks</li>
+        <li>Click "Load from URL" to load the official schema example</li>
+        <li>Toggle the checkboxes to show/hide different relationship types</li>
+        <li>Switch languages to see Hebrew or English titles</li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="module">
+    // In a real project, this would be:
+    // import { BlocksGraph } from '@luminastudy/blocks-graph';
+    // For this demo, we'll import from the built dist folder
+    import './dist/index.js';
+
+    const graph = document.getElementById('graph');
+    const languageSelect = document.getElementById('language');
+    const showPrerequisites = document.getElementById('show-prerequisites');
+    const showParents = document.getElementById('show-parents');
+    const loadExampleBtn = document.getElementById('load-example');
+    const loadFromUrlBtn = document.getElementById('load-from-url');
+
+    // Example data
+    const exampleBlocks = [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "title": {
+          "he_text": "מבוא למתמטיקה",
+          "en_text": "Introduction to Mathematics"
+        },
+        "prerequisites": [],
+        "parents": []
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440001",
+        "title": {
+          "he_text": "אלגברה ליניארית",
+          "en_text": "Linear Algebra"
+        },
+        "prerequisites": ["550e8400-e29b-41d4-a716-446655440000"],
+        "parents": ["550e8400-e29b-41d4-a716-446655440000"]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440002",
+        "title": {
+          "he_text": "חשבון אינפיניטסימלי",
+          "en_text": "Calculus"
+        },
+        "prerequisites": ["550e8400-e29b-41d4-a716-446655440000"],
+        "parents": ["550e8400-e29b-41d4-a716-446655440000"]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440003",
+        "title": {
+          "he_text": "אנליזה מתמטית",
+          "en_text": "Mathematical Analysis"
+        },
+        "prerequisites": [
+          "550e8400-e29b-41d4-a716-446655440001",
+          "550e8400-e29b-41d4-a716-446655440002"
+        ],
+        "parents": ["550e8400-e29b-41d4-a716-446655440002"]
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440004",
+        "title": {
+          "he_text": "תורת המספרים",
+          "en_text": "Number Theory"
+        },
+        "prerequisites": ["550e8400-e29b-41d4-a716-446655440001"],
+        "parents": ["550e8400-e29b-41d4-a716-446655440001"]
+      }
+    ];
+
+    // Event listeners
+    languageSelect.addEventListener('change', (e) => {
+      graph.language = e.target.value;
+    });
+
+    showPrerequisites.addEventListener('change', (e) => {
+      graph.showPrerequisites = e.target.checked;
+    });
+
+    showParents.addEventListener('change', (e) => {
+      graph.showParents = e.target.checked;
+    });
+
+    loadExampleBtn.addEventListener('click', () => {
+      graph.loadFromJson(JSON.stringify(exampleBlocks), 'v0.1');
+    });
+
+    loadFromUrlBtn.addEventListener('click', async () => {
+      try {
+        // Note: This URL is an example - update with actual URL when available
+        await graph.loadFromUrl(
+          'https://raw.githubusercontent.com/luminastudy/block/main/schema/v0.1/example.json',
+          'v0.1'
+        );
+      } catch (error) {
+        console.error('Failed to load from URL:', error);
+        alert('Failed to load from URL. Loading example data instead.');
+        graph.loadFromJson(JSON.stringify(exampleBlocks), 'v0.1');
+      }
+    });
+
+    // Listen for render events
+    graph.addEventListener('blocks-rendered', (event) => {
+      console.log('Blocks rendered:', event.detail);
+    });
+
+    // Load example data on page load
+    graph.loadFromJson(JSON.stringify(exampleBlocks), 'v0.1');
+  </script>
+</body>
+</html>

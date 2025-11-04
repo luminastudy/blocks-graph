@@ -1,0 +1,230 @@
+import type { BlockGraph, PositionedBlock } from '../types/block.js';
+
+/**
+ * Renderer configuration
+ */
+export interface RendererConfig {
+  language: 'en' | 'he';
+  showPrerequisites: boolean;
+  showParents: boolean;
+  blockStyle: {
+    fill: string;
+    stroke: string;
+    strokeWidth: number;
+    cornerRadius: number;
+  };
+  textStyle: {
+    fontSize: number;
+    fill: string;
+    fontFamily: string;
+  };
+  edgeStyle: {
+    prerequisite: {
+      stroke: string;
+      strokeWidth: number;
+      dashArray?: string;
+    };
+    parent: {
+      stroke: string;
+      strokeWidth: number;
+      dashArray?: string;
+    };
+  };
+}
+
+/**
+ * Default renderer configuration
+ */
+const DEFAULT_RENDERER_CONFIG: RendererConfig = {
+  language: 'en',
+  showPrerequisites: true,
+  showParents: true,
+  blockStyle: {
+    fill: '#ffffff',
+    stroke: '#333333',
+    strokeWidth: 2,
+    cornerRadius: 8,
+  },
+  textStyle: {
+    fontSize: 14,
+    fill: '#333333',
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+  },
+  edgeStyle: {
+    prerequisite: {
+      stroke: '#4a90e2',
+      strokeWidth: 2,
+      dashArray: '5,5',
+    },
+    parent: {
+      stroke: '#666666',
+      strokeWidth: 2,
+    },
+  },
+};
+
+/**
+ * SVG renderer for block graphs
+ */
+export class GraphRenderer {
+  private config: RendererConfig;
+
+  constructor(config: Partial<RendererConfig> = {}) {
+    this.config = { ...DEFAULT_RENDERER_CONFIG, ...config };
+  }
+
+  /**
+   * Update renderer configuration
+   */
+  updateConfig(config: Partial<RendererConfig>): void {
+    this.config = { ...this.config, ...config };
+  }
+
+  /**
+   * Render edges (connections between blocks)
+   */
+  private renderEdges(graph: BlockGraph, positioned: PositionedBlock[]): SVGGElement {
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    group.setAttribute('class', 'edges');
+
+    const positionMap = new Map(positioned.map(pb => [pb.block.id, pb.position]));
+
+    for (const edge of graph.edges) {
+      const fromPos = positionMap.get(edge.from);
+      const toPos = positionMap.get(edge.to);
+
+      if (!fromPos || !toPos) {
+        continue;
+      }
+
+      const shouldRender =
+        (edge.type === 'prerequisite' && this.config.showPrerequisites) ||
+        (edge.type === 'parent' && this.config.showParents);
+
+      if (!shouldRender) {
+        continue;
+      }
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+
+      // Connect from bottom center of source to top center of target
+      line.setAttribute('x1', String(fromPos.x + fromPos.width / 2));
+      line.setAttribute('y1', String(fromPos.y + fromPos.height));
+      line.setAttribute('x2', String(toPos.x + toPos.width / 2));
+      line.setAttribute('y2', String(toPos.y));
+
+      const style = this.config.edgeStyle[edge.type];
+      line.setAttribute('stroke', style.stroke);
+      line.setAttribute('stroke-width', String(style.strokeWidth));
+
+      if (style.dashArray) {
+        line.setAttribute('stroke-dasharray', style.dashArray);
+      }
+
+      line.setAttribute('class', `edge edge-${edge.type}`);
+      line.setAttribute('data-from', edge.from);
+      line.setAttribute('data-to', edge.to);
+
+      group.appendChild(line);
+    }
+
+    return group;
+  }
+
+  /**
+   * Render blocks (nodes in the graph)
+   */
+  private renderBlocks(positioned: PositionedBlock[]): SVGGElement {
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    group.setAttribute('class', 'blocks');
+
+    for (const { block, position } of positioned) {
+      const blockGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      blockGroup.setAttribute('class', 'block');
+      blockGroup.setAttribute('data-id', block.id);
+
+      // Render block rectangle
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', String(position.x));
+      rect.setAttribute('y', String(position.y));
+      rect.setAttribute('width', String(position.width));
+      rect.setAttribute('height', String(position.height));
+      rect.setAttribute('fill', this.config.blockStyle.fill);
+      rect.setAttribute('stroke', this.config.blockStyle.stroke);
+      rect.setAttribute('stroke-width', String(this.config.blockStyle.strokeWidth));
+      rect.setAttribute('rx', String(this.config.blockStyle.cornerRadius));
+      blockGroup.appendChild(rect);
+
+      // Render block text
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', String(position.x + position.width / 2));
+      text.setAttribute('y', String(position.y + position.height / 2));
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('dominant-baseline', 'middle');
+      text.setAttribute('fill', this.config.textStyle.fill);
+      text.setAttribute('font-size', String(this.config.textStyle.fontSize));
+      text.setAttribute('font-family', this.config.textStyle.fontFamily);
+
+      const title = this.config.language === 'he' ? block.title.he : block.title.en;
+      text.textContent = title;
+      blockGroup.appendChild(text);
+
+      group.appendChild(blockGroup);
+    }
+
+    return group;
+  }
+
+  /**
+   * Calculate the bounding box of all positioned blocks
+   */
+  private calculateViewBox(positioned: PositionedBlock[]): { x: number; y: number; width: number; height: number } {
+    if (positioned.length === 0) {
+      return { x: 0, y: 0, width: 800, height: 600 };
+    }
+
+    let minX = Number.POSITIVE_INFINITY;
+    let minY = Number.POSITIVE_INFINITY;
+    let maxX = Number.NEGATIVE_INFINITY;
+    let maxY = Number.NEGATIVE_INFINITY;
+
+    for (const { position } of positioned) {
+      minX = Math.min(minX, position.x);
+      minY = Math.min(minY, position.y);
+      maxX = Math.max(maxX, position.x + position.width);
+      maxY = Math.max(maxY, position.y + position.height);
+    }
+
+    const padding = 40;
+    return {
+      x: minX - padding,
+      y: minY - padding,
+      width: maxX - minX + 2 * padding,
+      height: maxY - minY + 2 * padding,
+    };
+  }
+
+  /**
+   * Render the complete graph to an SVG element
+   */
+  render(graph: BlockGraph, positioned: PositionedBlock[]): SVGSVGElement {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+    // Calculate and set viewBox
+    const viewBox = this.calculateViewBox(positioned);
+    svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', '100%');
+
+    // Render edges first (so they appear behind blocks)
+    const edgesGroup = this.renderEdges(graph, positioned);
+    svg.appendChild(edgesGroup);
+
+    // Render blocks
+    const blocksGroup = this.renderBlocks(positioned);
+    svg.appendChild(blocksGroup);
+
+    return svg;
+  }
+}
