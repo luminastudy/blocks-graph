@@ -22,7 +22,7 @@
     "build:bundle": "node build.mjs",
     "preserve": "pnpm build",
     "serve": "npx http-server --cors",
-    "test": "vitest",
+    "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "lint": "eslint .",
