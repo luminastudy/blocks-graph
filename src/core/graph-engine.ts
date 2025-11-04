@@ -287,36 +287,39 @@ export class GraphEngine {
     // For those root single nodes, show their sub-blocks instead
     if (!selectedBlockId || selectionLevel === 0) {
       for (const block of blocks) {
-        if (!this.isSubBlock(block)) {
-          // Check if this block is a root node
-          const isRoot = this.isRootNode(block.id, graph);
+        // Skip sub-blocks
+        if (this.isSubBlock(block)) {
+          continue;
+        }
 
-          if (isRoot) {
-            // Check if this root block is a single node
-            const prerequisites = this.getDirectPrerequisites(block.id, graph);
-            const postRequisites = this.getDirectPostRequisites(block.id, graph);
-            const isSingleNode = prerequisites.length === 0 && postRequisites.length === 0;
+        // Check if this block is a root node
+        const isRoot = this.isRootNode(block.id, graph);
 
-            if (isSingleNode) {
-              // If it's a root single node, show its sub-blocks instead
-              const subBlocks = this.getSubBlocks(block.id, graph);
-              if (subBlocks.length > 0) {
-                // Has sub-blocks - don't show the parent, show the children
-                for (const subBlock of subBlocks) {
-                  visible.add(subBlock.id);
-                }
-              } else {
-                // No sub-blocks - show the single node itself
-                visible.add(block.id);
+        if (isRoot) {
+          // Check if this root block is a single node
+          const prerequisites = this.getDirectPrerequisites(block.id, graph);
+          const postRequisites = this.getDirectPostRequisites(block.id, graph);
+          const isSingleNode = prerequisites.length === 0 && postRequisites.length === 0;
+
+          if (isSingleNode) {
+            // If it's a root single node, show its sub-blocks instead
+            const subBlocks = this.getSubBlocks(block.id, graph);
+            if (subBlocks.length > 0) {
+              // Has sub-blocks - don't show the parent, show the children
+              for (const subBlock of subBlocks) {
+                visible.add(subBlock.id);
               }
             } else {
-              // Root but not a single node - show it normally
+              // No sub-blocks - show the single node itself
               visible.add(block.id);
             }
           } else {
-            // Not a root node - show it normally
+            // Root but not a single node - show it normally
             visible.add(block.id);
           }
+        } else {
+          // Not a root node - show it normally
+          visible.add(block.id);
         }
       }
       return { visible, dimmed };
