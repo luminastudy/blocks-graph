@@ -27,6 +27,8 @@
     "test:coverage": "vitest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "spell": "cspell lint --no-progress --show-suggestions \"**/*.{ts,tsx,js,jsx,mjs,md,json}\"",
+    "spell:check": "cspell lint --no-progress \"**/*.{ts,tsx,js,jsx,mjs,md,json}\"",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "pnpm run build",
     "release": "release-it"
@@ -51,6 +53,7 @@
     "@types/node": "^22.10.5",
     "@vitest/coverage-v8": "^2.1.8",
     "@vitest/ui": "^2.1.8",
+    "cspell": "^9.2.2",
     "esbuild": "^0.25.12",
     "eslint": "^9.17.0",
     "eslint-config-agent": "^1.6.3",
