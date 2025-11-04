@@ -151,4 +151,214 @@ export class GraphEngine {
     const positioned = this.layoutGraph(graph);
     return { graph, positioned };
   }
+
+  /**
+   * Check if a block is a sub-block (has parents)
+   */
+  isSubBlock(block: Block): boolean {
+    return block.parents.length > 0;
+  }
+
+  /**
+   * Check if a block is a root node (has no incoming edges)
+   */
+  isRootNode(blockId: string, graph: BlockGraph): boolean {
+    // Check if any edge points TO this block
+    const hasIncomingEdges = graph.edges.some(edge => edge.to === blockId);
+    return !hasIncomingEdges;
+  }
+
+  /**
+   * Get direct prerequisites of a block
+   */
+  getDirectPrerequisites(blockId: string, graph: BlockGraph): Block[] {
+    const block = graph.blocks.get(blockId);
+    if (!block) {
+      return [];
+    }
+
+    return block.prerequisites
+      .map(prereqId => graph.blocks.get(prereqId))
+      .filter((b): b is Block => b !== undefined);
+  }
+
+  /**
+   * Get direct post-requisites (dependents) of a block
+   */
+  getDirectPostRequisites(blockId: string, graph: BlockGraph): Block[] {
+    const dependents: Block[] = [];
+
+    for (const edge of graph.edges) {
+      if (edge.from !== blockId || edge.type !== 'prerequisite') {
+        continue;
+      }
+      const dependent = graph.blocks.get(edge.to);
+      if (dependent) {
+        dependents.push(dependent);
+      }
+    }
+
+    return dependents;
+  }
+
+  /**
+   * Get sub-blocks (children) of a block
+   */
+  getSubBlocks(blockId: string, graph: BlockGraph): Block[] {
+    const subBlocks: Block[] = [];
+
+    for (const edge of graph.edges) {
+      if (edge.from === blockId && edge.type === 'parent') {
+        const subBlock = graph.blocks.get(edge.to);
+        if (subBlock) {
+          subBlocks.push(subBlock);
+        }
+      }
+    }
+
+    return subBlocks;
+  }
+
+  /**
+   * Get all related blocks for a selected block
+   * Includes direct prerequisites, post-requisites, and optionally their sub-blocks
+   */
+  getRelatedBlocks(blockId: string, graph: BlockGraph, includeSubBlocks: boolean): Set<string> {
+    const relatedIds = new Set<string>();
+
+    // Add the selected block itself
+    relatedIds.add(blockId);
+
+    // Get direct prerequisites
+    const prerequisites = this.getDirectPrerequisites(blockId, graph);
+    for (const prereq of prerequisites) {
+      relatedIds.add(prereq.id);
+
+      // Add sub-blocks of prerequisites if requested
+      if (includeSubBlocks) {
+        const subBlocks = this.getSubBlocks(prereq.id, graph);
+        for (const subBlock of subBlocks) {
+          relatedIds.add(subBlock.id);
+        }
+      }
+    }
+
+    // Get direct post-requisites
+    const postRequisites = this.getDirectPostRequisites(blockId, graph);
+    for (const postReq of postRequisites) {
+      relatedIds.add(postReq.id);
+
+      // Add sub-blocks of post-requisites if requested
+      if (includeSubBlocks) {
+        const subBlocks = this.getSubBlocks(postReq.id, graph);
+        for (const subBlock of subBlocks) {
+          relatedIds.add(subBlock.id);
+        }
+      }
+    }
+
+    // If the selected block itself has sub-blocks and we're including them
+    if (includeSubBlocks) {
+      const subBlocks = this.getSubBlocks(blockId, graph);
+      for (const subBlock of subBlocks) {
+        relatedIds.add(subBlock.id);
+      }
+    }
+
+    return relatedIds;
+  }
+
+  /**
+   * Categorize blocks based on selection state
+   * Returns which blocks should be visible vs dimmed
+   */
+  categorizeBlocks(
+    blocks: Block[],
+    graph: BlockGraph,
+    selectedBlockId: string | null,
+    selectionLevel: number
+  ): { visible: Set<string>; dimmed: Set<string> } {
+    const visible = new Set<string>();
+    const dimmed = new Set<string>();
+
+    // If nothing is selected, show all non-sub-blocks normally
+    // EXCEPT: root single nodes (blocks that are roots AND have no prerequisites/post-requisites)
+    // For those root single nodes, show their sub-blocks instead
+    if (!selectedBlockId || selectionLevel === 0) {
+      for (const block of blocks) {
+        if (!this.isSubBlock(block)) {
+          // Check if this block is a root node
+          const isRoot = this.isRootNode(block.id, graph);
+
+          if (isRoot) {
+            // Check if this root block is a single node
+            const prerequisites = this.getDirectPrerequisites(block.id, graph);
+            const postRequisites = this.getDirectPostRequisites(block.id, graph);
+            const isSingleNode = prerequisites.length === 0 && postRequisites.length === 0;
+
+            if (isSingleNode) {
+              // If it's a root single node, show its sub-blocks instead
+              const subBlocks = this.getSubBlocks(block.id, graph);
+              if (subBlocks.length > 0) {
+                // Has sub-blocks - don't show the parent, show the children
+                for (const subBlock of subBlocks) {
+                  visible.add(subBlock.id);
+                }
+              } else {
+                // No sub-blocks - show the single node itself
+                visible.add(block.id);
+              }
+            } else {
+              // Root but not a single node - show it normally
+              visible.add(block.id);
+            }
+          } else {
+            // Not a root node - show it normally
+            visible.add(block.id);
+          }
+        }
+      }
+      return { visible, dimmed };
+    }
+
+    // Determine which blocks to show based on selection level
+    let includeSubBlocks = selectionLevel >= 2;
+
+    // Check if selected block is a root node AND a "single node" (no prerequisites or post-requisites)
+    const isRoot = this.isRootNode(selectedBlockId, graph);
+    const prerequisites = this.getDirectPrerequisites(selectedBlockId, graph);
+    const postRequisites = this.getDirectPostRequisites(selectedBlockId, graph);
+    const isSingleNode = prerequisites.length === 0 && postRequisites.length === 0;
+    const isRootSingleNode = isRoot && isSingleNode;
+
+    // If it's a root single node, automatically show sub-blocks instead of just the single block
+    if (isRootSingleNode && selectionLevel === 1) {
+      includeSubBlocks = true;
+    }
+
+    const relatedIds = this.getRelatedBlocks(selectedBlockId, graph, includeSubBlocks);
+
+    // If it's a root single node with sub-blocks, don't show the parent block itself
+    // Only show its sub-blocks
+    if (isRootSingleNode && includeSubBlocks) {
+      const subBlocks = this.getSubBlocks(selectedBlockId, graph);
+      if (subBlocks.length > 0) {
+        relatedIds.delete(selectedBlockId);
+      }
+    }
+
+    // Categorize all blocks
+    for (const block of blocks) {
+      if (relatedIds.has(block.id)) {
+        // This block is related to the selection
+        visible.add(block.id);
+      } else if (!this.isSubBlock(block)) {
+        // This is an unrelated non-sub-block - dim it
+        dimmed.add(block.id);
+      }
+      // Sub-blocks that aren't related are simply not shown
+    }
+
+    return { visible, dimmed };
+  }
 }
