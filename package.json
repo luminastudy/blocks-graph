@@ -18,8 +18,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "dev": "vite",
-    "serve": "vite preview",
+    "serve": "npx serve .",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",

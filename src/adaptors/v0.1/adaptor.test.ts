@@ -71,15 +71,15 @@ describe('SchemaV01Adaptor', () => {
     it('should convert multiple blocks', () => {
       const schemaBlocks: BlockSchemaV01[] = [
         {
-          id: '1',
+          id: '550e8400-e29b-41d4-a716-446655440001',
           title: { he_text: 'א', en_text: 'A' },
           prerequisites: [],
           parents: [],
         },
         {
-          id: '2',
+          id: '550e8400-e29b-41d4-a716-446655440002',
           title: { he_text: 'ב', en_text: 'B' },
-          prerequisites: ['1'],
+          prerequisites: ['550e8400-e29b-41d4-a716-446655440001'],
           parents: [],
         },
       ];
@@ -87,16 +87,16 @@ describe('SchemaV01Adaptor', () => {
       const results = adaptor.adaptMany(schemaBlocks);
 
       expect(results).toHaveLength(2);
-      expect(results[0]?.id).toBe('1');
-      expect(results[1]?.id).toBe('2');
-      expect(results[1]?.prerequisites).toEqual(['1']);
+      expect(results[0]?.id).toBe('550e8400-e29b-41d4-a716-446655440001');
+      expect(results[1]?.id).toBe('550e8400-e29b-41d4-a716-446655440002');
+      expect(results[1]?.prerequisites).toEqual(['550e8400-e29b-41d4-a716-446655440001']);
     });
   });
 
   describe('adaptFromJson', () => {
     it('should parse and adapt a single block from JSON', () => {
       const json = JSON.stringify({
-        id: '1',
+        id: '550e8400-e29b-41d4-a716-446655440000',
         title: { he_text: 'א', en_text: 'A' },
         prerequisites: [],
         parents: [],
@@ -105,13 +105,13 @@ describe('SchemaV01Adaptor', () => {
       const results = adaptor.adaptFromJson(json);
 
       expect(results).toHaveLength(1);
-      expect(results[0]?.id).toBe('1');
+      expect(results[0]?.id).toBe('550e8400-e29b-41d4-a716-446655440000');
     });
 
     it('should parse and adapt an array of blocks from JSON', () => {
       const json = JSON.stringify([
-        { id: '1', title: { he_text: 'א', en_text: 'A' }, prerequisites: [], parents: [] },
-        { id: '2', title: { he_text: 'ב', en_text: 'B' }, prerequisites: [], parents: [] },
+        { id: '550e8400-e29b-41d4-a716-446655440001', title: { he_text: 'א', en_text: 'A' }, prerequisites: [], parents: [] },
+        { id: '550e8400-e29b-41d4-a716-446655440002', title: { he_text: 'ב', en_text: 'B' }, prerequisites: [], parents: [] },
       ]);
 
       const results = adaptor.adaptFromJson(json);
@@ -133,7 +133,7 @@ describe('SchemaV01Adaptor', () => {
   describe('validate', () => {
     it('should validate a valid block', () => {
       const block = {
-        id: '1',
+        id: '550e8400-e29b-41d4-a716-446655440001',
         title: { he_text: 'א', en_text: 'A' },
         prerequisites: [],
         parents: [],
@@ -144,8 +144,8 @@ describe('SchemaV01Adaptor', () => {
 
     it('should validate an array of valid blocks', () => {
       const blocks = [
-        { id: '1', title: { he_text: 'א', en_text: 'A' }, prerequisites: [], parents: [] },
-        { id: '2', title: { he_text: 'ב', en_text: 'B' }, prerequisites: [], parents: [] },
+        { id: '550e8400-e29b-41d4-a716-446655440001', title: { he_text: 'א', en_text: 'A' }, prerequisites: [], parents: [] },
+        { id: '550e8400-e29b-41d4-a716-446655440002', title: { he_text: 'ב', en_text: 'B' }, prerequisites: [], parents: [] },
       ];
 
       expect(SchemaV01Adaptor.validate(blocks)).toBe(true);

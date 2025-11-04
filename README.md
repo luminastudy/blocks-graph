@@ -180,21 +180,25 @@ graph.addEventListener('blocks-rendered', (event) => {
 
 ## Schema Versions
 
+This package uses [`@tupe12334/block-schema`](https://www.npmjs.com/package/@tupe12334/block-schema) for JSON Schema validation.
+
 ### v0.1
 
-The v0.1 schema expects blocks in the following format:
+The v0.1 schema expects blocks in the following format (validated using JSON Schema draft-07):
 
 ```typescript
 {
-  "id": "uuid-string",
+  "id": "uuid-string",              // Required: UUID format
   "title": {
-    "he_text": "Hebrew title",
-    "en_text": "English title"
+    "he_text": "Hebrew title",      // Required
+    "en_text": "English title"      // Required
   },
-  "prerequisites": ["uuid-1", "uuid-2"],  // Optional
-  "parents": ["uuid-3"]                    // Optional
+  "prerequisites": ["uuid-1"],      // Required: Array of prerequisite block IDs (can be empty)
+  "parents": ["uuid-2"]             // Required: Array of parent block IDs (can be empty)
 }
 ```
+
+**Note**: IDs must be valid UUIDs. Additional properties are allowed and will be preserved.
 
 ## Advanced Usage
 
@@ -255,7 +259,17 @@ pnpm lint
 
 # Type check
 pnpm typecheck
+
+# Serve example
+pnpm serve
 ```
+
+## Dependencies
+
+- **Runtime**:
+  - `@tupe12334/block-schema` - JSON Schema definitions for block validation
+  - `ajv` - JSON Schema validator
+  - `ajv-formats` - Format validation for AJV (UUID support)
 
 ## License
 
