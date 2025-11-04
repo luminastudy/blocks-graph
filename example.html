@@ -129,8 +129,9 @@
       </p>
       <ul>
         <li>Click "Load Example Data" to see sample blocks</li>
+        <li><strong>Root single nodes (root blocks with no connections) are hidden - only their sub-blocks are shown</strong></li>
         <li><strong>Click on a block to show its prerequisites and post-requisites</strong></li>
-        <li>Click the same block again to also reveal sub-blocks</li>
+        <li>Click the same block again to toggle additional sub-blocks or reset</li>
         <li>Click a third time to reset to default view</li>
         <li>Enter a URL in the input field and click "Load from URL" to load data from any JSON endpoint</li>
         <li>Toggle the checkboxes to show/hide different relationship types</li>
@@ -244,6 +245,43 @@
     // Listen for render events
     graph.addEventListener('blocks-rendered', (event) => {
       console.log('Blocks rendered:', event.detail);
+    });
+
+    // Listen for block selection events
+    graph.addEventListener('block-selected', (event) => {
+      const { blockId, selectionLevel } = event.detail;
+      const statusEl = document.getElementById('selection-status');
+
+      if (blockId === null) {
+        statusEl.textContent = 'Selection: None (Default view - showing all non-sub-blocks)';
+      } else {
+        const block = exampleBlocks.find(b => b.id === blockId);
+        const blockTitle = block ? block.title.en_text : blockId;
+
+        // Check if it's a root node (no incoming edges)
+        const isRoot = !exampleBlocks.some(b =>
+          b.prerequisites.includes(blockId) || b.parents.includes(blockId)
+        );
+
+        // Check if it's a single node (no prerequisites or post-requisites)
+        const hasPrereqs = block && block.prerequisites.length > 0;
+        const hasPostReqs = exampleBlocks.some(b => b.prerequisites.includes(blockId));
+        const isSingleNode = !hasPrereqs && !hasPostReqs;
+        const isRootSingleNode = isRoot && isSingleNode;
+
+        let levelText;
+        if (isRootSingleNode && selectionLevel === 1) {
+          levelText = 'root single node - showing sub-blocks automatically';
+        } else if (selectionLevel === 1) {
+          levelText = 'showing graph';
+        } else {
+          levelText = 'showing graph + sub-blocks';
+        }
+
+        statusEl.textContent = `Selection: "${blockTitle}" (Level ${selectionLevel} - ${levelText})`;
+      }
+
+      console.log('Block selected:', event.detail);
     });
 
     // Load example data on page load

@@ -7,6 +7,9 @@ export interface RendererConfig {
   language: 'en' | 'he';
   showPrerequisites: boolean;
   showParents: boolean;
+  selectedBlockId?: string | null;
+  visibleBlocks?: Set<string>;
+  dimmedBlocks?: Set<string>;
   blockStyle: {
     fill: string;
     stroke: string;
@@ -121,6 +124,13 @@ export class GraphRenderer {
         line.setAttribute('stroke-dasharray', style.dashArray);
       }
 
+      // Dim edge if either endpoint is dimmed
+      const isFromDimmed = this.config.dimmedBlocks?.has(edge.from) ?? false;
+      const isToDimmed = this.config.dimmedBlocks?.has(edge.to) ?? false;
+      if (isFromDimmed || isToDimmed) {
+        line.setAttribute('opacity', '0.3');
+      }
+
       line.setAttribute('class', `edge edge-${edge.type}`);
       line.setAttribute('data-from', edge.from);
       line.setAttribute('data-to', edge.to);
@@ -143,6 +153,11 @@ export class GraphRenderer {
       blockGroup.setAttribute('class', 'block');
       blockGroup.setAttribute('data-id', block.id);
 
+      // Determine visual state
+      const isSelected = this.config.selectedBlockId === block.id;
+      const isDimmed = this.config.dimmedBlocks?.has(block.id) ?? false;
+      const opacity = isDimmed ? '0.3' : '1';
+
       // Render block rectangle
       const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rect.setAttribute('x', String(position.x));
@@ -150,9 +165,19 @@ export class GraphRenderer {
       rect.setAttribute('width', String(position.width));
       rect.setAttribute('height', String(position.height));
       rect.setAttribute('fill', this.config.blockStyle.fill);
-      rect.setAttribute('stroke', this.config.blockStyle.stroke);
-      rect.setAttribute('stroke-width', String(this.config.blockStyle.strokeWidth));
+
+      // Highlight selected block
+      if (isSelected) {
+        rect.setAttribute('stroke', '#4a90e2');
+        rect.setAttribute('stroke-width', String(this.config.blockStyle.strokeWidth + 2));
+        rect.setAttribute('filter', 'drop-shadow(0 0 8px rgba(74, 144, 226, 0.5))');
+      } else {
+        rect.setAttribute('stroke', this.config.blockStyle.stroke);
+        rect.setAttribute('stroke-width', String(this.config.blockStyle.strokeWidth));
+      }
+
       rect.setAttribute('rx', String(this.config.blockStyle.cornerRadius));
+      rect.setAttribute('opacity', opacity);
       blockGroup.appendChild(rect);
 
       // Render block text
@@ -164,6 +189,7 @@ export class GraphRenderer {
       text.setAttribute('fill', this.config.textStyle.fill);
       text.setAttribute('font-size', String(this.config.textStyle.fontSize));
       text.setAttribute('font-family', this.config.textStyle.fontFamily);
+      text.setAttribute('opacity', opacity);
 
       const title = this.config.language === 'he' ? block.title.he : block.title.en;
       text.textContent = title;

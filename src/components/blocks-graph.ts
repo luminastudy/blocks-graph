@@ -20,6 +20,8 @@ export class BlocksGraph extends HTMLElement {
   private engine: GraphEngine;
   private renderer: GraphRenderer;
   private blocks: Block[] = [];
+  private selectedBlockId: string | null = null;
+  private selectionLevel: number = 0; // 0=default, 1=graph shown, 2=graph+sub-blocks shown
 
   constructor() {
     super();
@@ -150,6 +152,37 @@ export class BlocksGraph extends HTMLElement {
   }
 
   /**
+   * Handle block click events
+   * Implements 3-state toggle: default -> graph -> graph+sub-blocks -> default
+   */
+  private handleBlockClick(blockId: string): void {
+    if (this.selectedBlockId === blockId) {
+      // Same block clicked - advance selection level
+      this.selectionLevel++;
+      if (this.selectionLevel > 2) {
+        // Reset to default
+        this.selectedBlockId = null;
+        this.selectionLevel = 0;
+      }
+    } else {
+      // Different block clicked - select it at level 1
+      this.selectedBlockId = blockId;
+      this.selectionLevel = 1;
+    }
+
+    // Dispatch custom event for block selection
+    this.dispatchEvent(new CustomEvent('block-selected', {
+      detail: {
+        blockId: this.selectedBlockId,
+        selectionLevel: this.selectionLevel
+      },
+    }));
+
+    // Re-render with new selection
+    this.render();
+  }
+
+  /**
    * Render the graph
    */
   private render(): void {
@@ -202,13 +235,50 @@ export class BlocksGraph extends HTMLElement {
     }
 
     try {
-      const { graph, positioned } = this.engine.process(this.blocks);
+      // Build the full graph first
+      const fullGraph = this.engine.buildGraph(this.blocks);
+
+      // Categorize blocks based on selection state
+      const { visible, dimmed } = this.engine.categorizeBlocks(
+        this.blocks,
+        fullGraph,
+        this.selectedBlockId,
+        this.selectionLevel
+      );
+
+      // Filter blocks to only those that should be rendered (visible or dimmed)
+      const blocksToRender = this.blocks.filter(block =>
+        visible.has(block.id) || dimmed.has(block.id)
+      );
+
+      // Process the filtered blocks
+      const { graph, positioned } = this.engine.process(blocksToRender);
+
+      // Update renderer config with selection state
+      this.renderer.updateConfig({
+        selectedBlockId: this.selectedBlockId,
+        visibleBlocks: visible,
+        dimmedBlocks: dimmed,
+      });
+
+      // Render the graph
       const svg = this.renderer.render(graph, positioned);
       this.shadowRoot!.appendChild(svg);
 
+      // Attach click event listeners to block elements
+      const blockElements = svg.querySelectorAll('.block');
+      blockElements.forEach((blockEl) => {
+        const blockId = blockEl.getAttribute('data-id');
+        if (blockId) {
+          blockEl.addEventListener('click', () => {
+            this.handleBlockClick(blockId);
+          });
+        }
+      });
+
       // Dispatch custom event when render is complete
       this.dispatchEvent(new CustomEvent('blocks-rendered', {
-        detail: { blockCount: this.blocks.length },
+        detail: { blockCount: blocksToRender.length },
       }));
     }
     catch (error) {
