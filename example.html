@@ -101,6 +101,16 @@
         <span>Show Parents</span>
       </label>
 
+      <label>
+        <span>URL:</span>
+        <input
+          type="text"
+          id="json-url"
+          placeholder="https://example.com/data.json"
+          style="width: 400px; padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;"
+        >
+      </label>
+
       <button id="load-example">Load Example Data</button>
       <button id="load-from-url">Load from URL</button>
     </div>
@@ -119,10 +129,16 @@
       </p>
       <ul>
         <li>Click "Load Example Data" to see sample blocks</li>
-        <li>Click "Load from URL" to load the official schema example</li>
+        <li><strong>Click on a block to show its prerequisites and post-requisites</strong></li>
+        <li>Click the same block again to also reveal sub-blocks</li>
+        <li>Click a third time to reset to default view</li>
+        <li>Enter a URL in the input field and click "Load from URL" to load data from any JSON endpoint</li>
         <li>Toggle the checkboxes to show/hide different relationship types</li>
         <li>Switch languages to see Hebrew or English titles</li>
       </ul>
+      <p id="selection-status" style="font-weight: bold; color: #2196f3; margin-top: 10px;">
+        Selection: None
+      </p>
     </div>
   </div>
 
@@ -136,6 +152,7 @@
     const languageSelect = document.getElementById('language');
     const showPrerequisites = document.getElementById('show-prerequisites');
     const showParents = document.getElementById('show-parents');
+    const jsonUrlInput = document.getElementById('json-url');
     const loadExampleBtn = document.getElementById('load-example');
     const loadFromUrlBtn = document.getElementById('load-from-url');
 
@@ -209,16 +226,18 @@
     });
 
     loadFromUrlBtn.addEventListener('click', async () => {
+      const url = jsonUrlInput.value.trim();
+
+      if (!url) {
+        alert('Please enter a URL to load from.');
+        return;
+      }
+
       try {
-        // Note: This URL is an example - update with actual URL when available
-        await graph.loadFromUrl(
-          'https://raw.githubusercontent.com/luminastudy/block/main/schema/v0.1/example.json',
-          'v0.1'
-        );
+        await graph.loadFromUrl(url, 'v0.1');
       } catch (error) {
         console.error('Failed to load from URL:', error);
-        alert('Failed to load from URL. Loading example data instead.');
-        graph.loadFromJson(JSON.stringify(exampleBlocks), 'v0.1');
+        alert(`Failed to load from URL: ${error.message}`);
       }
     });
 
