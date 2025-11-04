@@ -3,9 +3,16 @@
  * Uses @tupe12334/block-schema for validation
  */
 
-import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
+import AjvImport from 'ajv';
+import addFormatsImport from 'ajv-formats';
 import blockSchemaV01 from '@tupe12334/block-schema/v0.1' with { type: 'json' };
+
+// Handle both ESM and CJS imports
+type AjvModule = typeof AjvImport & { default?: typeof AjvImport };
+type AddFormatsModule = typeof addFormatsImport & { default?: typeof addFormatsImport };
+
+const Ajv = (AjvImport as AjvModule).default || AjvImport;
+const addFormats = (addFormatsImport as AddFormatsModule).default || addFormatsImport;
 
 /**
  * Bilingual title object
@@ -27,7 +34,7 @@ export interface BlockSchemaV01 {
   [key: string]: unknown;
 }
 
-// Create AJV validator
+// Create AJV validator (draft-07 compatible)
 const ajv = new Ajv({ strict: false });
 addFormats(ajv);
 const validateBlock = ajv.compile(blockSchemaV01);
