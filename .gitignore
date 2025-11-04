@@ -9,6 +9,7 @@ dist/
 # Testing
 coverage/
 .vitest/
+.playwright-mcp/
 
 # IDE
 .vscode/
