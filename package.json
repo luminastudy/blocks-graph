@@ -20,7 +20,7 @@
     "build": "pnpm run build:types && pnpm run build:bundle",
     "build:types": "tsc --emitDeclarationOnly",
     "build:bundle": "node build.mjs",
-    "serve": "npx serve .",
+    "serve": "npx http-server --cors",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
