@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 import { build } from 'esbuild';
-import { readFileSync } from 'fs';
-
-const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'));
 
 // Build ESM bundle
 await build({
