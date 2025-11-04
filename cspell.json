@@ -1,0 +1,96 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "lumina",
+    "luminastudy",
+    "esbuild",
+    "vitest",
+    "jsdom",
+    "pnpm",
+    "typecheck",
+    "prepublishOnly",
+    "customElement",
+    "categorize",
+    "dimmed",
+    "renderer",
+    "layouted",
+    "dagre",
+    "graphlib",
+    "tupe",
+    "ofek",
+    "blockCount",
+    "blocksToRender",
+    "selectedBlockId",
+    "selectionLevel",
+    "visibleBlocks",
+    "dimmedBlocks",
+    "blockId",
+    "blockEl",
+    "emitDeclarationOnly",
+    "noEmit",
+    "מבוא",
+    "למתמטיקה",
+    "אלגברה",
+    "ליניארית"
+  ],
+  "flagWords": [],
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    "coverage/**",
+    ".git/**",
+    "*.lock",
+    "pnpm-lock.yaml",
+    "package-lock.json",
+    "yarn.lock",
+    "*.min.js",
+    "*.bundle.js",
+    "build/**",
+    ".vscode/**",
+    ".idea/**",
+    "eslint-errors.txt",
+    "eslint-report.json"
+  ],
+  "overrides": [
+    {
+      "filename": "**/*.{ts,tsx,js,jsx,mjs}",
+      "words": [
+        "graphviz",
+        "typeof",
+        "instanceof",
+        "readonly",
+        "keyof",
+        "infer"
+      ]
+    },
+    {
+      "filename": "**/*.json",
+      "words": []
+    },
+    {
+      "filename": "**/package.json",
+      "ignoreWords": [
+        "http-server"
+      ]
+    }
+  ],
+  "dictionaries": [
+    "typescript",
+    "node",
+    "npm",
+    "html",
+    "css",
+    "bash"
+  ],
+  "import": [],
+  "enableFiletypes": [
+    "typescript",
+    "javascript",
+    "markdown",
+    "json"
+  ],
+  "allowCompoundWords": true,
+  "caseSensitive": false,
+  "useGitignore": true
+}
