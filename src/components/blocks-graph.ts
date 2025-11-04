@@ -3,6 +3,7 @@ import { GraphEngine } from '../core/graph-engine.js';
 import type { GraphLayoutConfig } from '../core/graph-engine.js';
 import { GraphRenderer } from '../core/renderer.js';
 import { schemaV01Adaptor } from '../adaptors/v0.1/adaptor.js';
+import { createStyles, createEmptyStateMessage, createErrorMessage, attachBlockClickListeners, renderGraph } from './render-helpers.js';
 
 /**
  * Custom element for rendering block graphs
@@ -147,7 +148,11 @@ export class BlocksGraph extends HTMLElement {
     }
     catch (error) {
       console.error('Error loading blocks from URL:', error);
-      this.showError(error instanceof Error ? error.message : 'Unknown error');
+      this.shadowRoot!.innerHTML = '';
+      this.shadowRoot!.appendChild(createStyles());
+      this.shadowRoot!.appendChild(
+        createErrorMessage(error instanceof Error ? error.message : 'Unknown error')
+      );
     }
   }
 
@@ -190,111 +195,35 @@ export class BlocksGraph extends HTMLElement {
     this.shadowRoot!.innerHTML = '';
 
     // Add styles
-    const style = document.createElement('style');
-    style.textContent = `
-      :host {
-        display: block;
-        width: 100%;
-        height: 100%;
-        min-height: 400px;
-      }
-
-      svg {
-        width: 100%;
-        height: 100%;
-      }
-
-      .block {
-        cursor: pointer;
-        transition: opacity 0.2s;
-      }
-
-      .block:hover rect {
-        filter: brightness(0.95);
-      }
-
-      .edge {
-        pointer-events: none;
-      }
-
-      .error {
-        color: #d32f2f;
-        padding: 1rem;
-        font-family: system-ui, -apple-system, sans-serif;
-      }
-    `;
-    this.shadowRoot!.appendChild(style);
+    this.shadowRoot!.appendChild(createStyles());
 
     if (this.blocks.length === 0) {
-      const message = document.createElement('div');
-      message.textContent = 'No blocks to display. Use setBlocks(), loadFromJson(), or loadFromUrl() to add data.';
-      message.style.padding = '1rem';
-      message.style.fontFamily = 'system-ui, -apple-system, sans-serif';
-      this.shadowRoot!.appendChild(message);
+      this.shadowRoot!.appendChild(createEmptyStateMessage());
       return;
     }
 
     try {
-      // Build the full graph first
-      const fullGraph = this.engine.buildGraph(this.blocks);
-
-      // Categorize blocks based on selection state
-      const { visible, dimmed } = this.engine.categorizeBlocks(
+      const { svg, blockCount } = renderGraph(
         this.blocks,
-        fullGraph,
+        this.engine,
+        this.renderer,
         this.selectedBlockId,
         this.selectionLevel
       );
-
-      // Filter blocks to only those that should be rendered (visible or dimmed)
-      const blocksToRender = this.blocks.filter(block =>
-        visible.has(block.id) || dimmed.has(block.id)
-      );
-
-      // Process the filtered blocks
-      const { graph, positioned } = this.engine.process(blocksToRender);
-
-      // Update renderer config with selection state
-      this.renderer.updateConfig({
-        selectedBlockId: this.selectedBlockId,
-        visibleBlocks: visible,
-        dimmedBlocks: dimmed,
-      });
-
-      // Render the graph
-      const svg = this.renderer.render(graph, positioned);
       this.shadowRoot!.appendChild(svg);
-
-      // Attach click event listeners to block elements
-      const blockElements = svg.querySelectorAll('.block');
-      blockElements.forEach((blockEl) => {
-        const blockId = blockEl.getAttribute('data-id');
-        if (blockId) {
-          blockEl.addEventListener('click', () => {
-            this.handleBlockClick(blockId);
-          });
-        }
-      });
-
-      // Dispatch custom event when render is complete
-      this.dispatchEvent(new CustomEvent('blocks-rendered', {
-        detail: { blockCount: blocksToRender.length },
-      }));
+      attachBlockClickListeners(
+        svg,
+        blockCount,
+        (blockId) => this.handleBlockClick(blockId),
+        (event) => this.dispatchEvent(event)
+      );
     }
     catch (error) {
       console.error('Error rendering graph:', error);
-      this.showError(error instanceof Error ? error.message : 'Unknown error');
+      this.shadowRoot!.appendChild(
+        createErrorMessage(error instanceof Error ? error.message : 'Unknown error')
+      );
     }
-  }
-
-  /**
-   * Show an error message
-   */
-  private showError(message: string): void {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error';
-    errorDiv.textContent = `Error: ${message}`;
-    this.shadowRoot!.appendChild(errorDiv);
   }
 
   /**
