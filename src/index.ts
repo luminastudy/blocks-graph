@@ -20,3 +20,6 @@ export type { RendererConfig } from './core/renderer.js';
 export { SchemaV01Adaptor, schemaV01Adaptor } from './adaptors/v0.1/adaptor.js';
 export type { BlockSchemaV01, BlockTitle } from './adaptors/v0.1/types.js';
 export { isBlockSchemaV01 } from './adaptors/v0.1/types.js';
+
+// Export custom errors
+export { InvalidBlockSchemaError, UnsupportedSchemaVersionError, BlocksFetchError } from './errors.js';

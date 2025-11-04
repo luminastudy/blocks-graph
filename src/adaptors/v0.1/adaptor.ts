@@ -1,6 +1,7 @@
 import type { Block } from '../../types/block.js';
 import type { BlockSchemaV01 } from './types.js';
 import { isBlockSchemaV01, getValidationErrors } from './types.js';
+import { InvalidBlockSchemaError } from '../../errors.js';
 
 /**
  * Adaptor for schema v0.1
@@ -58,7 +59,7 @@ export class SchemaV01Adaptor {
     }
 
     const errors = getValidationErrors();
-    throw new Error(`Invalid block schema v0.1 format${errors ? `: ${errors}` : ''}`);
+    throw new InvalidBlockSchemaError('Invalid block schema v0.1 format', errors ?? undefined);
   }
 
   /**

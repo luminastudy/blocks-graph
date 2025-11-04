@@ -4,6 +4,7 @@ import type { GraphLayoutConfig } from '../core/graph-engine.js';
 import { GraphRenderer } from '../core/renderer.js';
 import { schemaV01Adaptor } from '../adaptors/v0.1/adaptor.js';
 import { createStyles, createEmptyStateMessage, createErrorMessage, attachBlockClickListeners, renderGraph } from './render-helpers.js';
+import { UnsupportedSchemaVersionError, BlocksFetchError } from '../errors.js';
 
 /**
  * Custom element for rendering block graphs
@@ -130,7 +131,7 @@ export class BlocksGraph extends HTMLElement {
       this.render();
     }
     else {
-      throw new Error(`Unsupported schema version: ${schemaVersion}`);
+      throw new UnsupportedSchemaVersionError(schemaVersion);
     }
   }
 
@@ -141,7 +142,7 @@ export class BlocksGraph extends HTMLElement {
     try {
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error(`Failed to fetch blocks: ${response.statusText}`);
+        throw new BlocksFetchError(url, response.statusText);
       }
       const json = await response.text();
       this.loadFromJson(json, schemaVersion);
