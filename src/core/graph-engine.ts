@@ -147,37 +147,23 @@ export class GraphEngine {
 
   getSubBlocks(blockId: string, graph: BlockGraph): Block[] {
     const subBlocks: Block[] = [];
-
     for (const edge of graph.edges) {
-      if (edge.from !== blockId || edge.type !== 'parent') {
-        continue;
-      }
+      if (edge.from !== blockId || edge.type !== 'parent') continue;
       const subBlock = graph.blocks.get(edge.to);
-      if (subBlock) {
-        subBlocks.push(subBlock);
-      }
+      if (subBlock) subBlocks.push(subBlock);
     }
-
     return subBlocks;
   }
 
-  /**
-   * Add a block and optionally its sub-blocks to a set
-   */
   private addBlockWithSubBlocks(blockId: string, graph: BlockGraph, targetSet: Set<string>, includeSubBlocks: boolean): void {
     targetSet.add(blockId);
     if (includeSubBlocks) {
-      const subBlocks = this.getSubBlocks(blockId, graph);
-      for (const subBlock of subBlocks) {
+      for (const subBlock of this.getSubBlocks(blockId, graph)) {
         targetSet.add(subBlock.id);
       }
     }
   }
 
-  /**
-   * Get all related blocks for a selected block
-   * Includes direct prerequisites, post-requisites, and optionally their sub-blocks
-   */
   getRelatedBlocks(blockId: string, graph: BlockGraph, includeSubBlocks: boolean): Set<string> {
     const relatedIds = new Set<string>();
     relatedIds.add(blockId);
