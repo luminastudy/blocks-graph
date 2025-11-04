@@ -208,11 +208,12 @@ export class GraphEngine {
     const subBlocks: Block[] = [];
 
     for (const edge of graph.edges) {
-      if (edge.from === blockId && edge.type === 'parent') {
-        const subBlock = graph.blocks.get(edge.to);
-        if (subBlock) {
-          subBlocks.push(subBlock);
-        }
+      if (edge.from !== blockId || edge.type !== 'parent') {
+        continue;
+      }
+      const subBlock = graph.blocks.get(edge.to);
+      if (subBlock) {
+        subBlocks.push(subBlock);
       }
     }
 
