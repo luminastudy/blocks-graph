@@ -43,7 +43,13 @@ export class SchemaV01Adaptor {
   adaptFromJson(json: string): Block[] {
     const parsed: unknown = JSON.parse(json);
 
-    // Handle both single block and array of blocks
+    // Validate input is either a valid block or array
+    if (!Array.isArray(parsed) && !isBlockSchemaV01(parsed)) {
+      const errors = getValidationErrors();
+      throw new InvalidBlockSchemaError('Invalid block schema v0.1 format', errors ?? undefined);
+    }
+
+    // Handle array of blocks
     if (Array.isArray(parsed)) {
       const validBlocks = parsed.filter(isBlockSchemaV01);
       if (validBlocks.length !== parsed.length) {
@@ -54,12 +60,8 @@ export class SchemaV01Adaptor {
       return this.adaptMany(validBlocks);
     }
 
-    if (isBlockSchemaV01(parsed)) {
-      return [this.adapt(parsed)];
-    }
-
-    const errors = getValidationErrors();
-    throw new InvalidBlockSchemaError('Invalid block schema v0.1 format', errors ?? undefined);
+    // Handle single block
+    return [this.adapt(parsed)];
   }
 
   /**
