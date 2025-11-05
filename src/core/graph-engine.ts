@@ -230,16 +230,23 @@ export class GraphEngine {
    * Add block or its sub-blocks to visibility set based on root single node logic
    */
   private addBlockToVisibility(blockId: string, graph: BlockGraph, visible: Set<string>): void {
+    console.log(`[addBlockToVisibility] Processing block ${blockId}`);
     if (this.isRootSingleNode(blockId, graph)) {
+      console.log(`[addBlockToVisibility] Block is a root single node`);
       const subBlocks = this.getSubBlocks(blockId, graph);
+      console.log(`[addBlockToVisibility] Sub-blocks count: ${subBlocks.length}`);
       if (subBlocks.length > 0) {
+        console.log(`[addBlockToVisibility] Adding ${subBlocks.length} sub-blocks to visible set`);
         for (const subBlock of subBlocks) {
           visible.add(subBlock.id);
+          console.log(`[addBlockToVisibility] Added sub-block ${subBlock.id} to visible`);
         }
       } else {
+        console.log(`[addBlockToVisibility] No sub-blocks, adding root block itself`);
         visible.add(blockId);
       }
     } else {
+      console.log(`[addBlockToVisibility] Not a root single node, adding block normally`);
       visible.add(blockId);
     }
   }

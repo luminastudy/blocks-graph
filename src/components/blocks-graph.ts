@@ -3,7 +3,11 @@ import { GraphEngine } from '../core/graph-engine.js';
 import type { GraphLayoutConfig } from '../core/graph-engine.js';
 import { GraphRenderer } from '../core/renderer.js';
 import { schemaV01Adaptor } from '../adaptors/v0.1/instance.js';
-import { createStyles, createEmptyStateMessage, createErrorMessage, attachBlockClickListeners, renderGraph } from './render-helpers.js';
+import { createStyles } from './create-styles.js';
+import { createEmptyStateMessage } from './create-empty-state-message.js';
+import { createErrorMessage } from './create-error-message.js';
+import { attachBlockClickListeners } from './attach-block-click-listeners.js';
+import { renderGraph } from './render-graph.js';
 import { UnsupportedSchemaVersionError, BlocksFetchError } from '../errors.js';
 
 /**
