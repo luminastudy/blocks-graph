@@ -1,4 +1,8 @@
-import type { Block, BlockGraph, BlockPosition, GraphEdge, PositionedBlock } from '../types/block.js';
+import type { Block } from '../types/block.js';
+import type { BlockGraph } from '../types/block-graph.js';
+import type { BlockPosition } from '../types/block-position.js';
+import type { GraphEdge } from '../types/graph-edge.js';
+import type { PositionedBlock } from '../types/positioned-block.js';
 import type { GraphLayoutConfig } from './graph-layout-config.js';
 import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js';
 

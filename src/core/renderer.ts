@@ -1,4 +1,5 @@
-import type { BlockGraph, PositionedBlock } from '../types/block.js';
+import type { BlockGraph } from '../types/block-graph.js';
+import type { PositionedBlock } from '../types/positioned-block.js';
 import type { RendererConfig } from './renderer-config.js';
 import { DEFAULT_RENDERER_CONFIG } from './default-renderer-config.js';
 

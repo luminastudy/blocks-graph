@@ -8,7 +8,11 @@
 export { BlocksGraph } from './components/blocks-graph.js';
 
 // Export types
-export type { Block, BlockGraph, BlockPosition, GraphEdge, PositionedBlock } from './types/block.js';
+export type { Block } from './types/block.js';
+export type { BlockGraph } from './types/block-graph.js';
+export type { BlockPosition } from './types/block-position.js';
+export type { GraphEdge } from './types/graph-edge.js';
+export type { PositionedBlock } from './types/positioned-block.js';
 
 // Export core classes
 export { GraphEngine } from './core/graph-engine.js';
