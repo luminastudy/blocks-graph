@@ -12,7 +12,7 @@ export type { Block, BlockGraph, BlockPosition, GraphEdge, PositionedBlock } fro
 
 // Export core classes
 export { GraphEngine } from './core/graph-engine.js';
-export type { GraphLayoutConfig } from './core/graph-engine.js';
+export type { GraphLayoutConfig } from './core/graph-layout-config.js';
 export { GraphRenderer } from './core/renderer.js';
 export type { RendererConfig } from './core/renderer.js';
 

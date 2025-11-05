@@ -1,6 +1,6 @@
 import type { Block } from '../types/block.js';
 import { GraphEngine } from '../core/graph-engine.js';
-import type { GraphLayoutConfig } from '../core/graph-engine.js';
+import type { GraphLayoutConfig } from '../core/graph-layout-config.js';
 import { GraphRenderer } from '../core/renderer.js';
 import { schemaV01Adaptor } from '../adaptors/v0.1/instance.js';
 import { createStyles } from './create-styles.js';

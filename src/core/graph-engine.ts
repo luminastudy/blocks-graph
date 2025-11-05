@@ -1,24 +1,6 @@
 import type { Block, BlockGraph, BlockPosition, GraphEdge, PositionedBlock } from '../types/block.js';
-
-/**
- * Configuration for graph layout
- */
-export interface GraphLayoutConfig {
-  nodeWidth: number;
-  nodeHeight: number;
-  horizontalSpacing: number;
-  verticalSpacing: number;
-}
-
-/**
- * Default layout configuration
- */
-const DEFAULT_LAYOUT_CONFIG: GraphLayoutConfig = {
-  nodeWidth: 200,
-  nodeHeight: 80,
-  horizontalSpacing: 80,
-  verticalSpacing: 100,
-};
+import type { GraphLayoutConfig } from './graph-layout-config.js';
+import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js';
 
 /**
  * Graph engine responsible for building and laying out the block graph
@@ -204,7 +186,6 @@ export class GraphEngine {
    */
   private isRootSingleNode(blockId: string, graph: BlockGraph): boolean {
     const isRoot = this.isRootNode(blockId, graph);
-    // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- isRoot must be computed before guard check
     if (!isRoot) {
       console.log(`[isRootSingleNode] ${blockId}: NOT a root node`);
       return false;
