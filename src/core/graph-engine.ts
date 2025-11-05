@@ -5,6 +5,7 @@ import type { GraphEdge } from '../types/graph-edge.js';
 import type { PositionedBlock } from '../types/positioned-block.js';
 import type { GraphLayoutConfig } from './graph-layout-config.js';
 import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js';
+import { HorizontalRelationships } from './horizontal-relationships.js';
 
 /**
  * Graph engine responsible for building and laying out the block graph
@@ -33,7 +34,10 @@ export class GraphEngine {
       }
     }
 
-    return { blocks: blockMap, edges };
+    // Build horizontal relationships for efficient O(1) prerequisite/post-requisite lookups
+    const horizontalRelationships = HorizontalRelationships.fromBlocks(blocks);
+
+    return { blocks: blockMap, edges, horizontalRelationships };
   }
 
   /**
@@ -124,13 +128,23 @@ export class GraphEngine {
     return block.prerequisites.map(id => graph.blocks.get(id)).filter((b): b is Block => b !== undefined);
   }
 
+  /**
+   * Gets direct post-requisites using HorizontalRelationships for O(1) lookup.
+   * Uses pre-computed relationships if available, otherwise builds them on-demand.
+   */
   getDirectPostRequisites(blockId: string, graph: BlockGraph): Block[] {
+    // Use pre-computed relationships if available (O(1)), otherwise build on-demand
+    const relationships = graph.horizontalRelationships ?? HorizontalRelationships.fromGraph(graph);
+    const postreqIds = relationships.getPostrequisites(blockId);
     const dependents: Block[] = [];
-    for (const edge of graph.edges) {
-      if (edge.from !== blockId || edge.type !== 'prerequisite') continue;
-      const dependent = graph.blocks.get(edge.to);
-      if (dependent) dependents.push(dependent);
+
+    for (const id of postreqIds) {
+      const dependent = graph.blocks.get(id);
+      if (dependent) {
+        dependents.push(dependent);
+      }
     }
+
     return dependents;
   }
 

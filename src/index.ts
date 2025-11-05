@@ -16,6 +16,7 @@ export type { PositionedBlock } from './types/positioned-block.js';
 
 // Export core classes
 export { GraphEngine } from './core/graph-engine.js';
+export { HorizontalRelationships } from './core/horizontal-relationships.js';
 export type { GraphLayoutConfig } from './core/graph-layout-config.js';
 export { GraphRenderer } from './core/renderer.js';
 export type { RendererConfig } from './core/renderer-config.js';
