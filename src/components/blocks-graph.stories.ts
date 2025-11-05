@@ -221,35 +221,7 @@ export const CombinatoricsRootAutoHide: Story = {
 
         const graph = document.getElementById(storyId) as any;
         if (graph && typeof graph.loadFromJson === 'function') {
-          // Add debugging
-          console.log('=== COMBINATORICS DEBUG ===');
-          console.log('Total blocks:', data.length);
-
-          // Find root block
-          const rootBlock = data.find((b: any) => b.parents.length === 0 && b.prerequisites.length === 0);
-          console.log('Root block:', rootBlock?.title?.en_text, rootBlock?.id);
-
-          // Find children of root
-          const children = data.filter((b: any) => b.parents.includes(rootBlock?.id));
-          console.log('Root children count:', children.length);
-          console.log('Root children:', children.map((c: any) => c.title?.en_text));
-
-          // Check if children have root as prerequisite
-          const childrenWithRootAsPrereq = children.filter((c: any) => c.prerequisites.includes(rootBlock?.id));
-          console.log('Children with root as prerequisite:', childrenWithRootAsPrereq.length);
-
           graph.loadFromJson(JSON.stringify(data), 'v0.1');
-
-          // After render, check visibility
-          setTimeout(() => {
-            const shadowRoot = graph.shadowRoot;
-            if (shadowRoot) {
-              const allBlocks = shadowRoot.querySelectorAll('g[data-block-id]');
-              const rootVisible = Array.from(allBlocks).some((el: any) => el.getAttribute('data-block-id') === rootBlock?.id);
-              console.log('Root block visible:', rootVisible, '(should be FALSE)');
-              console.log('Total visible blocks:', allBlocks.length);
-            }
-          }, 500);
         }
       } catch (error) {
         console.error('Failed to load Combinatorics data:', error);

@@ -14,7 +14,7 @@ export type { Block, BlockGraph, BlockPosition, GraphEdge, PositionedBlock } fro
 export { GraphEngine } from './core/graph-engine.js';
 export type { GraphLayoutConfig } from './core/graph-layout-config.js';
 export { GraphRenderer } from './core/renderer.js';
-export type { RendererConfig } from './core/renderer.js';
+export type { RendererConfig } from './core/renderer-config.js';
 
 // Export adaptors
 export { SchemaV01Adaptor } from './adaptors/v0.1/adaptor.js';

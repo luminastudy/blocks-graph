@@ -132,19 +132,11 @@ export class GraphEngine {
 
   getSubBlocks(blockId: string, graph: BlockGraph): Block[] {
     const subBlocks: Block[] = [];
-    console.log(`[getSubBlocks] Looking for sub-blocks of ${blockId}`);
-    console.log(`[getSubBlocks] Total edges in graph: ${graph.edges.length}`);
-    let parentEdgesCount = 0;
     for (const edge of graph.edges) {
-      if (edge.type === 'parent') parentEdgesCount++;
       if (edge.from !== blockId || edge.type !== 'parent') continue;
       const subBlock = graph.blocks.get(edge.to);
-      if (subBlock) {
-        console.log(`[getSubBlocks] Found sub-block: ${subBlock.title.en} (${subBlock.id})`);
-        subBlocks.push(subBlock);
-      }
+      if (subBlock) subBlocks.push(subBlock);
     }
-    console.log(`[getSubBlocks] Total parent edges: ${parentEdgesCount}, Sub-blocks found: ${subBlocks.length}`);
     return subBlocks;
   }
 
@@ -186,48 +178,28 @@ export class GraphEngine {
    */
   private isRootSingleNode(blockId: string, graph: BlockGraph): boolean {
     const isRoot = this.isRootNode(blockId, graph);
-    if (!isRoot) {
-      console.log(`[isRootSingleNode] ${blockId}: NOT a root node`);
-      return false;
-    }
+    // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- isRoot must be computed before guard check
+    if (!isRoot) return false;
 
     const prerequisites = this.getDirectPrerequisites(blockId, graph);
     const postRequisites = this.getDirectPostRequisites(blockId, graph);
-    const result = prerequisites.length === 0 && postRequisites.length === 0;
-
-    console.log(`[isRootSingleNode] ${blockId}:`, {
-      isRoot: true,
-      prerequisites: prerequisites.length,
-      postRequisites: postRequisites.length,
-      result,
-      prereqIds: prerequisites.map(p => p.id),
-      postReqIds: postRequisites.map(p => p.id),
-    });
-
-    return result;
+    return prerequisites.length === 0 && postRequisites.length === 0;
   }
 
   /**
    * Add block or its sub-blocks to visibility set based on root single node logic
    */
   private addBlockToVisibility(blockId: string, graph: BlockGraph, visible: Set<string>): void {
-    console.log(`[addBlockToVisibility] Processing block ${blockId}`);
     if (this.isRootSingleNode(blockId, graph)) {
-      console.log(`[addBlockToVisibility] Block is a root single node`);
       const subBlocks = this.getSubBlocks(blockId, graph);
-      console.log(`[addBlockToVisibility] Sub-blocks count: ${subBlocks.length}`);
       if (subBlocks.length > 0) {
-        console.log(`[addBlockToVisibility] Adding ${subBlocks.length} sub-blocks to visible set`);
         for (const subBlock of subBlocks) {
           visible.add(subBlock.id);
-          console.log(`[addBlockToVisibility] Added sub-block ${subBlock.id} to visible`);
         }
       } else {
-        console.log(`[addBlockToVisibility] No sub-blocks, adding root block itself`);
         visible.add(blockId);
       }
     } else {
-      console.log(`[addBlockToVisibility] Not a root single node, adding block normally`);
       visible.add(blockId);
     }
   }
