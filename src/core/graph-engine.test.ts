@@ -141,8 +141,8 @@ describe('GraphEngine', () => {
       const graph = engine.buildGraph(blocks);
       const positioned = engine.layoutGraph(graph);
 
-      const block1Pos = positioned.find(p => p.block.id === '1')?.position;
-      const block2Pos = positioned.find(p => p.block.id === '2')?.position;
+      const block1Pos = positioned.find(p => p.block.id === '1')!.position;
+      const block2Pos = positioned.find(p => p.block.id === '2')!.position;
 
       expect(block1Pos).toBeDefined();
       expect(block2Pos).toBeDefined();
@@ -192,8 +192,8 @@ describe('GraphEngine', () => {
 
       const { positioned } = customEngine.process(blocks);
 
-      expect(positioned[0]?.position.width).toBe(300);
-      expect(positioned[0]?.position.height).toBe(100);
+      expect(positioned[0]!.position.width).toBe(300);
+      expect(positioned[0]!.position.height).toBe(100);
     });
   });
 });

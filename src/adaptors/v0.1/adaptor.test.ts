@@ -87,9 +87,9 @@ describe('SchemaV01Adaptor', () => {
       const results = adaptor.adaptMany(schemaBlocks);
 
       expect(results).toHaveLength(2);
-      expect(results[0]?.id).toBe('550e8400-e29b-41d4-a716-446655440001');
-      expect(results[1]?.id).toBe('550e8400-e29b-41d4-a716-446655440002');
-      expect(results[1]?.prerequisites).toEqual(['550e8400-e29b-41d4-a716-446655440001']);
+      expect(results[0]!.id).toBe('550e8400-e29b-41d4-a716-446655440001');
+      expect(results[1]!.id).toBe('550e8400-e29b-41d4-a716-446655440002');
+      expect(results[1]!.prerequisites).toEqual(['550e8400-e29b-41d4-a716-446655440001']);
     });
   });
 
@@ -105,7 +105,7 @@ describe('SchemaV01Adaptor', () => {
       const results = adaptor.adaptFromJson(json);
 
       expect(results).toHaveLength(1);
-      expect(results[0]?.id).toBe('550e8400-e29b-41d4-a716-446655440000');
+      expect(results[0]!.id).toBe('550e8400-e29b-41d4-a716-446655440000');
     });
 
     it('should parse and adapt an array of blocks from JSON', () => {

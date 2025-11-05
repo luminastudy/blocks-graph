@@ -62,8 +62,8 @@ export class GraphRenderer {
       }
 
       // Dim edge if either endpoint is dimmed
-      const isFromDimmed = this.config.dimmedBlocks?.has(edge.from) ?? false;
-      const isToDimmed = this.config.dimmedBlocks?.has(edge.to) ?? false;
+      const isFromDimmed = this.config.dimmedBlocks ? this.config.dimmedBlocks.has(edge.from) : false;
+      const isToDimmed = this.config.dimmedBlocks ? this.config.dimmedBlocks.has(edge.to) : false;
       if (isFromDimmed || isToDimmed) {
         line.setAttribute('opacity', '0.3');
       }
@@ -92,7 +92,7 @@ export class GraphRenderer {
 
       // Determine visual state
       const isSelected = this.config.selectedBlockId === block.id;
-      const isDimmed = this.config.dimmedBlocks?.has(block.id) ?? false;
+      const isDimmed = this.config.dimmedBlocks ? this.config.dimmedBlocks.has(block.id) : false;
       const opacity = isDimmed ? '0.3' : '1';
 
       // Render block rectangle

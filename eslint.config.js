@@ -10,7 +10,6 @@ export default [
       // Relax some overly strict rules for library code
       'max-lines': ['error', { max: 300 }],
       'default/no-default-params': 'off',
-      'no-optional-chaining/no-optional-chaining': 'off',
       'no-restricted-syntax': [
         'error',
         {
