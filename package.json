@@ -27,11 +27,13 @@
     "test:coverage": "vitest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "spell": "cspell lint --no-progress --show-suggestions \"**/*.{ts,tsx,js,jsx,mjs,md,json}\"",
-    "spell:check": "cspell lint --no-progress \"**/*.{ts,tsx,js,jsx,mjs,md,json}\"",
     "typecheck": "tsc --noEmit",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
     "prepublishOnly": "pnpm run build",
-    "release": "release-it"
+    "release": "release-it",
+    "spell": "cspell lint --no-progress --show-suggestions \"**/*.{ts,tsx,js,jsx,mjs,md,json}\"",
+    "spell:check": "cspell lint --no-progress \"**/*.{ts,tsx,js,jsx,mjs,md,json}\""
   },
   "keywords": [
     "visualization",
@@ -50,6 +52,12 @@
   },
   "packageManager": "pnpm@9.0.0",
   "devDependencies": {
+    "@storybook/addon-a11y": "^8",
+    "@storybook/addon-essentials": "^8",
+    "@storybook/addon-interactions": "^8",
+    "@storybook/test": "^8",
+    "@storybook/web-components": "^8",
+    "@storybook/web-components-vite": "^8",
     "@types/node": "^22.10.5",
     "@vitest/coverage-v8": "^2.1.8",
     "@vitest/ui": "^2.1.8",
@@ -58,7 +66,9 @@
     "eslint": "^9.17.0",
     "eslint-config-agent": "^1.6.3",
     "jsdom": "^25.0.1",
+    "lit": "^3",
     "release-it": "^17.10.0",
+    "storybook": "^8",
     "typescript": "^5.7.2",
     "vite": "^6.0.5",
     "vitest": "^2.1.8"

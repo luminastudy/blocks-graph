@@ -32,6 +32,6 @@
     /* Completeness */
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", ".storybook/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

@@ -3,7 +3,7 @@ import config from 'eslint-config-agent';
 export default [
   ...config,
   {
-    ignores: ['dist', 'coverage', 'node_modules', '*.config.js', '*.test.ts', '*.mjs'],
+    ignores: ['dist', 'coverage', 'node_modules', '*.config.js', '*.test.ts', '*.mjs', '.storybook', '*.stories.ts', 'storybook-static'],
   },
   {
     rules: {
