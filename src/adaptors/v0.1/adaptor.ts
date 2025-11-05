@@ -74,8 +74,3 @@ export class SchemaV01Adaptor {
     return isBlockSchemaV01(data);
   }
 }
-
-/**
- * Default instance for convenience
- */
-export const schemaV01Adaptor = new SchemaV01Adaptor();

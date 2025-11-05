@@ -203,3 +203,86 @@ export const Default: Story = {
     }
   },
 };
+
+/**
+ * Story demonstrating root block auto-hide behavior with Combinatorics curriculum.
+ * The root block "Combinatorics - The Open University" should be hidden,
+ * and its 7 children should be shown automatically on initial render.
+ */
+export const CombinatoricsRootAutoHide: Story = {
+  render: (args) => {
+    const storyId = `combinatorics-graph-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+    // Fetch the Combinatorics JSON from GitHub
+    const fetchAndLoadData = async () => {
+      try {
+        const response = await fetch('https://raw.githubusercontent.com/luminastudy/the-open-university-combinatorics/refs/heads/main/lumin.json');
+        const data = await response.json();
+
+        const graph = document.getElementById(storyId) as any;
+        if (graph && typeof graph.loadFromJson === 'function') {
+          // Add debugging
+          console.log('=== COMBINATORICS DEBUG ===');
+          console.log('Total blocks:', data.length);
+
+          // Find root block
+          const rootBlock = data.find((b: any) => b.parents.length === 0 && b.prerequisites.length === 0);
+          console.log('Root block:', rootBlock?.title?.en_text, rootBlock?.id);
+
+          // Find children of root
+          const children = data.filter((b: any) => b.parents.includes(rootBlock?.id));
+          console.log('Root children count:', children.length);
+          console.log('Root children:', children.map((c: any) => c.title?.en_text));
+
+          // Check if children have root as prerequisite
+          const childrenWithRootAsPrereq = children.filter((c: any) => c.prerequisites.includes(rootBlock?.id));
+          console.log('Children with root as prerequisite:', childrenWithRootAsPrereq.length);
+
+          graph.loadFromJson(JSON.stringify(data), 'v0.1');
+
+          // After render, check visibility
+          setTimeout(() => {
+            const shadowRoot = graph.shadowRoot;
+            if (shadowRoot) {
+              const allBlocks = shadowRoot.querySelectorAll('g[data-block-id]');
+              const rootVisible = Array.from(allBlocks).some((el: any) => el.getAttribute('data-block-id') === rootBlock?.id);
+              console.log('Root block visible:', rootVisible, '(should be FALSE)');
+              console.log('Total visible blocks:', allBlocks.length);
+            }
+          }, 500);
+        }
+      } catch (error) {
+        console.error('Failed to load Combinatorics data:', error);
+      }
+    };
+
+    // Load data after component is ready
+    setTimeout(fetchAndLoadData, 100);
+
+    return html`
+      <div>
+        <div style="padding: 16px; background: #f5f5f5; border-radius: 4px; margin-bottom: 16px;">
+          <h3 style="margin: 0 0 8px 0;">Expected Behavior</h3>
+          <ul style="margin: 0; padding-left: 20px;">
+            <li><strong>Root block</strong> ("Combinatorics - The Open University") should be <strong>hidden</strong></li>
+            <li><strong>7 children</strong> should be shown automatically</li>
+            <li>Check browser console for debug output</li>
+          </ul>
+        </div>
+        <div style="width: 100%; height: 800px; border: 1px solid #ddd; border-radius: 4px;">
+          <blocks-graph
+            id="${storyId}"
+            language="${args.language}"
+            show-prerequisites="${args.showPrerequisites}"
+            show-parents="${args.showParents}"
+          ></blocks-graph>
+        </div>
+      </div>
+    `;
+  },
+  args: {
+    language: 'en',
+    showPrerequisites: true,
+    showParents: true,
+  },
+};

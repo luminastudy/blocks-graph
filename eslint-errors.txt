@@ -1,0 +1,33 @@
+
+/Users/ofek/Documents/git/github/luminastudy/blocks-graph/src/adaptors/v0.1/adaptor.ts
+  81:1  error  Only one export is allowed per file. Found 2 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+
+/Users/ofek/Documents/git/github/luminastudy/blocks-graph/src/adaptors/v0.1/types.ts
+  28:1  error  Only one export is allowed per file. Found 4 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+  46:1  error  Only one export is allowed per file. Found 4 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+  53:1  error  Only one export is allowed per file. Found 4 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+
+/Users/ofek/Documents/git/github/luminastudy/blocks-graph/src/components/render-helpers.ts
+  48:1  error  Only one export is allowed per file. Found 5 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+  59:1  error  Only one export is allowed per file. Found 5 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+  69:1  error  Only one export is allowed per file. Found 5 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+  94:1  error  Only one export is allowed per file. Found 5 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+
+/Users/ofek/Documents/git/github/luminastudy/blocks-graph/src/core/graph-engine.ts
+  26:1  error  Only one export is allowed per file. Found 2 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+
+/Users/ofek/Documents/git/github/luminastudy/blocks-graph/src/core/renderer.ts
+  72:1  error  Only one export is allowed per file. Found 2 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+
+/Users/ofek/Documents/git/github/luminastudy/blocks-graph/src/errors.ts
+  18:1  error  Only one export is allowed per file. Found 3 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+  28:1  error  Only one export is allowed per file. Found 3 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+
+/Users/ofek/Documents/git/github/luminastudy/blocks-graph/src/types/block.ts
+  19:1  error  Only one export is allowed per file. Found 5 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+  29:1  error  Only one export is allowed per file. Found 5 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+  37:1  error  Only one export is allowed per file. Found 5 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+  46:1  error  Only one export is allowed per file. Found 5 exports. Split functionality across multiple files following domain boundaries  single-export/single-export
+
+✖ 16 problems (16 errors, 0 warnings)
+

@@ -197,11 +197,25 @@ export class GraphEngine {
   private isRootSingleNode(blockId: string, graph: BlockGraph): boolean {
     const isRoot = this.isRootNode(blockId, graph);
     // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- isRoot must be computed before guard check
-    if (!isRoot) return false;
+    if (!isRoot) {
+      console.log(`[isRootSingleNode] ${blockId}: NOT a root node`);
+      return false;
+    }
 
     const prerequisites = this.getDirectPrerequisites(blockId, graph);
     const postRequisites = this.getDirectPostRequisites(blockId, graph);
-    return prerequisites.length === 0 && postRequisites.length === 0;
+    const result = prerequisites.length === 0 && postRequisites.length === 0;
+
+    console.log(`[isRootSingleNode] ${blockId}:`, {
+      isRoot: true,
+      prerequisites: prerequisites.length,
+      postRequisites: postRequisites.length,
+      result,
+      prereqIds: prerequisites.map(p => p.id),
+      postReqIds: postRequisites.map(p => p.id),
+    });
+
+    return result;
   }
 
   /**

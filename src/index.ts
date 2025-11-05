@@ -17,7 +17,8 @@ export { GraphRenderer } from './core/renderer.js';
 export type { RendererConfig } from './core/renderer.js';
 
 // Export adaptors
-export { SchemaV01Adaptor, schemaV01Adaptor } from './adaptors/v0.1/adaptor.js';
+export { SchemaV01Adaptor } from './adaptors/v0.1/adaptor.js';
+export { schemaV01Adaptor } from './adaptors/v0.1/instance.js';
 export type { BlockSchemaV01, BlockTitle } from './adaptors/v0.1/types.js';
 export { isBlockSchemaV01 } from './adaptors/v0.1/types.js';
 

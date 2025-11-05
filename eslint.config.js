@@ -8,7 +8,6 @@ export default [
   {
     rules: {
       // Relax some overly strict rules for library code
-      'single-export/single-export': 'off',
       'max-lines': ['error', { max: 300 }],
       'default/no-default-params': 'off',
       'no-optional-chaining/no-optional-chaining': 'off',

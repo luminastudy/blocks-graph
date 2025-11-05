@@ -2,7 +2,7 @@ import type { Block } from '../types/block.js';
 import { GraphEngine } from '../core/graph-engine.js';
 import type { GraphLayoutConfig } from '../core/graph-engine.js';
 import { GraphRenderer } from '../core/renderer.js';
-import { schemaV01Adaptor } from '../adaptors/v0.1/adaptor.js';
+import { schemaV01Adaptor } from '../adaptors/v0.1/instance.js';
 import { createStyles, createEmptyStateMessage, createErrorMessage, attachBlockClickListeners, renderGraph } from './render-helpers.js';
 import { UnsupportedSchemaVersionError, BlocksFetchError } from '../errors.js';
 
