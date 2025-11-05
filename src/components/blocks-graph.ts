@@ -8,7 +8,8 @@ import { createEmptyStateMessage } from './create-empty-state-message.js';
 import { createErrorMessage } from './create-error-message.js';
 import { attachBlockClickListeners } from './attach-block-click-listeners.js';
 import { renderGraph } from './render-graph.js';
-import { UnsupportedSchemaVersionError, BlocksFetchError } from '../errors.js';
+import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-version-error.js';
+import { BlocksFetchError } from '../errors/blocks-fetch-error.js';
 
 /**
  * Custom element for rendering block graphs

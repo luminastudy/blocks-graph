@@ -24,4 +24,6 @@ export type { BlockTitle } from './adaptors/v0.1/block-title.js';
 export { isBlockSchemaV01 } from './adaptors/v0.1/validators.js';
 
 // Export custom errors
-export { InvalidBlockSchemaError, UnsupportedSchemaVersionError, BlocksFetchError } from './errors.js';
+export { InvalidBlockSchemaError } from './errors/invalid-block-schema-error.js';
+export { UnsupportedSchemaVersionError } from './errors/unsupported-schema-version-error.js';
+export { BlocksFetchError } from './errors/blocks-fetch-error.js';
