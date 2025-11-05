@@ -219,9 +219,9 @@ export const CombinatoricsRootAutoHide: Story = {
         const response = await fetch('https://raw.githubusercontent.com/luminastudy/the-open-university-combinatorics/refs/heads/main/lumin.json');
         const data = await response.json();
 
-        const graph = document.getElementById(storyId) as any;
-        if (graph && typeof graph.loadFromJson === 'function') {
-          graph.loadFromJson(JSON.stringify(data), 'v0.1');
+        const element = document.getElementById(storyId);
+        if (element && 'loadFromJson' in element && typeof element.loadFromJson === 'function') {
+          element.loadFromJson(JSON.stringify(data), 'v0.1');
         }
       } catch (error) {
         console.error('Failed to load Combinatorics data:', error);
