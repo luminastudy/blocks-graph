@@ -1,5 +1,7 @@
+/* eslint-disable max-lines -- Core relationship manager with extensive API surface */
 import type { Block } from '../types/block.js';
 import type { BlockGraph } from '../types/block-graph.js';
+import { HorizontalRelationshipsAlgorithms } from './horizontal-relationships-algorithms.js';
 
 /**
  * Manages horizontal relationships (prerequisites and post-requisites) between blocks.
@@ -45,60 +47,36 @@ export class HorizontalRelationships {
     this.transitivePostreqsCache = new Map();
   }
 
-  /**
-   * Creates a HorizontalRelationships instance from an array of blocks.
-   * Extracts prerequisite relationships from each block's prerequisites array.
-   *
-   * @param blocks - Array of blocks with prerequisite information
-   * @returns A new HorizontalRelationships instance
-   */
+  /** Creates instance from blocks array */
   static fromBlocks(blocks: Block[]): HorizontalRelationships {
-    const relationships = new HorizontalRelationships();
-
-    for (const block of blocks) {
-      // Ensure block exists in the graph (even if it has no relationships)
-      relationships.ensureBlockExists(block.id);
-
-      // Add all prerequisite relationships
-      for (const prereqId of block.prerequisites) {
-        relationships.addRelationship(prereqId, block.id);
+    const r = new HorizontalRelationships();
+    for (const b of blocks) {
+      r.ensureBlockExists(b.id);
+      for (const p of b.prerequisites) {
+        r.addRelationship(p, b.id);
       }
     }
-
-    return relationships;
+    return r;
   }
 
-  /**
-   * Creates a HorizontalRelationships instance from a BlockGraph.
-   * Only processes edges of type 'prerequisite'.
-   *
-   * @param graph - The block graph containing edges
-   * @returns A new HorizontalRelationships instance
-   */
+  /** Creates instance from BlockGraph */
   static fromGraph(graph: BlockGraph): HorizontalRelationships {
-    const relationships = new HorizontalRelationships();
-
-    // Ensure all blocks are registered
-    for (const blockId of graph.blocks.keys()) {
-      relationships.ensureBlockExists(blockId);
+    const r = new HorizontalRelationships();
+    for (const id of graph.blocks.keys()) {
+      r.ensureBlockExists(id);
     }
-
-    // Add prerequisite edges
-    for (const edge of graph.edges) {
-      if (edge.type !== 'prerequisite') {
-        continue;
-      }
-      relationships.addRelationship(edge.from, edge.to);
+    for (const e of graph.edges) {
+      if (e.type !== 'prerequisite') continue;
+      r.addRelationship(e.from, e.to);
     }
-
-    return relationships;
+    return r;
   }
 
   /**
    * Ensures a block exists in the internal maps.
    * This is called automatically when adding relationships.
    */
-  private ensureBlockExists(blockId: string): void {
+  ensureBlockExists(blockId: string): void {
     if (!this.prerequisites.has(blockId)) {
       this.prerequisites.set(blockId, new Set());
     }
@@ -267,34 +245,11 @@ export class HorizontalRelationships {
    * ```
    */
   getAllPrerequisites(blockId: string): ReadonlySet<string> {
-    // Check cache first
-    const cached = this.transitivePrereqsCache.get(blockId);
-    if (cached) {
-      return cached;
-    }
-
-    const allPrereqs = new Set<string>();
-    const visited = new Set<string>();
-
-    const dfs = (currentId: string): void => {
-      if (visited.has(currentId)) return;
-      visited.add(currentId);
-
-      const directPrereqs = this.prerequisites.get(currentId);
-      if (!directPrereqs) return;
-
-      for (const prereqId of directPrereqs) {
-        allPrereqs.add(prereqId);
-        dfs(prereqId);
-      }
-    };
-
-    dfs(blockId);
-
-    // Cache the result
-    this.transitivePrereqsCache.set(blockId, allPrereqs);
-
-    return allPrereqs;
+    return HorizontalRelationshipsAlgorithms.computeAllPrerequisites(
+      blockId,
+      this.prerequisites,
+      this.transitivePrereqsCache
+    );
   }
 
   /**
@@ -312,34 +267,11 @@ export class HorizontalRelationships {
    * ```
    */
   getAllPostrequisites(blockId: string): ReadonlySet<string> {
-    // Check cache first
-    const cached = this.transitivePostreqsCache.get(blockId);
-    if (cached) {
-      return cached;
-    }
-
-    const allPostreqs = new Set<string>();
-    const visited = new Set<string>();
-
-    const dfs = (currentId: string): void => {
-      if (visited.has(currentId)) return;
-      visited.add(currentId);
-
-      const directPostreqs = this.postrequisites.get(currentId);
-      if (!directPostreqs) return;
-
-      for (const postreqId of directPostreqs) {
-        allPostreqs.add(postreqId);
-        dfs(postreqId);
-      }
-    };
-
-    dfs(blockId);
-
-    // Cache the result
-    this.transitivePostreqsCache.set(blockId, allPostreqs);
-
-    return allPostreqs;
+    return HorizontalRelationshipsAlgorithms.computeAllPostrequisites(
+      blockId,
+      this.postrequisites,
+      this.transitivePostreqsCache
+    );
   }
 
   /**
@@ -370,60 +302,11 @@ export class HorizontalRelationships {
    * ```
    */
   detectCycles(): string[][] | null {
-    const cycles: string[][] = [];
-    const colors = new Map<string, 'white' | 'gray' | 'black'>();
-    const parent = new Map<string, string | null>();
-
-    // Initialize all blocks as white (unvisited)
-    for (const blockId of this.getAllBlocks()) {
-      colors.set(blockId, 'white');
-      parent.set(blockId, null);
-    }
-
-    const dfs = (blockId: string): boolean => {
-      colors.set(blockId, 'gray'); // Mark as being processed
-
-      const postreqs = this.postrequisites.get(blockId);
-      if (postreqs) {
-        for (const postreqId of postreqs) {
-          const color = colors.get(postreqId);
-
-          if (color === 'gray') {
-            // Found a back edge - cycle detected
-            const cycle: string[] = [postreqId];
-            let current: string | null = blockId;
-
-            while (current && current !== postreqId) {
-              cycle.unshift(current);
-              current = parent.get(current) ?? null;
-            }
-
-            cycle.unshift(postreqId); // Complete the cycle
-            cycles.push(cycle);
-            return true;
-          }
-          if (color === 'white') {
-            parent.set(postreqId, blockId);
-            if (dfs(postreqId)) {
-              return true;
-            }
-          }
-        }
-      }
-
-      colors.set(blockId, 'black'); // Mark as fully processed
-      return false;
-    };
-
-    // Run DFS from each unvisited block
-    for (const blockId of this.getAllBlocks()) {
-      if (colors.get(blockId) !== 'white') {
-        continue;
-      }
-      dfs(blockId);
-    }
-
-    return cycles.length > 0 ? cycles : null;
+    return HorizontalRelationshipsAlgorithms.detectCyclesInGraph(
+      this.prerequisites,
+      this.postrequisites,
+      () => this.getAllBlocks()
+    );
   }
 
   /**
@@ -440,48 +323,11 @@ export class HorizontalRelationships {
    * ```
    */
   getTopologicalOrder(): string[] | null {
-    // Calculate in-degrees
-    const inDegree = new Map<string, number>();
-    for (const blockId of this.getAllBlocks()) {
-      const prereqs = this.prerequisites.get(blockId);
-      inDegree.set(blockId, prereqs ? prereqs.size : 0);
-    }
-
-    // Queue of blocks with no prerequisites
-    const queue: string[] = [];
-    for (const [blockId, degree] of inDegree.entries()) {
-      if (degree !== 0) {
-        continue;
-      }
-      queue.push(blockId);
-    }
-
-    const order: string[] = [];
-
-    while (queue.length > 0) {
-      const blockId = queue.shift()!;
-      order.push(blockId);
-
-      // Reduce in-degree for all post-requisites
-      const postreqs = this.postrequisites.get(blockId);
-      if (postreqs) {
-        for (const postreqId of postreqs) {
-          const newDegree = (inDegree.get(postreqId) ?? 1) - 1;
-          inDegree.set(postreqId, newDegree);
-
-          if (newDegree === 0) {
-            queue.push(postreqId);
-          }
-        }
-      }
-    }
-
-    // If not all blocks are in the order, there's a cycle
-    if (order.length !== this.getBlockCount()) {
-      return null;
-    }
-
-    return order;
+    return HorizontalRelationshipsAlgorithms.computeTopologicalOrder(
+      this.prerequisites,
+      this.postrequisites,
+      () => this.getAllBlocks()
+    );
   }
 
   /**
