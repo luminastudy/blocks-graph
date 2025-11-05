@@ -150,11 +150,19 @@ export class GraphEngine {
 
   getSubBlocks(blockId: string, graph: BlockGraph): Block[] {
     const subBlocks: Block[] = [];
+    console.log(`[getSubBlocks] Looking for sub-blocks of ${blockId}`);
+    console.log(`[getSubBlocks] Total edges in graph: ${graph.edges.length}`);
+    let parentEdgesCount = 0;
     for (const edge of graph.edges) {
+      if (edge.type === 'parent') parentEdgesCount++;
       if (edge.from !== blockId || edge.type !== 'parent') continue;
       const subBlock = graph.blocks.get(edge.to);
-      if (subBlock) subBlocks.push(subBlock);
+      if (subBlock) {
+        console.log(`[getSubBlocks] Found sub-block: ${subBlock.title.en} (${subBlock.id})`);
+        subBlocks.push(subBlock);
+      }
     }
+    console.log(`[getSubBlocks] Total parent edges: ${parentEdgesCount}, Sub-blocks found: ${subBlocks.length}`);
     return subBlocks;
   }
 

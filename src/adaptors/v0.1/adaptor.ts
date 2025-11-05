@@ -1,6 +1,7 @@
 import type { Block } from '../../types/block.js';
 import type { BlockSchemaV01 } from './types.js';
-import { isBlockSchemaV01, getValidationErrors } from './types.js';
+import { isBlockSchemaV01 } from './validators.js';
+import { getValidationErrors } from './get-validation-errors.js';
 import { InvalidBlockSchemaError } from '../../errors.js';
 
 /**

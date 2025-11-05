@@ -19,8 +19,9 @@ export type { RendererConfig } from './core/renderer.js';
 // Export adaptors
 export { SchemaV01Adaptor } from './adaptors/v0.1/adaptor.js';
 export { schemaV01Adaptor } from './adaptors/v0.1/instance.js';
-export type { BlockSchemaV01, BlockTitle } from './adaptors/v0.1/types.js';
-export { isBlockSchemaV01 } from './adaptors/v0.1/types.js';
+export type { BlockSchemaV01 } from './adaptors/v0.1/types.js';
+export type { BlockTitle } from './adaptors/v0.1/block-title.js';
+export { isBlockSchemaV01 } from './adaptors/v0.1/validators.js';
 
 // Export custom errors
 export { InvalidBlockSchemaError, UnsupportedSchemaVersionError, BlocksFetchError } from './errors.js';
