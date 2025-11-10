@@ -1,0 +1,50 @@
+[
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "title": {
+      "he_text": "מבוא למתמטיקה",
+      "en_text": "Introduction to Mathematics"
+    },
+    "prerequisites": [],
+    "parents": []
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "title": {
+      "he_text": "אלגברה ליניארית",
+      "en_text": "Linear Algebra"
+    },
+    "prerequisites": ["550e8400-e29b-41d4-a716-446655440000"],
+    "parents": ["550e8400-e29b-41d4-a716-446655440000"]
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
+    "title": {
+      "he_text": "חשבון אינפיניטסימלי",
+      "en_text": "Calculus"
+    },
+    "prerequisites": ["550e8400-e29b-41d4-a716-446655440000"],
+    "parents": ["550e8400-e29b-41d4-a716-446655440000"]
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440003",
+    "title": {
+      "he_text": "אנליזה מתמטית",
+      "en_text": "Mathematical Analysis"
+    },
+    "prerequisites": [
+      "550e8400-e29b-41d4-a716-446655440001",
+      "550e8400-e29b-41d4-a716-446655440002"
+    ],
+    "parents": ["550e8400-e29b-41d4-a716-446655440002"]
+  },
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440004",
+    "title": {
+      "he_text": "תורת המספרים",
+      "en_text": "Number Theory"
+    },
+    "prerequisites": ["550e8400-e29b-41d4-a716-446655440001"],
+    "parents": ["550e8400-e29b-41d4-a716-446655440001"]
+  }
+]
