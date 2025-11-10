@@ -9,6 +9,13 @@
 **Phase**: initialized
 **Spec Location**: `.kiro/specs/runnable-examples/`
 
+### graph-orientation
+**Status**: Initialized
+**Description**: Add configurable graph orientation options (top-to-bottom, right-to-left, left-to-right) to control how nodes are organized and displayed in the graph visualization.
+
+**Phase**: initialized
+**Spec Location**: `.kiro/specs/graph-orientation/`
+
 ---
 
 ## Workflow Commands
