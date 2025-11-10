@@ -64,7 +64,7 @@
     "cspell": "^9.2.2",
     "esbuild": "^0.25.12",
     "eslint": "^9.17.0",
-    "eslint-config-agent": "^1.6.3",
+    "eslint-config-agent": "^1.7.1",
     "jsdom": "^25.0.1",
     "lit": "^3",
     "release-it": "^17.10.0",

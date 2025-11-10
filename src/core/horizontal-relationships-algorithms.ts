@@ -14,7 +14,6 @@ function computeAllPrerequisites(
 ): ReadonlySet<string> {
   // Check cache first - must retrieve value before checking
   const cached = cache.get(blockId);
-  // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- cache value must be retrieved before guard check
   if (cached) {
     return cached;
   }
@@ -28,7 +27,6 @@ function computeAllPrerequisites(
     visited.add(currentId);
 
     const directPrereqs = prerequisites.get(currentId);
-    // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- directPrereqs must be retrieved before checking
     if (!directPrereqs) return;
 
     for (const prereqId of directPrereqs) {
@@ -56,7 +54,6 @@ function computeAllPostrequisites(
 ): ReadonlySet<string> {
   // Check cache first - must retrieve value before checking
   const cached = cache.get(blockId);
-  // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- cache value must be retrieved before guard check
   if (cached) {
     return cached;
   }
@@ -69,7 +66,6 @@ function computeAllPostrequisites(
     visited.add(currentId);
 
     const directPostreqs = postrequisites.get(currentId);
-    // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- directPostreqs must be retrieved before checking
     if (!directPostreqs) return;
 
     for (const postreqId of directPostreqs) {
@@ -201,7 +197,6 @@ function computeTopologicalOrder(
   }
 
   // Check if all blocks were processed (no cycles)
-  // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- order must be computed before checking
   if (order.length !== inDegree.size) {
     return null; // Cycle detected
   }

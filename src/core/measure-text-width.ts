@@ -5,7 +5,6 @@ export function measureTextWidth(text: string, fontSize: number, fontFamily: str
   // Create a temporary canvas for text measurement
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- context must be retrieved before checking
   if (!context) {
     // Fallback: rough estimate based on character count
     return text.length * fontSize * 0.6;

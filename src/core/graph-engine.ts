@@ -121,7 +121,6 @@ export class GraphEngine {
 
   getDirectPrerequisites(blockId: string, graph: BlockGraph): Block[] {
     const block = graph.blocks.get(blockId);
-    // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- block must be retrieved before guard check
     if (!block) {
       return [];
     }
@@ -196,7 +195,6 @@ export class GraphEngine {
    */
   private isRootSingleNode(blockId: string, graph: BlockGraph): boolean {
     const isRoot = this.isRootNode(blockId, graph);
-    // eslint-disable-next-line guard-clauses/prefer-guard-at-function-start -- isRoot must be computed before guard check
     if (!isRoot) return false;
 
     const prerequisites = this.getDirectPrerequisites(blockId, graph);
