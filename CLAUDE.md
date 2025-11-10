@@ -1,0 +1,22 @@
+# Kiro Specification Workflow
+
+## Active Specifications
+
+### runnable-examples
+**Status**: Initialized
+**Description**: Create an examples folder with runnable demonstrations showing how to use the @luminastudy/blocks-graph library in both React and pure HTML contexts.
+
+**Phase**: initialized
+**Spec Location**: `.kiro/specs/runnable-examples/`
+
+---
+
+## Workflow Commands
+
+Follow these commands in order for spec-driven development:
+
+1. **`/kiro:spec-requirements <feature-name>`** - Generate comprehensive requirements
+2. **`/kiro:spec-design <feature-name>`** - Create technical design (requires approved requirements)
+3. **`/kiro:spec-tasks <feature-name>`** - Generate implementation tasks (requires approved design)
+4. **`/kiro:spec-impl <feature-name> [task-numbers]`** - Execute implementation with TDD
+5. **`/kiro:spec-status <feature-name>`** - Check specification status and progress
