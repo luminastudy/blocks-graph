@@ -45,11 +45,10 @@ function App() {
         setStatus('Loading data...');
 
         /*
-         * Fetch sample data from shared data directory
-         * Note: In Vite, public assets should be served from the public directory
-         * or we use relative path from the built application
+         * Fetch data from The Open University Combinatorics course
+         * This demonstrates loading data from a remote URL
          */
-        const response = await fetch('/data/blocks-sample.json');
+        const response = await fetch('https://raw.githubusercontent.com/luminastudy/the-open-university-combinatorics/refs/heads/main/lumin.json');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -146,7 +145,7 @@ function App() {
     <div className="app">
       <header className="header">
         <h1>@luminastudy/blocks-graph</h1>
-        <p>React Example - TypeScript Integration</p>
+        <p>The Open University - Combinatorics Course</p>
       </header>
 
       {/* Interactive Controls Panel */}
