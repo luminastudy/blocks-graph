@@ -1,0 +1,36 @@
+{
+  "name": "@luminastudy/tupe-commands",
+  "version": "0.1.0",
+  "description": "Enhanced Claude Code commands for deep thinking and task execution",
+  "type": "module",
+  "main": "./index.js",
+  "files": [
+    "commands",
+    "README.md",
+    "index.js"
+  ],
+  "scripts": {
+    "prepublishOnly": "node -e \"console.log('Package ready for publishing')\""
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "commands",
+    "ultrathink",
+    "tupe",
+    "ai-assistant"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luminastudy/blocks-graph.git",
+    "directory": "packages/tupe-commands"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

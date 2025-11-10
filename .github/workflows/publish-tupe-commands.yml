@@ -1,0 +1,73 @@
+name: Publish Tupe Commands
+
+on:
+  push:
+    tags:
+      - 'tupe-v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 0.1.0)'
+        required: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Required for npm provenance
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+            if [ -z "$VERSION" ]; then
+              echo "Version is required for manual dispatch"
+              exit 1
+            fi
+          else
+            # Extract version from tag (tupe-v1.0.0 -> 1.0.0)
+            VERSION=${GITHUB_REF#refs/tags/tupe-v}
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Publishing version: $VERSION"
+
+      - name: Update package version
+        working-directory: ./packages/tupe-commands
+        run: |
+          npm version ${{ steps.get_version.outputs.version }} --no-git-tag-version
+          cat package.json
+
+      - name: Publish to npm
+        working-directory: ./packages/tupe-commands
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Tupe Commands v${{ steps.get_version.outputs.version }}
+          body: |
+            Release of @luminastudy/tupe-commands v${{ steps.get_version.outputs.version }}
+
+            ## Installation
+            ```bash
+            npm install @luminastudy/tupe-commands@${{ steps.get_version.outputs.version }}
+            ```
+          draft: false
+          prerelease: false
