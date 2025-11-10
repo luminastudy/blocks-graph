@@ -1,2 +1,5 @@
 packages:
-  - 'examples/react'
+  - examples/react
+
+onlyBuiltDependencies:
+  - esbuild
