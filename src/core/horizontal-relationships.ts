@@ -1,6 +1,7 @@
 /* eslint-disable max-lines -- Core relationship manager with extensive API surface */
 import type { Block } from '../types/block.js';
 import type { BlockGraph } from '../types/block-graph.js';
+import { SelfLoopError } from '../errors/self-loop-error.js';
 import { HorizontalRelationshipsAlgorithms } from './horizontal-relationships-algorithms.js';
 
 /**
@@ -102,7 +103,7 @@ export class HorizontalRelationships {
   addRelationship(from: string, to: string): void {
     // Prevent self-loops
     if (from === to) {
-      throw new Error(`Cannot add self-loop: block ${from} cannot be its own prerequisite`);
+      throw new SelfLoopError(from);
     }
 
     this.ensureBlockExists(from);
