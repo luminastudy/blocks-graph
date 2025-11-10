@@ -245,11 +245,20 @@ document.body.appendChild(svg);
 # Install dependencies
 pnpm install
 
-# Run tests
+# Run unit tests
 pnpm test
 
 # Run tests with UI
 pnpm test:ui
+
+# Run visual regression tests
+pnpm test:visual
+
+# Update visual test snapshots
+pnpm test:visual:update
+
+# Run all tests (unit + visual)
+pnpm test:all
 
 # Build
 pnpm build
@@ -262,7 +271,16 @@ pnpm typecheck
 
 # Serve example
 pnpm serve
+
+# Run Storybook
+pnpm storybook
 ```
+
+### Visual Testing
+
+This project uses Playwright for visual regression testing. Tests capture PNG snapshots of the component in various states and compare them against baseline images.
+
+See [tests/visual/README.md](tests/visual/README.md) for detailed documentation on visual testing.
 
 ## Dependencies
 

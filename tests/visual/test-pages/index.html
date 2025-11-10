@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlocksGraph Visual Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .test-case {
+      background: white;
+      margin-bottom: 40px;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin: 0 0 20px 0;
+      color: #333;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .graph-container {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>BlocksGraph Visual Tests</h1>
+
+    <div class="test-case" id="test-default">
+      <h2>Default State</h2>
+      <div class="graph-container">
+        <blocks-graph id="graph-default" language="en" show-prerequisites="true" show-parents="true"></blocks-graph>
+      </div>
+    </div>
+
+    <div class="test-case" id="test-custom-dimensions">
+      <h2>Custom Dimensions</h2>
+      <div class="graph-container">
+        <blocks-graph
+          id="graph-custom"
+          language="en"
+          show-prerequisites="true"
+          show-parents="true"
+          node-width="250"
+          node-height="80"
+          horizontal-spacing="150"
+          vertical-spacing="100"
+        ></blocks-graph>
+      </div>
+    </div>
+
+    <div class="test-case" id="test-no-prerequisites">
+      <h2>Prerequisites Hidden</h2>
+      <div class="graph-container">
+        <blocks-graph id="graph-no-prereq" language="en" show-prerequisites="false" show-parents="true"></blocks-graph>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import '../../../dist/index.js';
+
+    // Sample data
+    const EXAMPLE_BLOCKS = [
+      {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        title: {
+          he_text: 'מבוא למתמטיקה',
+          en_text: 'Introduction to Mathematics',
+        },
+        prerequisites: [],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440001',
+        title: {
+          he_text: 'אלגברה ליניארית',
+          en_text: 'Linear Algebra',
+        },
+        prerequisites: ['550e8400-e29b-41d4-a716-446655440000'],
+        parents: ['550e8400-e29b-41d4-a716-446655440000'],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440002',
+        title: {
+          he_text: 'חשבון אינפיניטסימלי',
+          en_text: 'Calculus',
+        },
+        prerequisites: ['550e8400-e29b-41d4-a716-446655440000'],
+        parents: ['550e8400-e29b-41d4-a716-446655440000'],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440003',
+        title: {
+          he_text: 'אנליזה מתמטית',
+          en_text: 'Mathematical Analysis',
+        },
+        prerequisites: [
+          '550e8400-e29b-41d4-a716-446655440001',
+          '550e8400-e29b-41d4-a716-446655440002',
+        ],
+        parents: ['550e8400-e29b-41d4-a716-446655440002'],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440004',
+        title: {
+          he_text: 'תורת המספרים',
+          en_text: 'Number Theory',
+        },
+        prerequisites: ['550e8400-e29b-41d4-a716-446655440001'],
+        parents: ['550e8400-e29b-41d4-a716-446655440001'],
+      },
+    ];
+
+    // Wait for components to be defined
+    await customElements.whenDefined('blocks-graph');
+
+    // Load data into all graphs
+    setTimeout(() => {
+      const graphs = ['graph-default', 'graph-custom', 'graph-no-prereq'];
+      graphs.forEach(id => {
+        const graph = document.getElementById(id);
+        if (graph && typeof graph.loadFromJson === 'function') {
+          graph.loadFromJson(JSON.stringify(EXAMPLE_BLOCKS), 'v0.1');
+        }
+      });
+
+      // Signal that the page is ready for testing
+      window.testReady = true;
+    }, 500);
+  </script>
+</body>
+</html>

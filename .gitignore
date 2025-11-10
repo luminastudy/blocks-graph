@@ -11,6 +11,8 @@ storybook-static/
 coverage/
 .vitest/
 .playwright-mcp/
+playwright-report/
+test-results/
 
 # IDE
 .vscode/

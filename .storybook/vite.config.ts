@@ -13,4 +13,8 @@ export default defineConfig({
   optimizeDeps: {
     include: ['ajv', 'ajv-formats'],
   },
+  // Disable auto-opening browser (useful for CI and visual testing)
+  server: {
+    open: false,
+  },
 });
