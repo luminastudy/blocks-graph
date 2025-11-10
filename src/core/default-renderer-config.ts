@@ -18,6 +18,9 @@ export const DEFAULT_RENDERER_CONFIG: RendererConfig = {
     fontSize: 14,
     fill: '#333333',
     fontFamily: 'system-ui, -apple-system, sans-serif',
+    maxLines: 3,
+    lineHeight: 1.2,
+    horizontalPadding: 10,
   },
   edgeStyle: {
     prerequisite: {

@@ -216,6 +216,7 @@ export const CombinatoricsRootAutoHide: Story = {
     // Fetch the Combinatorics JSON from GitHub
     const fetchAndLoadData = async () => {
       try {
+        // eslint-disable-next-line default/no-hardcoded-urls -- Example data for Storybook
         const response = await fetch('https://raw.githubusercontent.com/luminastudy/the-open-university-combinatorics/refs/heads/main/lumin.json');
         const data = await response.json();
 

@@ -196,4 +196,155 @@ describe('GraphEngine', () => {
       expect(positioned[0]!.position.height).toBe(100);
     });
   });
+
+  describe('categorizeBlocks', () => {
+    it('should hide parent when showing sub-blocks (selectionLevel 2)', () => {
+      const blocks: Block[] = [
+        {
+          id: 'parent',
+          title: { he: 'הורה', en: 'Parent' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'child1',
+          title: { he: 'ילד 1', en: 'Child 1' },
+          prerequisites: [],
+          parents: ['parent'],
+        },
+        {
+          id: 'child2',
+          title: { he: 'ילד 2', en: 'Child 2' },
+          prerequisites: [],
+          parents: ['parent'],
+        },
+      ];
+
+      const graph = engine.buildGraph(blocks);
+      const { visible, dimmed } = engine.categorizeBlocks(blocks, graph, 'parent', 2);
+
+      // Parent should be hidden when showing sub-blocks
+      expect(visible.has('parent')).toBe(false);
+      expect(visible.has('child1')).toBe(true);
+      expect(visible.has('child2')).toBe(true);
+    });
+
+    it('should hide parent with prerequisites when showing sub-blocks', () => {
+      const blocks: Block[] = [
+        {
+          id: 'prereq',
+          title: { he: 'דרישה', en: 'Prerequisite' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'parent',
+          title: { he: 'הורה', en: 'Parent' },
+          prerequisites: ['prereq'],
+          parents: [],
+        },
+        {
+          id: 'child1',
+          title: { he: 'ילד 1', en: 'Child 1' },
+          prerequisites: [],
+          parents: ['parent'],
+        },
+      ];
+
+      const graph = engine.buildGraph(blocks);
+      const { visible, dimmed } = engine.categorizeBlocks(blocks, graph, 'parent', 2);
+
+      // Parent should be hidden even if it has prerequisites
+      expect(visible.has('parent')).toBe(false);
+      expect(visible.has('child1')).toBe(true);
+      expect(visible.has('prereq')).toBe(true);
+    });
+
+    it('should hide parent with post-requisites when showing sub-blocks', () => {
+      const blocks: Block[] = [
+        {
+          id: 'parent',
+          title: { he: 'הורה', en: 'Parent' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'child1',
+          title: { he: 'ילד 1', en: 'Child 1' },
+          prerequisites: [],
+          parents: ['parent'],
+        },
+        {
+          id: 'postreq',
+          title: { he: 'תלות', en: 'Post-requisite' },
+          prerequisites: ['parent'],
+          parents: [],
+        },
+      ];
+
+      const graph = engine.buildGraph(blocks);
+      const { visible, dimmed } = engine.categorizeBlocks(blocks, graph, 'parent', 2);
+
+      // Parent should be hidden even if it has post-requisites
+      expect(visible.has('parent')).toBe(false);
+      expect(visible.has('child1')).toBe(true);
+      expect(visible.has('postreq')).toBe(true);
+    });
+
+    it('should hide parent at selectionLevel 1 for root single nodes', () => {
+      const blocks: Block[] = [
+        {
+          id: 'parent',
+          title: { he: 'הורה', en: 'Parent' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'child1',
+          title: { he: 'ילד 1', en: 'Child 1' },
+          prerequisites: [],
+          parents: ['parent'],
+        },
+      ];
+
+      const graph = engine.buildGraph(blocks);
+      const { visible, dimmed } = engine.categorizeBlocks(blocks, graph, 'parent', 1);
+
+      // At level 1, for root single nodes, sub-blocks are shown automatically
+      // and the parent is hidden
+      expect(visible.has('parent')).toBe(false);
+      expect(visible.has('child1')).toBe(true);
+    });
+
+    it('should auto-hide root single node parent and show children at selectionLevel 0', () => {
+      const blocks: Block[] = [
+        {
+          id: 'parent',
+          title: { he: 'הורה', en: 'Parent' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'child1',
+          title: { he: 'ילד 1', en: 'Child 1' },
+          prerequisites: [],
+          parents: ['parent'],
+        },
+        {
+          id: 'standalone',
+          title: { he: 'עצמאי', en: 'Standalone' },
+          prerequisites: [],
+          parents: [],
+        },
+      ];
+
+      const graph = engine.buildGraph(blocks);
+      const { visible, dimmed } = engine.categorizeBlocks(blocks, graph, null, 0);
+
+      // At level 0, root single nodes with sub-blocks are auto-hidden
+      expect(visible.has('parent')).toBe(false);
+      expect(visible.has('child1')).toBe(true);
+      expect(visible.has('standalone')).toBe(true);
+    });
+  });
 });

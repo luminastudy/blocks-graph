@@ -257,8 +257,8 @@ export class GraphEngine {
 
     const relatedIds = this.getRelatedBlocks(selectedBlockId, graph, includeSubBlocks);
 
-    // For root single nodes with sub-blocks, don't show the parent block
-    if (isRootSingleNode && includeSubBlocks) {
+    // When showing sub-blocks, hide the parent block if it has any sub-blocks
+    if (includeSubBlocks) {
       const subBlocks = this.getSubBlocks(selectedBlockId, graph);
       if (subBlocks.length > 0) {
         relatedIds.delete(selectedBlockId);

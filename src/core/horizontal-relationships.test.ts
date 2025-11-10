@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- Comprehensive test suite */
 import { describe, expect, it, beforeEach } from 'vitest';
 import { HorizontalRelationships } from './horizontal-relationships.js';
 import type { Block } from '../types/block.js';

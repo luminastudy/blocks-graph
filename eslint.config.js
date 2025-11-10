@@ -6,6 +6,8 @@ export default [
     ignores: ['dist', 'coverage', 'node_modules', '*.config.js', '*.test.ts', '*.mjs', '.storybook', '*.stories.ts', 'storybook-static'],
   },
   {
+    files: ['**/*.ts'],
+    ignores: ['**/*.test.ts', '**/*.stories.ts'],
     rules: {
       // Relax some overly strict rules for library code
       'max-lines': ['error', { max: 300 }],

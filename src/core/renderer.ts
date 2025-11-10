@@ -2,6 +2,7 @@ import type { BlockGraph } from '../types/block-graph.js';
 import type { PositionedBlock } from '../types/positioned-block.js';
 import type { RendererConfig } from './renderer-config.js';
 import { DEFAULT_RENDERER_CONFIG } from './default-renderer-config.js';
+import { wrapTextToLines } from './text-wrapper.js';
 
 /**
  * SVG renderer for block graphs
@@ -117,20 +118,51 @@ export class GraphRenderer {
       rect.setAttribute('opacity', opacity);
       blockGroup.appendChild(rect);
 
-      // Render block text
+      // Render block text with wrapping
+      const title = this.config.language === 'he' ? block.title.he : block.title.en;
+      const fontSize = this.config.textStyle.fontSize;
+      const fontFamily = this.config.textStyle.fontFamily;
+      const lineHeight = this.config.textStyle.lineHeight ?? 1.2;
+      const horizontalPadding = this.config.textStyle.horizontalPadding ?? 10;
+      const maxLines = this.config.textStyle.maxLines ?? 3;
+
+      // Calculate max text width
+      const maxTextWidth = position.width - 2 * horizontalPadding;
+
+      // Wrap text into lines
+      const { lines, isTruncated } = wrapTextToLines(title, maxTextWidth, fontSize, fontFamily, maxLines);
+
+      // Create text element
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       text.setAttribute('x', String(position.x + position.width / 2));
-      text.setAttribute('y', String(position.y + position.height / 2));
       text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('dominant-baseline', 'middle');
       text.setAttribute('fill', this.config.textStyle.fill);
-      text.setAttribute('font-size', String(this.config.textStyle.fontSize));
-      text.setAttribute('font-family', this.config.textStyle.fontFamily);
+      text.setAttribute('font-size', String(fontSize));
+      text.setAttribute('font-family', fontFamily);
       text.setAttribute('opacity', opacity);
 
-      const title = this.config.language === 'he' ? block.title.he : block.title.en;
-      text.textContent = title;
+      // Calculate vertical centering
+      const totalTextHeight = lines.length * fontSize * lineHeight;
+      const startY = position.y + position.height / 2 - totalTextHeight / 2 + fontSize / 2;
+
+      // Add each line as a tspan
+      lines.forEach((line, index) => {
+        const tspan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+        tspan.setAttribute('x', String(position.x + position.width / 2));
+        tspan.setAttribute('y', String(startY + index * fontSize * lineHeight));
+        tspan.setAttribute('dominant-baseline', 'middle');
+        tspan.textContent = line;
+        text.appendChild(tspan);
+      });
+
       blockGroup.appendChild(text);
+
+      // Add tooltip if text was truncated or wrapped
+      if (isTruncated || lines.length > 1) {
+        const titleElement = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        titleElement.textContent = title;
+        blockGroup.appendChild(titleElement);
+      }
 
       group.appendChild(blockGroup);
     }

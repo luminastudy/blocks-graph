@@ -18,6 +18,9 @@ export interface RendererConfig {
     fontSize: number;
     fill: string;
     fontFamily: string;
+    maxLines?: number;
+    lineHeight?: number;
+    horizontalPadding?: number;
   };
   edgeStyle: {
     prerequisite: {
