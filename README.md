@@ -151,6 +151,55 @@ onMounted(async () => {
 | `node-height` | `number` | `80` | Height of each block node in pixels |
 | `horizontal-spacing` | `number` | `80` | Horizontal spacing between nodes |
 | `vertical-spacing` | `number` | `100` | Vertical spacing between levels |
+| `orientation` | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'` | `'ttb'` | Graph orientation: `ttb` (top-to-bottom), `ltr` (left-to-right), `rtl` (right-to-left), `btt` (bottom-to-top) |
+
+### Graph Orientation
+
+The `orientation` attribute controls how the graph flows and how blocks are arranged:
+
+- **`ttb` (top-to-bottom)**: Traditional hierarchical layout with root blocks at the top. Levels progress downward along the y-axis.
+- **`ltr` (left-to-right)**: Horizontal flow with root blocks on the left. Levels progress rightward along the x-axis. Ideal for timelines or process flows.
+- **`rtl` (right-to-left)**: Horizontal flow with root blocks on the right. Levels progress leftward along the x-axis. Useful for RTL language contexts.
+- **`btt` (bottom-to-top)**: Inverted hierarchical layout with root blocks at the bottom. Levels progress upward along the y-axis.
+
+**HTML Example:**
+```html
+<blocks-graph orientation="ltr" language="en"></blocks-graph>
+```
+
+**JavaScript Example:**
+```javascript
+const graph = document.querySelector('blocks-graph');
+graph.orientation = 'rtl'; // Dynamically change orientation
+```
+
+#### Spacing Behavior with Orientation
+
+The `horizontal-spacing` and `vertical-spacing` attributes adapt based on orientation:
+
+| Orientation | Level Spacing (between hierarchy levels) | Sibling Spacing (between blocks at same level) |
+|-------------|------------------------------------------|------------------------------------------------|
+| `ttb` | `vertical-spacing` | `horizontal-spacing` |
+| `btt` | `vertical-spacing` | `horizontal-spacing` |
+| `ltr` | `horizontal-spacing` | `vertical-spacing` |
+| `rtl` | `horizontal-spacing` | `vertical-spacing` |
+
+**Example with custom spacing:**
+```html
+<!-- For TTB: 80px between siblings horizontally, 120px between levels vertically -->
+<blocks-graph
+  orientation="ttb"
+  horizontal-spacing="80"
+  vertical-spacing="120">
+</blocks-graph>
+
+<!-- For LTR: 80px between levels horizontally, 120px between siblings vertically -->
+<blocks-graph
+  orientation="ltr"
+  horizontal-spacing="80"
+  vertical-spacing="120">
+</blocks-graph>
+```
 
 ## API Methods
 
@@ -218,6 +267,7 @@ const engine = new GraphEngine({
   nodeHeight: 100,
   horizontalSpacing: 100,
   verticalSpacing: 120,
+  orientation: 'ltr', // Optional: 'ttb' (default), 'ltr', 'rtl', or 'btt'
 });
 
 // Process blocks
