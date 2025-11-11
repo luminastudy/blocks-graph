@@ -2,8 +2,13 @@
 
 ## Active Specifications
 
-### runnable-examples
+### connector-style-configuration
 **Status**: Initialized
+**Description**: Enable developers to customize connector/edge styles with advanced options including colors, widths, dash patterns, arrow markers, curves, and animations. Supports multiple configuration methods (programmatic API, web component attributes, CSS variables, per-edge styling).
+
+**Phase**: initialized
+**Spec Location**: `.kiro/specs/connector-style-configuration/`
+
 ### runnable-examples
 **Status**: Completed
 **Description**: Create an examples folder with runnable demonstrations showing how to use the @luminastudy/blocks-graph library in both React and pure HTML contexts.
