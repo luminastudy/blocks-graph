@@ -1,4 +1,5 @@
 import type { Block } from '../types/block.js';
+import { isValidOrientation } from '../types/orientation.js';
 import { GraphEngine } from '../core/graph-engine.js';
 import type { GraphLayoutConfig } from '../core/graph-layout-config.js';
 import { GraphRenderer } from '../core/renderer.js';
@@ -49,6 +50,7 @@ export class BlocksGraph extends HTMLElement {
       'node-height',
       'horizontal-spacing',
       'vertical-spacing',
+      'orientation',
     ];
   }
 
@@ -83,6 +85,7 @@ export class BlocksGraph extends HTMLElement {
       case 'node-height':
       case 'horizontal-spacing':
       case 'vertical-spacing':
+      case 'orientation':
         this.updateLayoutConfig();
         break;
     }
@@ -116,7 +119,19 @@ export class BlocksGraph extends HTMLElement {
       config.verticalSpacing = Number.parseInt(verticalSpacing, 10);
     }
 
+    const orientation = this.getAttribute('orientation');
+    if (orientation && isValidOrientation(orientation)) {
+      config.orientation = orientation;
+    } else if (orientation) {
+      console.warn(
+        `Invalid orientation "${orientation}". Using default "ttb". ` +
+        `Valid values: ttb, ltr, rtl, btt`
+      );
+    }
+
     this.engine = new GraphEngine(config);
+    // Also update renderer config so edges render correctly
+    this.renderer.updateConfig({ orientation: config.orientation });
   }
 
   /**
@@ -272,6 +287,20 @@ export class BlocksGraph extends HTMLElement {
    */
   set showParents(value: boolean) {
     this.setAttribute('show-parents', String(value));
+  }
+
+  /**
+   * Get current orientation
+   */
+  get orientation(): string {
+    return this.getAttribute('orientation') ?? 'ttb';
+  }
+
+  /**
+   * Set orientation
+   */
+  set orientation(value: string) {
+    this.setAttribute('orientation', value);
   }
 }
 

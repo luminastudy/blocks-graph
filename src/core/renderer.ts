@@ -1,4 +1,5 @@
 import type { BlockGraph } from '../types/block-graph.js';
+import type { BlockPosition } from '../types/block-position.js';
 import type { PositionedBlock } from '../types/positioned-block.js';
 import type { RendererConfig } from './renderer-config.js';
 import { DEFAULT_RENDERER_CONFIG } from './default-renderer-config.js';
@@ -29,6 +30,7 @@ export class GraphRenderer {
     group.setAttribute('class', 'edges');
 
     const positionMap = new Map(positioned.map(pb => [pb.block.id, pb.position]));
+    const orientation = this.config.orientation ?? 'ttb';
 
     for (const edge of graph.edges) {
       const fromPos = positionMap.get(edge.from);
@@ -48,11 +50,12 @@ export class GraphRenderer {
 
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 
-      // Connect from bottom center of source to top center of target
-      line.setAttribute('x1', String(fromPos.x + fromPos.width / 2));
-      line.setAttribute('y1', String(fromPos.y + fromPos.height));
-      line.setAttribute('x2', String(toPos.x + toPos.width / 2));
-      line.setAttribute('y2', String(toPos.y));
+      // Calculate connection points based on orientation
+      const connectionPoints = this.calculateConnectionPoints(fromPos, toPos, orientation);
+      line.setAttribute('x1', String(connectionPoints.x1));
+      line.setAttribute('y1', String(connectionPoints.y1));
+      line.setAttribute('x2', String(connectionPoints.x2));
+      line.setAttribute('y2', String(connectionPoints.y2));
 
       const style = this.config.edgeStyle[edge.type];
       line.setAttribute('stroke', style.stroke);
@@ -77,6 +80,54 @@ export class GraphRenderer {
     }
 
     return group;
+  }
+
+  /**
+   * Calculate connection points for edges based on orientation
+   */
+  private calculateConnectionPoints(
+    fromPos: BlockPosition,
+    toPos: BlockPosition,
+    orientation: string
+  ): { x1: number; y1: number; x2: number; y2: number } {
+    switch (orientation) {
+      case 'ttb':
+        return {
+          x1: fromPos.x + fromPos.width / 2,
+          y1: fromPos.y + fromPos.height, // Bottom center
+          x2: toPos.x + toPos.width / 2,
+          y2: toPos.y, // Top center
+        };
+      case 'btt':
+        return {
+          x1: fromPos.x + fromPos.width / 2,
+          y1: fromPos.y, // Top center
+          x2: toPos.x + toPos.width / 2,
+          y2: toPos.y + toPos.height, // Bottom center
+        };
+      case 'ltr':
+        return {
+          x1: fromPos.x + fromPos.width, // Right center
+          y1: fromPos.y + fromPos.height / 2,
+          x2: toPos.x, // Left center
+          y2: toPos.y + toPos.height / 2,
+        };
+      case 'rtl':
+        return {
+          x1: fromPos.x, // Left center
+          y1: fromPos.y + fromPos.height / 2,
+          x2: toPos.x + toPos.width, // Right center
+          y2: toPos.y + toPos.height / 2,
+        };
+      default:
+        // Fallback to TTB
+        return {
+          x1: fromPos.x + fromPos.width / 2,
+          y1: fromPos.y + fromPos.height,
+          x2: toPos.x + toPos.width / 2,
+          y2: toPos.y,
+        };
+    }
   }
 
   /**

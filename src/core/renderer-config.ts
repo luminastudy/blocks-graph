@@ -1,3 +1,5 @@
+import type { Orientation } from '../types/orientation.js';
+
 /**
  * Renderer configuration
  */
@@ -8,6 +10,7 @@ export interface RendererConfig {
   selectedBlockId?: string | null;
   visibleBlocks?: Set<string>;
   dimmedBlocks?: Set<string>;
+  orientation?: Orientation;
   blockStyle: {
     fill: string;
     stroke: string;
