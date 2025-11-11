@@ -1,6 +1,5 @@
 import type { Block } from '../types/block.js';
 import { GraphEngine } from '../core/graph-engine.js';
-import type { GraphLayoutConfig } from '../core/graph-layout-config.js';
 import { GraphRenderer } from '../core/renderer.js';
 import { schemaV01Adaptor } from '../adaptors/v0.1/instance.js';
 import { createStyles } from './create-styles.js';
@@ -10,7 +9,7 @@ import { attachBlockClickListeners } from './attach-block-click-listeners.js';
 import { renderGraph } from './render-graph.js';
 import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-version-error.js';
 import { BlocksFetchError } from '../errors/blocks-fetch-error.js';
-import { isValidOrientation } from '../types/orientation.js';
+import { parseLayoutConfigFromAttributes } from './parse-layout-config-from-attributes.js';
 
 /**
  * Custom element for rendering block graphs
@@ -97,38 +96,7 @@ export class BlocksGraph extends HTMLElement {
    * Update layout configuration from attributes
    */
   private updateLayoutConfig(): void {
-    const config: Partial<GraphLayoutConfig> = {};
-
-    const nodeWidth = this.getAttribute('node-width');
-    if (nodeWidth) {
-      config.nodeWidth = Number.parseInt(nodeWidth, 10);
-    }
-
-    const nodeHeight = this.getAttribute('node-height');
-    if (nodeHeight) {
-      config.nodeHeight = Number.parseInt(nodeHeight, 10);
-    }
-
-    const horizontalSpacing = this.getAttribute('horizontal-spacing');
-    if (horizontalSpacing) {
-      config.horizontalSpacing = Number.parseInt(horizontalSpacing, 10);
-    }
-
-    const verticalSpacing = this.getAttribute('vertical-spacing');
-    if (verticalSpacing) {
-      config.verticalSpacing = Number.parseInt(verticalSpacing, 10);
-    }
-
-    const orientation = this.getAttribute('orientation');
-    if (orientation && isValidOrientation(orientation)) {
-      config.orientation = orientation;
-    } else if (orientation) {
-      console.warn(
-        `Invalid orientation "${orientation}". Using default "ttb". ` +
-        `Valid values: ttb, ltr, rtl, btt`
-      );
-    }
-
+    const config = parseLayoutConfigFromAttributes(this);
     this.engine = new GraphEngine(config);
   }
 

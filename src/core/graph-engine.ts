@@ -6,6 +6,9 @@ import type { PositionedBlock } from '../types/positioned-block.js';
 import type { GraphLayoutConfig } from './graph-layout-config.js';
 import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js';
 import { HorizontalRelationships } from './horizontal-relationships.js';
+import { addBlockWithSubBlocks } from './add-block-with-sub-blocks.js';
+import { isRootSingleNode } from './is-root-single-node.js';
+import { addBlockToVisibility } from './add-block-to-visibility.js';
 
 /**
  * Graph engine responsible for building and laying out the block graph
@@ -144,9 +147,6 @@ export class GraphEngine {
     return block.parents.length > 0;
   }
 
-  isRootNode(blockId: string, graph: BlockGraph): boolean {
-    return !graph.edges.some(edge => edge.to === blockId);
-  }
 
   getDirectPrerequisites(blockId: string, graph: BlockGraph): Block[] {
     const block = graph.blocks.get(blockId);
@@ -186,14 +186,6 @@ export class GraphEngine {
     return subBlocks;
   }
 
-  private addBlockWithSubBlocks(blockId: string, graph: BlockGraph, targetSet: Set<string>, includeSubBlocks: boolean): void {
-    targetSet.add(blockId);
-    if (includeSubBlocks) {
-      for (const subBlock of this.getSubBlocks(blockId, graph)) {
-        targetSet.add(subBlock.id);
-      }
-    }
-  }
 
   getRelatedBlocks(blockId: string, graph: BlockGraph, includeSubBlocks: boolean): Set<string> {
     const relatedIds = new Set<string>();
@@ -201,12 +193,12 @@ export class GraphEngine {
 
     const prerequisites = this.getDirectPrerequisites(blockId, graph);
     for (const prereq of prerequisites) {
-      this.addBlockWithSubBlocks(prereq.id, graph, relatedIds, includeSubBlocks);
+      addBlockWithSubBlocks(prereq.id, graph, relatedIds, includeSubBlocks, this.getSubBlocks.bind(this));
     }
 
     const postRequisites = this.getDirectPostRequisites(blockId, graph);
     for (const postReq of postRequisites) {
-      this.addBlockWithSubBlocks(postReq.id, graph, relatedIds, includeSubBlocks);
+      addBlockWithSubBlocks(postReq.id, graph, relatedIds, includeSubBlocks, this.getSubBlocks.bind(this));
     }
 
     if (includeSubBlocks) {
@@ -219,35 +211,6 @@ export class GraphEngine {
     return relatedIds;
   }
 
-  /**
-   * Check if a block is a root single node (root with no prerequisites/post-requisites)
-   */
-  private isRootSingleNode(blockId: string, graph: BlockGraph): boolean {
-    const isRoot = this.isRootNode(blockId, graph);
-    if (!isRoot) return false;
-
-    const prerequisites = this.getDirectPrerequisites(blockId, graph);
-    const postRequisites = this.getDirectPostRequisites(blockId, graph);
-    return prerequisites.length === 0 && postRequisites.length === 0;
-  }
-
-  /**
-   * Add block or its sub-blocks to visibility set based on root single node logic
-   */
-  private addBlockToVisibility(blockId: string, graph: BlockGraph, visible: Set<string>): void {
-    if (this.isRootSingleNode(blockId, graph)) {
-      const subBlocks = this.getSubBlocks(blockId, graph);
-      if (subBlocks.length > 0) {
-        for (const subBlock of subBlocks) {
-          visible.add(subBlock.id);
-        }
-      } else {
-        visible.add(blockId);
-      }
-    } else {
-      visible.add(blockId);
-    }
-  }
 
   /**
    * Categorize blocks based on selection state
@@ -268,17 +231,28 @@ export class GraphEngine {
         if (this.isSubBlock(block)) {
           continue;
         }
-        this.addBlockToVisibility(block.id, graph, visible);
+        addBlockToVisibility(
+          block.id,
+          graph,
+          visible,
+          this.getSubBlocks.bind(this),
+          (id, g) => isRootSingleNode(id, g, this.getDirectPrerequisites.bind(this), this.getDirectPostRequisites.bind(this))
+        );
       }
       return { visible, dimmed };
     }
 
     // Determine which blocks to show based on selection level
     let includeSubBlocks = selectionLevel >= 2;
-    const isRootSingleNode = this.isRootSingleNode(selectedBlockId, graph);
+    const isRootSingle = isRootSingleNode(
+      selectedBlockId,
+      graph,
+      this.getDirectPrerequisites.bind(this),
+      this.getDirectPostRequisites.bind(this)
+    );
 
     // If it's a root single node, automatically show sub-blocks
-    if (isRootSingleNode && selectionLevel === 1) {
+    if (isRootSingle && selectionLevel === 1) {
       includeSubBlocks = true;
     }
 

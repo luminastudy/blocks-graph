@@ -2,11 +2,29 @@
 
 This example demonstrates how to integrate the `@luminastudy/blocks-graph` Web Component into a React application using TypeScript, following React best practices.
 
+## Two Integration Approaches
+
+This example includes **two different implementations**:
+
+1. **`AppWithWrapper.tsx` (Recommended)** - Uses the `BlocksGraphReact` wrapper component
+   - ✅ Clean props-based API (no refs needed)
+   - ✅ React-style event handlers
+   - ✅ Full TypeScript support
+   - ✅ Automatic prop synchronization
+
+2. **`App.tsx` (Alternative)** - Direct Web Component usage
+   - Uses refs for imperative API access
+   - Manual event listener management
+   - More control over Web Component lifecycle
+
+**By default, the app uses `AppWithWrapper.tsx`** (the recommended approach). Switch in `main.tsx` to see the alternative.
+
 ## Overview
 
 This React example showcases:
+- **React wrapper component** for clean, declarative API
 - Web Component import and registration in React
-- Type-safe ref access to Web Component imperative API
+- Type-safe ref access to Web Component imperative API (alternative approach)
 - useEffect hooks for data loading lifecycle
 - State management for interactive controls
 - Event listener registration for Web Component events

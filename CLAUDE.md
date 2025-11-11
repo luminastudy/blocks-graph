@@ -23,6 +23,13 @@
 **Phase**: initialized
 **Spec Location**: `.kiro/specs/graph-orientation/`
 
+### pan-zoom-interaction
+**Status**: Initialized
+**Description**: Enable users to pan around the graph by dragging and zoom in/out using mouse scroll wheel for better navigation of large graphs.
+
+**Phase**: initialized
+**Spec Location**: `.kiro/specs/pan-zoom-interaction/`
+
 ---
 
 ## Workflow Commands

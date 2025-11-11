@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { Orientation } from './orientation.js';
-import { isValidOrientation } from './orientation.js';
+import { isValidOrientation } from './is-valid-orientation.js';
 
 describe('Orientation type', () => {
   it('should accept valid orientation values', () => {

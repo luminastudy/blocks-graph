@@ -2,7 +2,7 @@
 /* global console */
 import { build } from 'esbuild';
 
-// Build ESM bundle
+// Build main ESM bundle
 await build({
   entryPoints: ['src/index.ts'],
   bundle: true,
@@ -19,3 +19,22 @@ await build({
 });
 
 console.log('✓ ESM bundle created');
+
+// Build React wrapper bundle
+await build({
+  entryPoints: ['src/wrappers/react/index.ts'],
+  bundle: true,
+  format: 'esm',
+  platform: 'browser',
+  target: 'es2022',
+  outfile: 'dist/wrappers/react/index.js',
+  sourcemap: true,
+  external: ['react', 'react-dom'],
+  jsx: 'automatic',
+  loader: {
+    '.json': 'json',
+  },
+  logLevel: 'info',
+});
+
+console.log('✓ React wrapper bundle created');

@@ -1,5 +1,10 @@
 # @luminastudy/blocks-graph
 
+[![npm version](https://img.shields.io/npm/v/@luminastudy/blocks-graph.svg)](https://www.npmjs.com/package/@luminastudy/blocks-graph)
+[![CI](https://github.com/luminastudy/blocks-graph/workflows/CI/badge.svg)](https://github.com/luminastudy/blocks-graph/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/luminastudy/blocks-graph/branch/main/graph/badge.svg)](https://codecov.io/gh/luminastudy/blocks-graph)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Framework-agnostic Web Component for visualizing Lumina Study block schemas.
 
 ## Features
@@ -88,7 +93,49 @@ const blocks = schemaV01Adaptor.adaptFromJson(jsonString);
 graph.setBlocks(blocks);
 ```
 
-### React
+### React (Recommended: Using Wrapper Component)
+
+```tsx
+import { BlocksGraphReact } from '@luminastudy/blocks-graph/react';
+import type { Block } from '@luminastudy/blocks-graph';
+
+function App() {
+  const blocks: Block[] = [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      title: {
+        he: "מבוא למתמטיקה",
+        en: "Introduction to Mathematics"
+      },
+      prerequisites: [],
+      parents: []
+    }
+  ];
+
+  return (
+    <BlocksGraphReact
+      blocks={blocks}
+      language="en"
+      orientation="ttb"
+      showPrerequisites={true}
+      showParents={true}
+      onBlockSelected={(e) => console.log('Selected:', e.detail)}
+      style={{ width: '100%', height: '600px' }}
+    />
+  );
+}
+```
+
+**Benefits of the React wrapper:**
+- ✅ No refs needed - just pass props
+- ✅ Full TypeScript support with autocomplete
+- ✅ React-style event handlers
+- ✅ Automatic prop synchronization
+
+<details>
+<summary>Alternative: Direct Web Component Usage</summary>
+
+You can also use the Web Component directly with refs:
 
 ```tsx
 import { useEffect, useRef } from 'react';
@@ -116,6 +163,8 @@ function App() {
 }
 ```
 
+</details>
+
 ### Vue
 
 ```vue
@@ -140,7 +189,46 @@ onMounted(async () => {
 </script>
 ```
 
-## Attributes
+## React Component Props
+
+The `BlocksGraphReact` wrapper component accepts the following props:
+
+### Data Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `blocks` | `Block[]` | Array of blocks in internal format |
+| `blocksV01` | `BlockSchemaV01[]` | Array of blocks in v0.1 schema format (auto-converted) |
+| `jsonUrl` | `string` | URL to load blocks from |
+
+### Configuration Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `language` | `'en' \| 'he'` | `'en'` | Language to display block titles |
+| `orientation` | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'` | `'ttb'` | Graph orientation direction |
+| `showPrerequisites` | `boolean` | `true` | Show prerequisite relationships |
+| `showParents` | `boolean` | `true` | Show parent relationships |
+| `nodeWidth` | `number` | `200` | Width of each block node in pixels |
+| `nodeHeight` | `number` | `80` | Height of each block node in pixels |
+| `horizontalSpacing` | `number` | `80` | Horizontal spacing between nodes |
+| `verticalSpacing` | `number` | `100` | Vertical spacing between levels |
+
+### Event Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `onBlocksRendered` | `(event: CustomEvent<{ blockCount: number }>) => void` | Called when blocks are rendered |
+| `onBlockSelected` | `(event: CustomEvent<{ blockId: string \| null; selectionLevel: number }>) => void` | Called when a block is selected |
+
+### Standard Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `className` | `string` | CSS class name |
+| `style` | `CSSProperties` | Inline styles |
+
+## Web Component Attributes
 
 | Attribute | Type | Default | Description |
 |-----------|------|---------|-------------|
