@@ -1,0 +1,97 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 0.2.0, 1.0.0-beta.1)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Is this a pre-release?'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.21.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Validate version format
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if ! [[ $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+(-.*)?$ ]]; then
+            echo "Invalid version format. Expected X.Y.Z or X.Y.Z-beta.N"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run quality checks
+        run: |
+          pnpm spell:check
+          pnpm lint
+          pnpm typecheck
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Update version in package.json
+        run: |
+          npm version ${{ env.VERSION }} --no-git-tag-version
+          echo "Updated package.json to version ${{ env.VERSION }}"
+
+      - name: Build library
+        run: pnpm build
+
+      - name: Verify build artifacts
+        run: |
+          test -f dist/index.js || (echo "Missing dist/index.js" && exit 1)
+          test -f dist/index.d.ts || (echo "Missing dist/index.d.ts" && exit 1)
+          echo "✓ Build artifacts verified"
+
+      - name: Update CHANGELOG.md
+        run: |
+          # Add instructions for manual changelog update
+          echo "⚠️  Remember to update CHANGELOG.md before merging!"
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to ${{ env.VERSION }}"
+
+      - name: Create and push tag
+        run: |
+          git tag "v${{ env.VERSION }}"
+          git push origin main
+          git push origin "v${{ env.VERSION }}"
+
+      - name: Wait for publish workflow
+        run: |
+          echo "Tag v${{ env.VERSION }} pushed!"
+          echo "The publish workflow will now run automatically."
+          echo "Check: https://github.com/${{ github.repository }}/actions"
