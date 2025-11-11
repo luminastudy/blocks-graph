@@ -81,17 +81,46 @@ export class GraphEngine {
       blocksByLevel.set(level, blocksAtLevel);
     }
 
+    const orientation = this.config.orientation ?? 'ttb';
+
+    // Determine axis and direction
+    const isVertical = orientation === 'ttb' || orientation === 'btt';
+    const isReversed = orientation === 'btt' || orientation === 'rtl';
+
+    // Calculate max level for reversed orientations
+    const maxLevel = isReversed
+      ? Math.max(...Array.from(blocksByLevel.keys()))
+      : 0;
+
     const positions = new Map<string, BlockPosition>();
+
     for (const [level, blockIds] of blocksByLevel.entries()) {
-      const y = level * (this.config.nodeHeight + this.config.verticalSpacing);
-      blockIds.forEach((blockId, index) => {
-        positions.set(blockId, {
-          x: index * (this.config.nodeWidth + this.config.horizontalSpacing),
-          y,
-          width: this.config.nodeWidth,
-          height: this.config.nodeHeight,
+      // Calculate level position based on orientation
+      const adjustedLevel = isReversed ? maxLevel - level : level;
+
+      if (isVertical) {
+        // TTB or BTT: levels progress along y-axis
+        const y = adjustedLevel * (this.config.nodeHeight + this.config.verticalSpacing);
+        blockIds.forEach((blockId, index) => {
+          positions.set(blockId, {
+            x: index * (this.config.nodeWidth + this.config.horizontalSpacing),
+            y,
+            width: this.config.nodeWidth,
+            height: this.config.nodeHeight,
+          });
         });
-      });
+      } else {
+        // LTR or RTL: levels progress along x-axis
+        const x = adjustedLevel * (this.config.nodeWidth + this.config.horizontalSpacing);
+        blockIds.forEach((blockId, index) => {
+          positions.set(blockId, {
+            x,
+            y: index * (this.config.nodeHeight + this.config.verticalSpacing),
+            width: this.config.nodeWidth,
+            height: this.config.nodeHeight,
+          });
+        });
+      }
     }
 
     const positionedBlocks: PositionedBlock[] = [];
