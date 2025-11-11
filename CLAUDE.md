@@ -4,9 +4,11 @@
 
 ### runnable-examples
 **Status**: Initialized
+### runnable-examples
+**Status**: Completed
 **Description**: Create an examples folder with runnable demonstrations showing how to use the @luminastudy/blocks-graph library in both React and pure HTML contexts.
 
-**Phase**: initialized
+**Phase**: tasks-generated
 **Spec Location**: `.kiro/specs/runnable-examples/`
 
 ### graph-orientation
