@@ -110,6 +110,14 @@ const meta: Meta = {
         defaultValue: { summary: '80' },
       },
     },
+    orientation: {
+      control: 'select',
+      options: ['ttb', 'ltr', 'rtl', 'btt'],
+      description: 'Graph orientation: ttb (top-to-bottom), ltr (left-to-right), rtl (right-to-left), btt (bottom-to-top)',
+      table: {
+        defaultValue: { summary: 'ttb' },
+      },
+    },
   },
   parameters: {
     docs: {
@@ -147,6 +155,7 @@ export const Default: Story = {
           node-height="${args.nodeHeight || ''}"
           horizontal-spacing="${args.horizontalSpacing || ''}"
           vertical-spacing="${args.verticalSpacing || ''}"
+          orientation="${args.orientation || 'ttb'}"
           @block-selected="${(e: CustomEvent) => {
             console.log('Block selected:', e.detail);
           }}"
@@ -248,6 +257,7 @@ export const CombinatoricsRootAutoHide: Story = {
             language="${args.language}"
             show-prerequisites="${args.showPrerequisites}"
             show-parents="${args.showParents}"
+            orientation="${args.orientation || 'ttb'}"
           ></blocks-graph>
         </div>
       </div>
@@ -257,5 +267,84 @@ export const CombinatoricsRootAutoHide: Story = {
     language: 'en',
     showPrerequisites: true,
     showParents: true,
+  },
+};
+
+/**
+ * Story demonstrating all four graph orientations side by side.
+ * Shows how the same graph data can be rendered in different directions:
+ * - TTB (Top-to-Bottom): Traditional hierarchical layout
+ * - LTR (Left-to-Right): Horizontal flow, left to right
+ * - RTL (Right-to-Left): Horizontal flow, right to left (for Hebrew/Arabic)
+ * - BTT (Bottom-to-Top): Inverted hierarchical layout
+ */
+export const AllOrientations: Story = {
+  render: () => {
+    const orientations = [
+      { value: 'ttb', label: 'Top-to-Bottom (TTB)', description: 'Traditional hierarchical layout' },
+      { value: 'ltr', label: 'Left-to-Right (LTR)', description: 'Horizontal flow, ideal for timelines' },
+      { value: 'rtl', label: 'Right-to-Left (RTL)', description: 'Horizontal flow for RTL languages' },
+      { value: 'btt', label: 'Bottom-to-Top (BTT)', description: 'Inverted hierarchical layout' },
+    ];
+
+    return html`
+      <div style="padding: 16px;">
+        <h2 style="margin: 0 0 16px 0;">Graph Orientations Comparison</h2>
+        <p style="margin: 0 0 24px 0; color: #666;">
+          The same curriculum data displayed in four different orientations.
+          Notice how edges connect appropriately for each orientation.
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          ${orientations.map((orientation, index) => {
+            const storyId = `orientation-${orientation.value}-${Date.now()}-${index}`;
+
+            setTimeout(() => {
+              const graph = document.getElementById(storyId);
+              if (graph && 'loadFromJson' in graph && typeof graph.loadFromJson === 'function') {
+                graph.loadFromJson(JSON.stringify(EXAMPLE_BLOCKS), 'v0.1');
+              }
+            }, 100);
+
+            return html`
+              <div style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;">
+                <div style="margin-bottom: 12px;">
+                  <h3 style="margin: 0 0 4px 0; color: #333;">
+                    ${orientation.label}
+                  </h3>
+                  <p style="margin: 0; font-size: 14px; color: #666;">
+                    ${orientation.description}
+                  </p>
+                </div>
+                <div style="width: 100%; height: 400px; border: 1px solid #e0e0e0; border-radius: 4px;">
+                  <blocks-graph
+                    id="${storyId}"
+                    language="en"
+                    show-prerequisites="true"
+                    show-parents="true"
+                    orientation="${orientation.value}"
+                    node-width="180"
+                    node-height="70"
+                    horizontal-spacing="60"
+                    vertical-spacing="80"
+                  ></blocks-graph>
+                </div>
+              </div>
+            `;
+          })}
+        </div>
+
+        <div style="margin-top: 24px; padding: 16px; background: #f5f5f5; border-radius: 4px;">
+          <h4 style="margin: 0 0 8px 0;">Usage Example</h4>
+          <pre style="margin: 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto;"><code>&lt;blocks-graph orientation="ltr"&gt;&lt;/blocks-graph&gt;
+&lt;blocks-graph orientation="rtl"&gt;&lt;/blocks-graph&gt;
+&lt;blocks-graph orientation="ttb"&gt;&lt;/blocks-graph&gt;
+&lt;blocks-graph orientation="btt"&gt;&lt;/blocks-graph&gt;</code></pre>
+        </div>
+      </div>
+    `;
+  },
+  parameters: {
+    layout: 'fullscreen',
   },
 };

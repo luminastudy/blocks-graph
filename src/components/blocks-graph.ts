@@ -10,6 +10,7 @@ import { attachBlockClickListeners } from './attach-block-click-listeners.js';
 import { renderGraph } from './render-graph.js';
 import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-version-error.js';
 import { BlocksFetchError } from '../errors/blocks-fetch-error.js';
+import { isValidOrientation } from '../types/orientation.js';
 
 /**
  * Custom element for rendering block graphs
@@ -49,6 +50,7 @@ export class BlocksGraph extends HTMLElement {
       'node-height',
       'horizontal-spacing',
       'vertical-spacing',
+      'orientation',
     ];
   }
 
@@ -83,6 +85,7 @@ export class BlocksGraph extends HTMLElement {
       case 'node-height':
       case 'horizontal-spacing':
       case 'vertical-spacing':
+      case 'orientation':
         this.updateLayoutConfig();
         break;
     }
@@ -114,6 +117,16 @@ export class BlocksGraph extends HTMLElement {
     const verticalSpacing = this.getAttribute('vertical-spacing');
     if (verticalSpacing) {
       config.verticalSpacing = Number.parseInt(verticalSpacing, 10);
+    }
+
+    const orientation = this.getAttribute('orientation');
+    if (orientation && isValidOrientation(orientation)) {
+      config.orientation = orientation;
+    } else if (orientation) {
+      console.warn(
+        `Invalid orientation "${orientation}". Using default "ttb". ` +
+        `Valid values: ttb, ltr, rtl, btt`
+      );
     }
 
     this.engine = new GraphEngine(config);
@@ -272,6 +285,20 @@ export class BlocksGraph extends HTMLElement {
    */
   set showParents(value: boolean) {
     this.setAttribute('show-parents', String(value));
+  }
+
+  /**
+   * Get current orientation
+   */
+  get orientation(): string {
+    return this.getAttribute('orientation') ?? 'ttb';
+  }
+
+  /**
+   * Set orientation programmatically
+   */
+  set orientation(value: string) {
+    this.setAttribute('orientation', value);
   }
 }
 
