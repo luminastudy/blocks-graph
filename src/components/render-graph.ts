@@ -11,7 +11,8 @@ export function renderGraph(
   engine: GraphEngine,
   renderer: GraphRenderer,
   selectedBlockId: string | null,
-  selectionLevel: number
+  selectionLevel: number,
+  orientation?: string
 ): { svg: SVGElement; blockCount: number } {
   // Build the full graph first
   const fullGraph = engine.buildGraph(blocks);
@@ -32,11 +33,12 @@ export function renderGraph(
   // Process the filtered blocks
   const { graph, positioned } = engine.process(blocksToRender);
 
-  // Update renderer config with selection state
+  // Update renderer config with selection state and orientation
   renderer.updateConfig({
     selectedBlockId,
     visibleBlocks: visible,
     dimmedBlocks: dimmed,
+    orientation: orientation as 'ttb' | 'ltr' | 'rtl' | 'btt' | undefined,
   });
 
   // Render the graph

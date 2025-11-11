@@ -227,7 +227,8 @@ export class BlocksGraph extends HTMLElement {
         this.engine,
         this.renderer,
         this.selectedBlockId,
-        this.selectionLevel
+        this.selectionLevel,
+        this.getAttribute('orientation') ?? undefined
       );
       this.shadowRoot!.appendChild(svg);
       attachBlockClickListeners(

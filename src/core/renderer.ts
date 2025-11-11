@@ -1,5 +1,6 @@
 import type { BlockGraph } from '../types/block-graph.js';
 import type { PositionedBlock } from '../types/positioned-block.js';
+import type { BlockPosition } from '../types/block-position.js';
 import type { RendererConfig } from './renderer-config.js';
 import { DEFAULT_RENDERER_CONFIG } from './default-renderer-config.js';
 import { wrapTextToLines } from './text-wrapper.js';
@@ -22,6 +23,58 @@ export class GraphRenderer {
   }
 
   /**
+   * Calculate connection points for edges based on orientation
+   */
+  private calculateConnectionPoints(
+    fromPos: BlockPosition,
+    toPos: BlockPosition,
+    orientation: string
+  ): { x1: number; y1: number; x2: number; y2: number } {
+    switch (orientation) {
+      case 'ttb':
+        // Top-to-bottom: connect from bottom center to top center
+        return {
+          x1: fromPos.x + fromPos.width / 2,
+          y1: fromPos.y + fromPos.height,
+          x2: toPos.x + toPos.width / 2,
+          y2: toPos.y,
+        };
+      case 'btt':
+        // Bottom-to-top: connect from top center to bottom center
+        return {
+          x1: fromPos.x + fromPos.width / 2,
+          y1: fromPos.y,
+          x2: toPos.x + toPos.width / 2,
+          y2: toPos.y + toPos.height,
+        };
+      case 'ltr':
+        // Left-to-right: connect from right center to left center
+        return {
+          x1: fromPos.x + fromPos.width,
+          y1: fromPos.y + fromPos.height / 2,
+          x2: toPos.x,
+          y2: toPos.y + toPos.height / 2,
+        };
+      case 'rtl':
+        // Right-to-left: connect from left center to right center
+        return {
+          x1: fromPos.x,
+          y1: fromPos.y + fromPos.height / 2,
+          x2: toPos.x + toPos.width,
+          y2: toPos.y + toPos.height / 2,
+        };
+      default:
+        // Default to TTB
+        return {
+          x1: fromPos.x + fromPos.width / 2,
+          y1: fromPos.y + fromPos.height,
+          x2: toPos.x + toPos.width / 2,
+          y2: toPos.y,
+        };
+    }
+  }
+
+  /**
    * Render edges (connections between blocks)
    */
   private renderEdges(graph: BlockGraph, positioned: PositionedBlock[]): SVGGElement {
@@ -29,6 +82,7 @@ export class GraphRenderer {
     group.setAttribute('class', 'edges');
 
     const positionMap = new Map(positioned.map(pb => [pb.block.id, pb.position]));
+    const orientation = this.config.orientation ?? 'ttb';
 
     for (const edge of graph.edges) {
       const fromPos = positionMap.get(edge.from);
@@ -48,11 +102,13 @@ export class GraphRenderer {
 
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 
-      // Connect from bottom center of source to top center of target
-      line.setAttribute('x1', String(fromPos.x + fromPos.width / 2));
-      line.setAttribute('y1', String(fromPos.y + fromPos.height));
-      line.setAttribute('x2', String(toPos.x + toPos.width / 2));
-      line.setAttribute('y2', String(toPos.y));
+      // Calculate connection points based on orientation
+      const { x1, y1, x2, y2 } = this.calculateConnectionPoints(fromPos, toPos, orientation);
+
+      line.setAttribute('x1', String(x1));
+      line.setAttribute('y1', String(y1));
+      line.setAttribute('x2', String(x2));
+      line.setAttribute('y2', String(y2));
 
       const style = this.config.edgeStyle[edge.type];
       line.setAttribute('stroke', style.stroke);

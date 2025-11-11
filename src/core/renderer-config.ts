@@ -1,3 +1,5 @@
+import type { Orientation } from '../types/orientation.js';
+
 /**
  * Renderer configuration
  */
@@ -5,6 +7,7 @@ export interface RendererConfig {
   language: 'en' | 'he';
   showPrerequisites: boolean;
   showParents: boolean;
+  orientation?: Orientation;
   selectedBlockId?: string | null;
   visibleBlocks?: Set<string>;
   dimmedBlocks?: Set<string>;
