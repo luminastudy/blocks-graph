@@ -9,4 +9,5 @@ export const DEFAULT_LAYOUT_CONFIG: GraphLayoutConfig = {
   nodeHeight: 80,
   horizontalSpacing: 80,
   verticalSpacing: 100,
+  orientation: 'ttb',
 };
