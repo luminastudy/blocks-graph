@@ -268,7 +268,6 @@ useEffect(() => {
   graphRef.current?.addEventListener('block-selected', handler)
   return () => graphRef.current?.removeEventListener('block-selected', handler)
 }, [])
-
 ;<blocks-graph ref={graphRef} />
 ```
 

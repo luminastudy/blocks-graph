@@ -120,7 +120,6 @@ import { schemaV01Adaptor } from '@luminastudy/blocks-graph'
 const data = await response.json()
 const converted = schemaV01Adaptor.adaptMany(data)
 setBlocks(converted)
-
 ;<BlocksGraphReact blocks={blocks} />
 ```
 
@@ -158,7 +157,6 @@ setBlocks(converted)
    ```tsx
    // Uses AppWithWrapper by default
    import AppWithWrapper from './AppWithWrapper'
-
    ;<React.StrictMode>
      <AppWithWrapper />
    </React.StrictMode>

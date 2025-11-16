@@ -214,7 +214,6 @@ useEffect(() => {
   graphRef.current?.addEventListener('block-selected', handler)
   return () => graphRef.current?.removeEventListener('block-selected', handler)
 }, [])
-
 ;<blocks-graph ref={graphRef} />
 ```
 
@@ -314,7 +313,6 @@ const graphRef = useRef(null)
 useEffect(() => {
   graphRef.current?.loadFromJson(json, 'v0.1')
 }, [])
-
 ;<blocks-graph ref={graphRef} language="en" />
 ```
 
@@ -322,7 +320,6 @@ useEffect(() => {
 
 ```tsx
 import { BlocksGraphReact } from '@luminastudy/blocks-graph/react'
-
 ;<BlocksGraphReact blocks={blocks} language="en" />
 ```
 

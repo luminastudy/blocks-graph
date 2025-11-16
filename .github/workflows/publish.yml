@@ -45,6 +45,7 @@ jobs:
         run: |
           pnpm spell:check
           pnpm lint
+          pnpm format:check
           pnpm typecheck
 
       - name: Run tests
