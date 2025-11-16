@@ -1,4 +1,4 @@
-import type { Orientation } from '../types/orientation.js';
+import type { Orientation } from '../types/orientation.js'
 
 /**
  * Configuration for graph layout engine.
@@ -21,10 +21,10 @@ import type { Orientation } from '../types/orientation.js';
  */
 export interface GraphLayoutConfig {
   /** Width of each block node in pixels */
-  nodeWidth: number;
+  nodeWidth: number
 
   /** Height of each block node in pixels */
-  nodeHeight: number;
+  nodeHeight: number
 
   /**
    * Horizontal spacing between blocks in pixels.
@@ -32,7 +32,7 @@ export interface GraphLayoutConfig {
    * For vertical orientations (ttb, btt): spacing between sibling blocks at the same level.
    * For horizontal orientations (ltr, rtl): spacing between hierarchy levels.
    */
-  horizontalSpacing: number;
+  horizontalSpacing: number
 
   /**
    * Vertical spacing between blocks in pixels.
@@ -40,7 +40,7 @@ export interface GraphLayoutConfig {
    * For vertical orientations (ttb, btt): spacing between hierarchy levels.
    * For horizontal orientations (ltr, rtl): spacing between sibling blocks at the same level.
    */
-  verticalSpacing: number;
+  verticalSpacing: number
 
   /**
    * Graph orientation controlling directional flow.
@@ -52,5 +52,5 @@ export interface GraphLayoutConfig {
    *
    * When undefined, defaults to 'ttb' for backward compatibility.
    */
-  orientation?: Orientation;
+  orientation?: Orientation
 }

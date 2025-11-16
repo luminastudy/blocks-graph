@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* global console */
-import { build } from 'esbuild';
+import { build } from 'esbuild'
 
 // Build main ESM bundle
 await build({
@@ -16,9 +16,9 @@ await build({
     '.json': 'json',
   },
   logLevel: 'info',
-});
+})
 
-console.log('✓ ESM bundle created');
+console.log('✓ ESM bundle created')
 
 // Build React wrapper bundle
 await build({
@@ -35,6 +35,6 @@ await build({
     '.json': 'json',
   },
   logLevel: 'info',
-});
+})
 
-console.log('✓ React wrapper bundle created');
+console.log('✓ React wrapper bundle created')

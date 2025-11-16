@@ -1,8 +1,8 @@
 /* eslint-disable max-lines -- Core relationship manager with extensive API surface */
-import type { Block } from '../types/block.js';
-import type { BlockGraph } from '../types/block-graph.js';
-import { SelfLoopError } from '../errors/self-loop-error.js';
-import { HorizontalRelationshipsAlgorithms } from './horizontal-relationships-algorithms.js';
+import type { Block } from '../types/block.js'
+import type { BlockGraph } from '../types/block-graph.js'
+import { SelfLoopError } from '../errors/self-loop-error.js'
+import { HorizontalRelationshipsAlgorithms } from './horizontal-relationships-algorithms.js'
 
 /**
  * Manages horizontal relationships (prerequisites and post-requisites) between blocks.
@@ -23,54 +23,54 @@ export class HorizontalRelationships {
    * Maps each block ID to the set of its direct prerequisites.
    * If A→B (A is prerequisite of B), then prerequisites.get(B) contains A.
    */
-  private readonly prerequisites: Map<string, Set<string>>;
+  private readonly prerequisites: Map<string, Set<string>>
 
   /**
    * Maps each block ID to the set of blocks that have it as a prerequisite.
    * If A→B (A is prerequisite of B), then postrequisites.get(A) contains B.
    */
-  private readonly postrequisites: Map<string, Set<string>>;
+  private readonly postrequisites: Map<string, Set<string>>
 
   /**
    * Memoization cache for transitive prerequisites to avoid recomputation.
    */
-  private readonly transitivePrereqsCache: Map<string, Set<string>>;
+  private readonly transitivePrereqsCache: Map<string, Set<string>>
 
   /**
    * Memoization cache for transitive post-requisites to avoid recomputation.
    */
-  private readonly transitivePostreqsCache: Map<string, Set<string>>;
+  private readonly transitivePostreqsCache: Map<string, Set<string>>
 
   constructor() {
-    this.prerequisites = new Map();
-    this.postrequisites = new Map();
-    this.transitivePrereqsCache = new Map();
-    this.transitivePostreqsCache = new Map();
+    this.prerequisites = new Map()
+    this.postrequisites = new Map()
+    this.transitivePrereqsCache = new Map()
+    this.transitivePostreqsCache = new Map()
   }
 
   /** Creates instance from blocks array */
   static fromBlocks(blocks: Block[]): HorizontalRelationships {
-    const r = new HorizontalRelationships();
+    const r = new HorizontalRelationships()
     for (const b of blocks) {
-      r.ensureBlockExists(b.id);
+      r.ensureBlockExists(b.id)
       for (const p of b.prerequisites) {
-        r.addRelationship(p, b.id);
+        r.addRelationship(p, b.id)
       }
     }
-    return r;
+    return r
   }
 
   /** Creates instance from BlockGraph */
   static fromGraph(graph: BlockGraph): HorizontalRelationships {
-    const r = new HorizontalRelationships();
+    const r = new HorizontalRelationships()
     for (const id of graph.blocks.keys()) {
-      r.ensureBlockExists(id);
+      r.ensureBlockExists(id)
     }
     for (const e of graph.edges) {
-      if (e.type !== 'prerequisite') continue;
-      r.addRelationship(e.from, e.to);
+      if (e.type !== 'prerequisite') continue
+      r.addRelationship(e.from, e.to)
     }
-    return r;
+    return r
   }
 
   /**
@@ -79,10 +79,10 @@ export class HorizontalRelationships {
    */
   ensureBlockExists(blockId: string): void {
     if (!this.prerequisites.has(blockId)) {
-      this.prerequisites.set(blockId, new Set());
+      this.prerequisites.set(blockId, new Set())
     }
     if (!this.postrequisites.has(blockId)) {
-      this.postrequisites.set(blockId, new Set());
+      this.postrequisites.set(blockId, new Set())
     }
   }
 
@@ -103,18 +103,18 @@ export class HorizontalRelationships {
   addRelationship(from: string, to: string): void {
     // Prevent self-loops
     if (from === to) {
-      throw new SelfLoopError(from);
+      throw new SelfLoopError(from)
     }
 
-    this.ensureBlockExists(from);
-    this.ensureBlockExists(to);
+    this.ensureBlockExists(from)
+    this.ensureBlockExists(to)
 
     // Add to both maps for bidirectional lookup
-    this.prerequisites.get(to)!.add(from);
-    this.postrequisites.get(from)!.add(to);
+    this.prerequisites.get(to)!.add(from)
+    this.postrequisites.get(from)!.add(to)
 
     // Invalidate caches since graph structure changed
-    this.clearCaches();
+    this.clearCaches()
   }
 
   /**
@@ -124,17 +124,17 @@ export class HorizontalRelationships {
    * @param to - The dependent block ID
    */
   removeRelationship(from: string, to: string): void {
-    const toPrereqs = this.prerequisites.get(to);
+    const toPrereqs = this.prerequisites.get(to)
     if (toPrereqs) {
-      toPrereqs.delete(from);
+      toPrereqs.delete(from)
     }
-    const fromPostreqs = this.postrequisites.get(from);
+    const fromPostreqs = this.postrequisites.get(from)
     if (fromPostreqs) {
-      fromPostreqs.delete(to);
+      fromPostreqs.delete(to)
     }
 
     // Invalidate caches since graph structure changed
-    this.clearCaches();
+    this.clearCaches()
   }
 
   /**
@@ -144,33 +144,33 @@ export class HorizontalRelationships {
    */
   removeBlock(blockId: string): void {
     // Remove all incoming edges (prerequisites pointing to this block)
-    const prereqs = this.prerequisites.get(blockId);
+    const prereqs = this.prerequisites.get(blockId)
     if (prereqs) {
       for (const prereqId of prereqs) {
-        const prereqPostreqs = this.postrequisites.get(prereqId);
+        const prereqPostreqs = this.postrequisites.get(prereqId)
         if (prereqPostreqs) {
-          prereqPostreqs.delete(blockId);
+          prereqPostreqs.delete(blockId)
         }
       }
     }
 
     // Remove all outgoing edges (postrequisites this block points to)
-    const postreqs = this.postrequisites.get(blockId);
+    const postreqs = this.postrequisites.get(blockId)
     if (postreqs) {
       for (const postreqId of postreqs) {
-        const postreqPrereqs = this.prerequisites.get(postreqId);
+        const postreqPrereqs = this.prerequisites.get(postreqId)
         if (postreqPrereqs) {
-          postreqPrereqs.delete(blockId);
+          postreqPrereqs.delete(blockId)
         }
       }
     }
 
     // Remove the block itself
-    this.prerequisites.delete(blockId);
-    this.postrequisites.delete(blockId);
+    this.prerequisites.delete(blockId)
+    this.postrequisites.delete(blockId)
 
     // Invalidate caches
-    this.clearCaches();
+    this.clearCaches()
   }
 
   /**
@@ -186,8 +186,8 @@ export class HorizontalRelationships {
    * ```
    */
   getPrerequisites(blockId: string): ReadonlySet<string> {
-    const prereqs = this.prerequisites.get(blockId);
-    return prereqs ? new Set(prereqs) : new Set();
+    const prereqs = this.prerequisites.get(blockId)
+    return prereqs ? new Set(prereqs) : new Set()
   }
 
   /**
@@ -203,8 +203,8 @@ export class HorizontalRelationships {
    * ```
    */
   getPostrequisites(blockId: string): ReadonlySet<string> {
-    const postreqs = this.postrequisites.get(blockId);
-    return postreqs ? new Set(postreqs) : new Set();
+    const postreqs = this.postrequisites.get(blockId)
+    return postreqs ? new Set(postreqs) : new Set()
   }
 
   /**
@@ -215,8 +215,8 @@ export class HorizontalRelationships {
    * @returns True if prerequisiteId is a direct prerequisite of blockId
    */
   hasPrerequisite(blockId: string, prerequisiteId: string): boolean {
-    const prereqs = this.prerequisites.get(blockId);
-    return prereqs ? prereqs.has(prerequisiteId) : false;
+    const prereqs = this.prerequisites.get(blockId)
+    return prereqs ? prereqs.has(prerequisiteId) : false
   }
 
   /**
@@ -227,8 +227,8 @@ export class HorizontalRelationships {
    * @returns True if postrequisiteId has blockId as a prerequisite
    */
   hasPostrequisite(blockId: string, postrequisiteId: string): boolean {
-    const postreqs = this.postrequisites.get(blockId);
-    return postreqs ? postreqs.has(postrequisiteId) : false;
+    const postreqs = this.postrequisites.get(blockId)
+    return postreqs ? postreqs.has(postrequisiteId) : false
   }
 
   /**
@@ -250,7 +250,7 @@ export class HorizontalRelationships {
       blockId,
       this.prerequisites,
       this.transitivePrereqsCache
-    );
+    )
   }
 
   /**
@@ -272,7 +272,7 @@ export class HorizontalRelationships {
       blockId,
       this.postrequisites,
       this.transitivePostreqsCache
-    );
+    )
   }
 
   /**
@@ -283,10 +283,10 @@ export class HorizontalRelationships {
    * @returns True if there is a directed path from 'from' to 'to'
    */
   hasPath(from: string, to: string): boolean {
-    if (from === to) return true;
+    if (from === to) return true
 
-    const allPostreqs = this.getAllPostrequisites(from);
-    return allPostreqs.has(to);
+    const allPostreqs = this.getAllPostrequisites(from)
+    return allPostreqs.has(to)
   }
 
   /**
@@ -307,7 +307,7 @@ export class HorizontalRelationships {
       this.prerequisites,
       this.postrequisites,
       () => this.getAllBlocks()
-    );
+    )
   }
 
   /**
@@ -328,7 +328,7 @@ export class HorizontalRelationships {
       this.prerequisites,
       this.postrequisites,
       () => this.getAllBlocks()
-    );
+    )
   }
 
   /**
@@ -337,7 +337,7 @@ export class HorizontalRelationships {
    * @returns A read-only set of all block IDs
    */
   getAllBlocks(): ReadonlySet<string> {
-    return new Set(this.prerequisites.keys());
+    return new Set(this.prerequisites.keys())
   }
 
   /**
@@ -346,7 +346,7 @@ export class HorizontalRelationships {
    * @returns The number of blocks
    */
   getBlockCount(): number {
-    return this.prerequisites.size;
+    return this.prerequisites.size
   }
 
   /**
@@ -355,20 +355,20 @@ export class HorizontalRelationships {
    * @returns The number of relationships (edges)
    */
   getRelationshipCount(): number {
-    let count = 0;
+    let count = 0
     for (const prereqs of this.prerequisites.values()) {
-      count += prereqs.size;
+      count += prereqs.size
     }
-    return count;
+    return count
   }
 
   /**
    * Clears all relationships and blocks from the graph.
    */
   clear(): void {
-    this.prerequisites.clear();
-    this.postrequisites.clear();
-    this.clearCaches();
+    this.prerequisites.clear()
+    this.postrequisites.clear()
+    this.clearCaches()
   }
 
   /**
@@ -376,8 +376,8 @@ export class HorizontalRelationships {
    * Called automatically when the graph structure changes.
    */
   private clearCaches(): void {
-    this.transitivePrereqsCache.clear();
-    this.transitivePostreqsCache.clear();
+    this.transitivePrereqsCache.clear()
+    this.transitivePostreqsCache.clear()
   }
 
   /**
@@ -386,22 +386,24 @@ export class HorizontalRelationships {
    * @returns A human-readable string showing all relationships
    */
   toString(): string {
-    const lines: string[] = [];
-    lines.push(`HorizontalRelationships (${this.getBlockCount()} blocks, ${this.getRelationshipCount()} relationships)`);
+    const lines: string[] = []
+    lines.push(
+      `HorizontalRelationships (${this.getBlockCount()} blocks, ${this.getRelationshipCount()} relationships)`
+    )
 
     for (const blockId of this.getAllBlocks()) {
-      const prereqs = Array.from(this.getPrerequisites(blockId));
-      const postreqs = Array.from(this.getPostrequisites(blockId));
+      const prereqs = Array.from(this.getPrerequisites(blockId))
+      const postreqs = Array.from(this.getPostrequisites(blockId))
 
-      lines.push(`  ${blockId}:`);
+      lines.push(`  ${blockId}:`)
       if (prereqs.length > 0) {
-        lines.push(`    Prerequisites: [${prereqs.join(', ')}]`);
+        lines.push(`    Prerequisites: [${prereqs.join(', ')}]`)
       }
       if (postreqs.length > 0) {
-        lines.push(`    Post-requisites: [${postreqs.join(', ')}]`);
+        lines.push(`    Post-requisites: [${postreqs.join(', ')}]`)
       }
     }
 
-    return lines.join('\n');
+    return lines.join('\n')
   }
 }

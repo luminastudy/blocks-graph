@@ -1,34 +1,36 @@
-import { useEffect, useRef, type CSSProperties } from 'react';
-import type { Block } from '../../types/block.js';
-import type { BlockSchemaV01 } from '../../adaptors/v0.1/types.js';
-import type { BlocksGraph } from '../../components/blocks-graph.js';
+import { useEffect, useRef, type CSSProperties } from 'react'
+import type { Block } from '../../types/block.js'
+import type { BlockSchemaV01 } from '../../adaptors/v0.1/types.js'
+import type { BlocksGraph } from '../../components/blocks-graph.js'
 
 // Import the web component to ensure it's registered
-import '../../index.js';
+import '../../index.js'
 
 export interface BlocksGraphProps {
   // Data props
-  blocks?: Block[];
-  blocksV01?: BlockSchemaV01[];
-  jsonUrl?: string;
+  blocks?: Block[]
+  blocksV01?: BlockSchemaV01[]
+  jsonUrl?: string
 
   // Configuration props
-  language?: 'en' | 'he';
-  orientation?: 'ttb' | 'ltr' | 'rtl' | 'btt';
-  showPrerequisites?: boolean;
-  showParents?: boolean;
-  nodeWidth?: number;
-  nodeHeight?: number;
-  horizontalSpacing?: number;
-  verticalSpacing?: number;
+  language?: 'en' | 'he'
+  orientation?: 'ttb' | 'ltr' | 'rtl' | 'btt'
+  showPrerequisites?: boolean
+  showParents?: boolean
+  nodeWidth?: number
+  nodeHeight?: number
+  horizontalSpacing?: number
+  verticalSpacing?: number
 
   // Event callbacks
-  onBlocksRendered?: (event: CustomEvent<{ blockCount: number }>) => void;
-  onBlockSelected?: (event: CustomEvent<{ blockId: string | null; selectionLevel: number }>) => void;
+  onBlocksRendered?: (event: CustomEvent<{ blockCount: number }>) => void
+  onBlockSelected?: (
+    event: CustomEvent<{ blockId: string | null; selectionLevel: number }>
+  ) => void
 
   // Standard props
-  className?: string;
-  style?: CSSProperties;
+  className?: string
+  style?: CSSProperties
 }
 
 /**
@@ -70,98 +72,98 @@ export function BlocksGraphReact({
   className,
   style,
 }: BlocksGraphProps) {
-  const ref = useRef<BlocksGraph>(null);
+  const ref = useRef<BlocksGraph>(null)
 
   // Load data when blocks change
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current) return
 
     if (blocks) {
       // Set internal format directly
-      ref.current.setBlocks(blocks);
+      ref.current.setBlocks(blocks)
     } else if (blocksV01) {
       // Convert from v0.1 schema
-      ref.current.loadFromJson(JSON.stringify(blocksV01), 'v0.1');
+      ref.current.loadFromJson(JSON.stringify(blocksV01), 'v0.1')
     } else if (jsonUrl) {
       // Load from URL
-      ref.current.loadFromUrl(jsonUrl, 'v0.1').catch(console.error);
+      ref.current.loadFromUrl(jsonUrl, 'v0.1').catch(console.error)
     }
-  }, [blocks, blocksV01, jsonUrl]);
+  }, [blocks, blocksV01, jsonUrl])
 
   // Sync configuration props
   useEffect(() => {
-    if (!ref.current) return;
-    ref.current.language = language;
-  }, [language]);
+    if (!ref.current) return
+    ref.current.language = language
+  }, [language])
 
   useEffect(() => {
-    if (!ref.current) return;
-    ref.current.orientation = orientation;
-  }, [orientation]);
+    if (!ref.current) return
+    ref.current.orientation = orientation
+  }, [orientation])
 
   useEffect(() => {
-    if (!ref.current) return;
-    ref.current.showPrerequisites = showPrerequisites;
-  }, [showPrerequisites]);
+    if (!ref.current) return
+    ref.current.showPrerequisites = showPrerequisites
+  }, [showPrerequisites])
 
   useEffect(() => {
-    if (!ref.current) return;
-    ref.current.showParents = showParents;
-  }, [showParents]);
+    if (!ref.current) return
+    ref.current.showParents = showParents
+  }, [showParents])
 
   // Sync layout props
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current) return
     if (nodeWidth !== undefined) {
-      ref.current.setAttribute('node-width', String(nodeWidth));
+      ref.current.setAttribute('node-width', String(nodeWidth))
     }
-  }, [nodeWidth]);
+  }, [nodeWidth])
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current) return
     if (nodeHeight !== undefined) {
-      ref.current.setAttribute('node-height', String(nodeHeight));
+      ref.current.setAttribute('node-height', String(nodeHeight))
     }
-  }, [nodeHeight]);
+  }, [nodeHeight])
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current) return
     if (horizontalSpacing !== undefined) {
-      ref.current.setAttribute('horizontal-spacing', String(horizontalSpacing));
+      ref.current.setAttribute('horizontal-spacing', String(horizontalSpacing))
     }
-  }, [horizontalSpacing]);
+  }, [horizontalSpacing])
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current) return
     if (verticalSpacing !== undefined) {
-      ref.current.setAttribute('vertical-spacing', String(verticalSpacing));
+      ref.current.setAttribute('vertical-spacing', String(verticalSpacing))
     }
-  }, [verticalSpacing]);
+  }, [verticalSpacing])
 
   // Event listeners
   useEffect(() => {
-    const element = ref.current;
-    if (!element || !onBlocksRendered) return;
+    const element = ref.current
+    if (!element || !onBlocksRendered) return
 
     const handler = (event: Event) => {
-      onBlocksRendered(event as CustomEvent);
-    };
+      onBlocksRendered(event as CustomEvent)
+    }
 
-    element.addEventListener('blocks-rendered', handler);
-    return () => element.removeEventListener('blocks-rendered', handler);
-  }, [onBlocksRendered]);
+    element.addEventListener('blocks-rendered', handler)
+    return () => element.removeEventListener('blocks-rendered', handler)
+  }, [onBlocksRendered])
 
   useEffect(() => {
-    const element = ref.current;
-    if (!element || !onBlockSelected) return;
+    const element = ref.current
+    if (!element || !onBlockSelected) return
 
     const handler = (event: Event) => {
-      onBlockSelected(event as CustomEvent);
-    };
+      onBlockSelected(event as CustomEvent)
+    }
 
-    element.addEventListener('block-selected', handler);
-    return () => element.removeEventListener('block-selected', handler);
-  }, [onBlockSelected]);
+    element.addEventListener('block-selected', handler)
+    return () => element.removeEventListener('block-selected', handler)
+  }, [onBlockSelected])
 
   return (
     <blocks-graph
@@ -170,5 +172,5 @@ export function BlocksGraphReact({
       // @ts-expect-error - React CSSProperties type conflicts with DOM CSSStyleDeclaration
       style={style}
     />
-  );
+  )
 }

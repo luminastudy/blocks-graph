@@ -7,6 +7,7 @@ The @luminastudy/blocks-graph library is a framework-agnostic Web Component for 
 This feature will create an `examples/` directory containing fully functional, standalone applications demonstrating the library's usage in both React and pure HTML contexts. These examples will serve as both learning resources for new users and validation that the library works correctly in different environments.
 
 **Business Value:**
+
 - Reduces onboarding time for new developers by providing working reference implementations
 - Validates library compatibility across different integration patterns
 - Serves as living documentation that stays in sync with the library's API

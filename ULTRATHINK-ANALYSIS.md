@@ -13,23 +13,25 @@ After deep analysis of the React example implementation, I identified and fixed 
 **Location**: `examples/react/src/AppWithWrapper.tsx`
 
 **Problem**:
+
 ```tsx
 // ❌ BEFORE (BROKEN)
-import { BlocksGraphReact, type Block } from '@luminastudy/blocks-graph/react';
+import { BlocksGraphReact, type Block } from '@luminastudy/blocks-graph/react'
 
 // State typed as internal Block[] format
-const [blocks, setBlocks] = useState<Block[] | null>(null);
+const [blocks, setBlocks] = useState<Block[] | null>(null)
 
 // Data fetched from API (v0.1 schema format with he_text/en_text)
-const data = await response.json();
-setBlocks(data);
+const data = await response.json()
+setBlocks(data)
 
 // Prop expects Block[] but receives BlockSchemaV01[]
-<BlocksGraphReact blocks={blocks} />
+;<BlocksGraphReact blocks={blocks} />
 ```
 
 **Root Cause**:
 The API returns data in **v0.1 schema format**:
+
 ```json
 {
   "title": {
@@ -40,6 +42,7 @@ The API returns data in **v0.1 schema format**:
 ```
 
 But I was treating it as **internal Block format**:
+
 ```json
 {
   "title": {
@@ -50,9 +53,11 @@ But I was treating it as **internal Block format**:
 ```
 
 **Runtime Error This Would Cause**:
+
 ```
 Cannot read property 'he' of undefined
 ```
+
 Because the wrapper would try to access `title.he` but the data has `title.he_text`.
 
 ---
@@ -61,20 +66,24 @@ Because the wrapper would try to access `title.he` but the data has `title.he_te
 
 ```tsx
 // ✅ AFTER (CORRECT)
-import { BlocksGraphReact, type BlockSchemaV01 } from '@luminastudy/blocks-graph/react';
+import {
+  BlocksGraphReact,
+  type BlockSchemaV01,
+} from '@luminastudy/blocks-graph/react'
 
 // State typed as v0.1 schema format (matches API response)
-const [blocks, setBlocks] = useState<BlockSchemaV01[] | null>(null);
+const [blocks, setBlocks] = useState<BlockSchemaV01[] | null>(null)
 
 // Data from API in v0.1 format
-const data = await response.json();
-setBlocks(data);
+const data = await response.json()
+setBlocks(data)
 
 // Use blocksV01 prop which auto-converts the format
-<BlocksGraphReact blocksV01={blocks} />
+;<BlocksGraphReact blocksV01={blocks} />
 ```
 
 **Why This Works**:
+
 1. ✅ Type matches data: `BlockSchemaV01[]` matches API response
 2. ✅ Correct prop: `blocksV01=` triggers auto-conversion
 3. ✅ Wrapper handles it: Internally calls `schemaV01Adaptor.adaptMany()`
@@ -86,36 +95,42 @@ setBlocks(data);
 ### Alternative Solutions I Considered
 
 #### Option A: Use `blocksV01` Prop (CHOSEN ✅)
+
 ```tsx
-const [blocks, setBlocks] = useState<BlockSchemaV01[] | null>(null);
-<BlocksGraphReact blocksV01={blocks} />
+const [blocks, setBlocks] = useState<BlockSchemaV01[] | null>(null)
+;<BlocksGraphReact blocksV01={blocks} />
 ```
 
 **Pros**:
+
 - ✅ Simpler code
 - ✅ Fewer imports
 - ✅ Demonstrates wrapper's flexibility
 - ✅ TypeScript catches errors at compile-time
 
 **Cons**:
+
 - ⚠️ Conversion happens on every render (minor performance impact)
 
 #### Option B: Manual Conversion
+
 ```tsx
-import { schemaV01Adaptor } from '@luminastudy/blocks-graph';
+import { schemaV01Adaptor } from '@luminastudy/blocks-graph'
 
-const data = await response.json();
-const converted = schemaV01Adaptor.adaptMany(data);
-setBlocks(converted);
+const data = await response.json()
+const converted = schemaV01Adaptor.adaptMany(data)
+setBlocks(converted)
 
-<BlocksGraphReact blocks={blocks} />
+;<BlocksGraphReact blocks={blocks} />
 ```
 
 **Pros**:
+
 - ✅ Conversion happens once
 - ✅ Slightly better performance
 
 **Cons**:
+
 - ❌ More code
 - ❌ Extra import
 - ❌ Less beginner-friendly
@@ -128,6 +143,7 @@ setBlocks(converted);
 ## 📊 What I Actually Updated in Examples
 
 ### Files Created ✅
+
 1. `examples/react/src/AppWithWrapper.tsx`
    - New example using React wrapper
    - Loads data from real API
@@ -136,12 +152,14 @@ setBlocks(converted);
    - **Now fixed with correct types and props**
 
 ### Files Modified ✅
+
 1. `examples/react/src/main.tsx`
+
    ```tsx
    // Uses AppWithWrapper by default
-   import AppWithWrapper from './AppWithWrapper';
+   import AppWithWrapper from './AppWithWrapper'
 
-   <React.StrictMode>
+   ;<React.StrictMode>
      <AppWithWrapper />
    </React.StrictMode>
    ```
@@ -152,6 +170,7 @@ setBlocks(converted);
    - Links to both implementations
 
 ### Files Unchanged (Still Available)
+
 1. `examples/react/src/App.tsx`
    - Original ref-based approach
    - Still works fine
@@ -180,6 +199,7 @@ pnpm dev
 ```
 
 **Expected Behavior**:
+
 1. ✅ Page loads without errors
 2. ✅ Graph displays Open University Combinatorics data
 3. ✅ Language toggle works (EN ↔ HE)
@@ -193,19 +213,24 @@ pnpm dev
 ## 🎯 Key Learnings
 
 ### 1. Data Format Awareness
+
 Always be aware of what format your data is in:
+
 - **External data** (from APIs) → Usually v0.1 schema format
 - **Internal usage** → Block format after conversion
 
 ### 2. Type Safety Catches Bugs
+
 ```tsx
 // TypeScript would catch this at compile-time
-const blocks: Block[] = apiData;  // ❌ Type error!
-const blocks: BlockSchemaV01[] = apiData;  // ✅ Correct!
+const blocks: Block[] = apiData // ❌ Type error!
+const blocks: BlockSchemaV01[] = apiData // ✅ Correct!
 ```
 
 ### 3. Wrapper Flexibility
+
 The wrapper supporting both `blocks=` and `blocksV01=` makes it very developer-friendly:
+
 - Beginners can use `blocksV01=` directly
 - Advanced users can pre-convert for performance
 
@@ -213,27 +238,29 @@ The wrapper supporting both `blocks=` and `blocksV01=` makes it very developer-f
 
 ## 📈 Example Quality Assessment
 
-| Aspect | Status | Notes |
-|--------|--------|-------|
-| **Type Safety** | ✅ FIXED | Now uses correct BlockSchemaV01 type |
-| **Prop Usage** | ✅ FIXED | Now uses blocksV01 prop |
-| **Error Handling** | ✅ GOOD | Try-catch with user feedback |
-| **Loading State** | ✅ GOOD | Shows "Loading..." message |
-| **Code Quality** | ✅ EXCELLENT | Clean, commented, educational |
-| **Real Data** | ✅ EXCELLENT | Uses actual course data from API |
-| **Interactive** | ✅ EXCELLENT | Full control panel |
-| **Documentation** | ✅ EXCELLENT | Inline comments explain everything |
+| Aspect             | Status       | Notes                                |
+| ------------------ | ------------ | ------------------------------------ |
+| **Type Safety**    | ✅ FIXED     | Now uses correct BlockSchemaV01 type |
+| **Prop Usage**     | ✅ FIXED     | Now uses blocksV01 prop              |
+| **Error Handling** | ✅ GOOD      | Try-catch with user feedback         |
+| **Loading State**  | ✅ GOOD      | Shows "Loading..." message           |
+| **Code Quality**   | ✅ EXCELLENT | Clean, commented, educational        |
+| **Real Data**      | ✅ EXCELLENT | Uses actual course data from API     |
+| **Interactive**    | ✅ EXCELLENT | Full control panel                   |
+| **Documentation**  | ✅ EXCELLENT | Inline comments explain everything   |
 
 ---
 
 ## 🚀 Production Readiness
 
 ### Before This Fix: ❌ BROKEN
+
 - Would crash at runtime
 - TypeScript types incorrect
 - User experience: Complete failure
 
 ### After This Fix: ✅ PRODUCTION READY
+
 - ✅ Correct types
 - ✅ Proper prop usage
 - ✅ Will run without errors
@@ -247,6 +274,7 @@ The wrapper supporting both `blocks=` and `blocksV01=` makes it very developer-f
 While the example is now correct, here are potential enhancements:
 
 ### 1. Add Error Boundary
+
 ```tsx
 <ErrorBoundary fallback={<ErrorDisplay />}>
   <AppWithWrapper />
@@ -254,6 +282,7 @@ While the example is now correct, here are potential enhancements:
 ```
 
 ### 2. Add Suspense for Loading
+
 ```tsx
 <Suspense fallback={<LoadingSpinner />}>
   <AppWithWrapper />
@@ -261,15 +290,17 @@ While the example is now correct, here are potential enhancements:
 ```
 
 ### 3. Add Data Validation
+
 ```tsx
-import { isBlockSchemaV01 } from '@luminastudy/blocks-graph';
+import { isBlockSchemaV01 } from '@luminastudy/blocks-graph'
 
 if (!data.every(isBlockSchemaV01)) {
-  throw new Error('Invalid data format');
+  throw new Error('Invalid data format')
 }
 ```
 
 ### 4. Add Performance Monitoring
+
 ```tsx
 useEffect(() => {
   performance.mark('graph-render-start');

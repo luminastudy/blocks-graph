@@ -2,9 +2,9 @@
  * Render the block graph with selection state
  */
 
-import type { Block } from '../types/block.js';
-import type { GraphEngine } from '../core/graph-engine.js';
-import type { GraphRenderer } from '../core/renderer.js';
+import type { Block } from '../types/block.js'
+import type { GraphEngine } from '../core/graph-engine.js'
+import type { GraphRenderer } from '../core/renderer.js'
 
 export function renderGraph(
   blocks: Block[],
@@ -15,7 +15,7 @@ export function renderGraph(
   orientation?: string
 ): { svg: SVGElement; blockCount: number } {
   // Build the full graph first
-  const fullGraph = engine.buildGraph(blocks);
+  const fullGraph = engine.buildGraph(blocks)
 
   // Categorize blocks based on selection state
   const { visible, dimmed } = engine.categorizeBlocks(
@@ -23,15 +23,15 @@ export function renderGraph(
     fullGraph,
     selectedBlockId,
     selectionLevel
-  );
+  )
 
   // Filter blocks to only those that should be rendered (visible or dimmed)
-  const blocksToRender = blocks.filter(block =>
-    visible.has(block.id) || dimmed.has(block.id)
-  );
+  const blocksToRender = blocks.filter(
+    block => visible.has(block.id) || dimmed.has(block.id)
+  )
 
   // Process the filtered blocks
-  const { graph, positioned } = engine.process(blocksToRender);
+  const { graph, positioned } = engine.process(blocksToRender)
 
   // Update renderer config with selection state and orientation
   renderer.updateConfig({
@@ -39,10 +39,10 @@ export function renderGraph(
     visibleBlocks: visible,
     dimmedBlocks: dimmed,
     orientation: orientation as 'ttb' | 'ltr' | 'rtl' | 'btt' | undefined,
-  });
+  })
 
   // Render the graph
-  const svg = renderer.render(graph, positioned);
+  const svg = renderer.render(graph, positioned)
 
-  return { svg, blockCount: blocksToRender.length };
+  return { svg, blockCount: blocksToRender.length }
 }

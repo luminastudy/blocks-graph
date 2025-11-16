@@ -5,6 +5,7 @@
 This feature adds configurable graph orientation to the `@luminastudy/blocks-graph` Web Component, allowing developers to control the directional flow of node layouts. Currently, the graph uses a fixed top-to-bottom (TTB) layout where parent nodes appear above their children. This enhancement will support multiple orientation modes: top-to-bottom (TTB), left-to-right (LTR), right-to-left (RTL), and bottom-to-top (BTT).
 
 **Business Value:**
+
 - **Internationalization Support**: RTL orientation aligns with Hebrew and Arabic reading patterns, improving UX for right-to-left language users
 - **Flexible Visualization**: Different orientation modes suit different use cases (e.g., organizational charts vs. process flows)
 - **Framework Consistency**: Maintains the component's framework-agnostic nature while extending layout capabilities
@@ -15,6 +16,7 @@ This feature extends the existing layout configuration system without breaking c
 ## Requirements
 
 ### Requirement 1: Orientation Configuration
+
 **Objective:** As a developer using the blocks-graph component, I want to specify the graph's orientation direction, so that nodes are arranged according to my preferred visual layout (top-to-bottom, left-to-right, right-to-left, or bottom-to-top).
 
 #### Acceptance Criteria
@@ -29,6 +31,7 @@ This feature extends the existing layout configuration system without breaking c
 8. WHERE the orientation is "ltr" or "rtl" THE BlocksGraph component SHALL apply horizontal spacing between levels and vertical spacing between siblings
 
 ### Requirement 2: Web Component Attribute Integration
+
 **Objective:** As a developer using HTML markup, I want to configure orientation using standard Web Component attributes, so that I can set the graph direction declaratively without JavaScript.
 
 #### Acceptance Criteria
@@ -39,6 +42,7 @@ This feature extends the existing layout configuration system without breaking c
 4. IF the component is already rendered with blocks AND the orientation changes THEN the BlocksGraph component SHALL automatically re-render without requiring manual data reload
 
 ### Requirement 3: JavaScript API Support
+
 **Objective:** As a developer using the imperative API, I want to set and get the orientation property programmatically, so that I can control graph direction through JavaScript code.
 
 #### Acceptance Criteria
@@ -49,6 +53,7 @@ This feature extends the existing layout configuration system without breaking c
 4. WHEN the orientation property is set via JavaScript THEN the corresponding HTML attribute SHALL be updated to maintain attribute-property synchronization
 
 ### Requirement 4: Layout Engine Adaptation
+
 **Objective:** As a system component, the GraphEngine needs to compute node positions based on orientation, so that blocks are correctly positioned according to the specified directional flow.
 
 #### Acceptance Criteria
@@ -61,6 +66,7 @@ This feature extends the existing layout configuration system without breaking c
 6. WHEN calculating block positions for any orientation THEN the GraphEngine SHALL maintain consistent spacing ratios and relative positioning between connected nodes
 
 ### Requirement 5: Edge Rendering Adaptation
+
 **Objective:** As a rendering component, the GraphRenderer needs to draw edges correctly for different orientations, so that relationship lines connect nodes appropriately regardless of layout direction.
 
 #### Acceptance Criteria
@@ -72,6 +78,7 @@ This feature extends the existing layout configuration system without breaking c
 5. WHERE edges connect nodes in any orientation THE GraphRenderer SHALL maintain visual consistency in line styling (stroke width, color, dash patterns)
 
 ### Requirement 6: Configuration Type Safety
+
 **Objective:** As a TypeScript developer, I want proper type definitions for orientation values, so that I get compile-time validation and IDE autocomplete when using the component.
 
 #### Acceptance Criteria
@@ -82,6 +89,7 @@ This feature extends the existing layout configuration system without breaking c
 4. WHEN developers use IDEs with TypeScript support THEN they SHALL receive autocomplete suggestions for valid orientation values
 
 ### Requirement 7: Backward Compatibility
+
 **Objective:** As an existing user of the blocks-graph component, I want my current implementations to continue working without changes, so that upgrading to the new version doesn't break my application.
 
 #### Acceptance Criteria
@@ -92,6 +100,7 @@ This feature extends the existing layout configuration system without breaking c
 4. WHEN the component loads with no orientation specified THEN all existing examples, tests, and documentation SHALL continue to function without modification
 
 ### Requirement 8: Documentation and Examples
+
 **Objective:** As a developer learning to use the orientation feature, I want clear documentation and examples, so that I can understand how to configure and use different orientations effectively.
 
 #### Acceptance Criteria
@@ -102,6 +111,7 @@ This feature extends the existing layout configuration system without breaking c
 4. WHEN developers view examples THEN at least one example SHALL demonstrate changing orientation dynamically and show the visual effect
 
 ### Requirement 9: Schema Validation Compatibility
+
 **Objective:** As a system ensuring data integrity, the existing schema validation must continue to work correctly regardless of graph orientation, so that block data remains valid and relationships are preserved.
 
 #### Acceptance Criteria
@@ -111,6 +121,7 @@ This feature extends the existing layout configuration system without breaking c
 3. WHEN the graph re-renders with a new orientation THEN block IDs, titles, and relationship references SHALL be preserved unchanged
 
 ### Requirement 10: Performance Consistency
+
 **Objective:** As a performance-conscious developer, I want orientation changes to have minimal performance impact, so that the graph remains responsive when switching between layout modes.
 
 #### Acceptance Criteria

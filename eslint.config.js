@@ -1,4 +1,4 @@
-import agentConfig from 'eslint-config-agent';
+import agentConfig from 'eslint-config-agent'
 
 export default [
   ...agentConfig,
@@ -48,4 +48,4 @@ export default [
       'error/require-custom-error': 'off',
     },
   },
-];
+]

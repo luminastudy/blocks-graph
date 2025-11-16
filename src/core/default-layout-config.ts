@@ -2,7 +2,7 @@
  * Default layout configuration
  */
 
-import type { GraphLayoutConfig } from './graph-layout-config.js';
+import type { GraphLayoutConfig } from './graph-layout-config.js'
 
 export const DEFAULT_LAYOUT_CONFIG: GraphLayoutConfig = {
   nodeWidth: 200,
@@ -10,4 +10,4 @@ export const DEFAULT_LAYOUT_CONFIG: GraphLayoutConfig = {
   horizontalSpacing: 80,
   verticalSpacing: 100,
   orientation: 'ttb',
-};
+}

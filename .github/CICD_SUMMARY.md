@@ -103,6 +103,7 @@ graph LR
 ### Prerequisites Setup
 
 1. **Create npm Automation Token**
+
    ```
    1. Go to https://www.npmjs.com/settings/[username]/tokens
    2. Click "Generate New Token" → "Automation"
@@ -110,6 +111,7 @@ graph LR
    ```
 
 2. **Add Token to GitHub**
+
    ```
    1. Go to repository Settings → Secrets → Actions
    2. Click "New repository secret"
@@ -139,6 +141,7 @@ pnpm release
 ```
 
 This will:
+
 - Run all checks
 - Update package.json version
 - Create git commit and tag
@@ -172,31 +175,37 @@ git push origin v0.1.0
 ### CI Workflow (`ci.yml`)
 
 **Triggers:**
+
 - Push to `main` or `develop`
 - Pull requests to `main` or `develop`
 
 **Jobs:**
+
 - **Quality Checks**: spell check, ESLint, TypeScript
 - **Tests**: Run on Node 18, 20, 22 (parallel)
 - **Build**: Compile and verify artifacts
 - **Storybook**: Build documentation site
 
 **Artifacts Uploaded:**
+
 - Build artifacts (7 days)
 - Storybook static site (7 days)
 
 ### Publish Workflow (`publish.yml`)
 
 **Triggers:**
+
 - Tags matching `v*.*.*` (e.g., v0.1.0, v1.2.3-beta.1)
 
 **Security Features:**
+
 - npm provenance (supply chain security)
 - OIDC authentication
 - Version verification
 - Pre-publish validation
 
 **Outputs:**
+
 - Published npm package
 - GitHub release
 - Release notes
@@ -204,13 +213,16 @@ git push origin v0.1.0
 ### Release Workflow (`release.yml`)
 
 **Triggers:**
+
 - Manual workflow dispatch
 
 **Inputs:**
+
 - Version number (e.g., 0.2.0)
 - Pre-release flag (boolean)
 
 **Actions:**
+
 - Updates package.json
 - Creates git commit and tag
 - Triggers publish workflow
@@ -227,12 +239,14 @@ Follow Semantic Versioning (SemVer):
 ## What Gets Published
 
 The npm package includes:
+
 - `dist/` - Compiled JavaScript and type definitions
 - `README.md` - Documentation
 - `LICENSE` - MIT license
 - `package.json` - Package metadata
 
 It excludes:
+
 - Source TypeScript files
 - Tests
 - Examples
@@ -240,6 +254,7 @@ It excludes:
 - Git files
 
 Verify with:
+
 ```bash
 npm pack --dry-run
 ```
@@ -264,16 +279,19 @@ npm pack --dry-run
 ## Monitoring
 
 ### Check CI Status
+
 ```
 https://github.com/luminastudy/blocks-graph/actions
 ```
 
 ### Check npm Package
+
 ```bash
 npm view @luminastudy/blocks-graph
 ```
 
 ### Check Coverage
+
 ```
 https://codecov.io/gh/luminastudy/blocks-graph
 ```
@@ -324,10 +342,12 @@ pnpm release -- major # Release major version
 ## Troubleshooting
 
 See detailed troubleshooting in:
+
 - `PUBLISHING.md` - Publishing issues
 - `.github/SETUP.md` - Setup issues
 
 Common issues:
+
 - **403 Forbidden**: Check NPM_TOKEN is valid
 - **Version mismatch**: Tag must match package.json
 - **Build fails**: Run `pnpm build` locally first
@@ -343,6 +363,7 @@ Common issues:
 ## Support
 
 For issues:
+
 1. Check workflow logs in GitHub Actions
 2. Review documentation (PUBLISHING.md, SETUP.md)
 3. Open an issue on GitHub

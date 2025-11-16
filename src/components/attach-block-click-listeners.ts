@@ -7,18 +7,20 @@ export function attachBlockClickListeners(
   handleBlockClick: (blockId: string) => void,
   dispatchEvent: (event: Event) => boolean
 ): void {
-  const blockElements = svg.querySelectorAll('.block');
-  blockElements.forEach((blockEl) => {
-    const blockId = blockEl.getAttribute('data-id');
+  const blockElements = svg.querySelectorAll('.block')
+  blockElements.forEach(blockEl => {
+    const blockId = blockEl.getAttribute('data-id')
     if (blockId) {
       blockEl.addEventListener('click', () => {
-        handleBlockClick(blockId);
-      });
+        handleBlockClick(blockId)
+      })
     }
-  });
+  })
 
   // Dispatch custom event when render is complete
-  dispatchEvent(new CustomEvent('blocks-rendered', {
-    detail: { blockCount },
-  }));
+  dispatchEvent(
+    new CustomEvent('blocks-rendered', {
+      detail: { blockCount },
+    })
+  )
 }

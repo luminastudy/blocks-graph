@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - CI/CD pipeline with GitHub Actions
 - Automated npm publishing on version tags
 - Comprehensive publishing documentation
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - npm provenance for supply chain security
 
 ### Changed
+
 - Updated package.json with publishConfig for public access
 - Removed non-existent React wrapper from exports
 - Added author, bugs, and homepage fields to package.json
@@ -24,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - Initial Release
 
 ### Added
+
 - Framework-agnostic Web Component for visualizing block graphs
 - Support for schema v0.1 with JSON validation
 - Bilingual support (Hebrew and English)
@@ -41,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Spell checking with cspell
 
 ### Core Components
+
 - `BlocksGraph` Web Component with Shadow DOM
 - `GraphEngine` for graph building and layout
 - `GraphRenderer` for SVG rendering
@@ -49,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Custom error classes for better error handling
 
 ### Features
+
 - Automatic graph layout with level-based positioning
 - Orientation-aware edge rendering
 - Text wrapping with truncation support

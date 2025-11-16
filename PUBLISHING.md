@@ -11,6 +11,7 @@ The package uses an automated CI/CD pipeline powered by GitHub Actions. Publishi
 ### 1. npm Account Setup
 
 Ensure you have:
+
 - An npm account with publish permissions for `@luminastudy` scope
 - Two-factor authentication (2FA) enabled on your npm account
 
@@ -67,6 +68,7 @@ pnpm release -- --preRelease=alpha # 0.1.0 → 0.1.1-alpha.0
 ```
 
 **What `release-it` does:**
+
 1. Runs pre-publish checks (tests, lint, build)
 2. Bumps version in package.json
 3. Creates git commit and tag
@@ -181,21 +183,27 @@ Before each release, update `CHANGELOG.md`:
 ## [X.Y.Z] - YYYY-MM-DD
 
 ### Added
+
 - New features
 
 ### Changed
+
 - Changes to existing functionality
 
 ### Deprecated
+
 - Soon-to-be removed features
 
 ### Removed
+
 - Removed features
 
 ### Fixed
+
 - Bug fixes
 
 ### Security
+
 - Security fixes
 ```
 
@@ -208,6 +216,7 @@ Commit the changelog update before running `pnpm release`.
 **Cause**: Tag version doesn't match package.json version.
 
 **Solution**:
+
 ```bash
 # Check package.json version
 cat package.json | grep version
@@ -229,6 +238,7 @@ git push origin v0.1.0
 **Cause**: Invalid or expired `NPM_TOKEN`, or insufficient permissions.
 
 **Solution**:
+
 1. Create new automation token on npmjs.com
 2. Update `NPM_TOKEN` in GitHub secrets
 3. Ensure token has publish permission for `@luminastudy` scope
@@ -239,6 +249,7 @@ git push origin v0.1.0
 **Cause**: package-lock.json or pnpm-lock.yaml is out of sync.
 
 **Solution**:
+
 ```bash
 # Delete lock file and node_modules
 rm -rf node_modules pnpm-lock.yaml
@@ -256,6 +267,7 @@ git commit -m "chore: update lock file"
 **Cause**: Build failed silently or files not included.
 
 **Solution**:
+
 ```bash
 # Clean build
 rm -rf dist
@@ -273,6 +285,7 @@ ls -la dist/
 **Cause**: Environment differences, missing dependencies, or timing issues.
 
 **Solution**:
+
 1. Check Node.js version matches CI (18, 20, or 22)
 2. Clear local cache: `pnpm store prune`
 3. Fresh install: `rm -rf node_modules && pnpm install`
@@ -307,6 +320,7 @@ git push origin v0.1.0
 After publishing, verify:
 
 1. **npm Registry**
+
    ```bash
    # Check package is live
    npm view @luminastudy/blocks-graph
@@ -321,6 +335,7 @@ After publishing, verify:
    - Check release notes
 
 3. **Installation Test**
+
    ```bash
    # In a test directory
    mkdir test-install && cd test-install
@@ -357,6 +372,7 @@ npm deprecate @luminastudy/blocks-graph@0.1.0 "This version has critical bugs. U
 ### npm Provenance
 
 The publish workflow uses `--provenance` flag for:
+
 - Cryptographic proof of package origin
 - Links package to source code commit
 - Verifiable build process

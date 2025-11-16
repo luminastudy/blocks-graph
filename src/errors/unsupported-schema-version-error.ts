@@ -3,7 +3,7 @@
  */
 export class UnsupportedSchemaVersionError extends Error {
   constructor(public readonly version: string) {
-    super(`Unsupported schema version: ${version}`);
-    this.name = 'UnsupportedSchemaVersionError';
+    super(`Unsupported schema version: ${version}`)
+    this.name = 'UnsupportedSchemaVersionError'
   }
 }

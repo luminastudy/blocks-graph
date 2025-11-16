@@ -40,19 +40,19 @@ Adaptors use JSON Schema validation to ensure data integrity. Invalid data is ei
 
 ```typescript
 // Import the adaptor for your schema version
-import { schemaV0XAdaptor } from './adaptors/v0.X/adaptor.js';
+import { schemaV0XAdaptor } from './adaptors/v0.X/adaptor.js'
 
 // Validate data
 if (Adaptor.validate(externalData)) {
   // Adapt to internal format
-  const blocks = adaptor.adapt(externalData);
+  const blocks = adaptor.adapt(externalData)
 }
 
 // Parse and adapt from JSON
-const blocks = adaptor.adaptFromJson(jsonString);
+const blocks = adaptor.adaptFromJson(jsonString)
 
 // Adapt multiple blocks
-const blocks = adaptor.adaptMany(externalDataArray);
+const blocks = adaptor.adaptMany(externalDataArray)
 ```
 
 ## Adding New Adaptors

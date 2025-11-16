@@ -13,34 +13,34 @@ function computeAllPrerequisites(
   cache: Map<string, Set<string>>
 ): ReadonlySet<string> {
   // Check cache first - must retrieve value before checking
-  const cached = cache.get(blockId);
+  const cached = cache.get(blockId)
   if (cached) {
-    return cached;
+    return cached
   }
 
-  const allPrereqs = new Set<string>();
-  const visited = new Set<string>();
+  const allPrereqs = new Set<string>()
+  const visited = new Set<string>()
 
   const dfs = (currentId: string): void => {
     // Guard clause at start of nested function
-    if (visited.has(currentId)) return;
-    visited.add(currentId);
+    if (visited.has(currentId)) return
+    visited.add(currentId)
 
-    const directPrereqs = prerequisites.get(currentId);
-    if (!directPrereqs) return;
+    const directPrereqs = prerequisites.get(currentId)
+    if (!directPrereqs) return
 
     for (const prereqId of directPrereqs) {
-      allPrereqs.add(prereqId);
-      dfs(prereqId);
+      allPrereqs.add(prereqId)
+      dfs(prereqId)
     }
-  };
+  }
 
-  dfs(blockId);
+  dfs(blockId)
 
   // Cache the result
-  cache.set(blockId, allPrereqs);
+  cache.set(blockId, allPrereqs)
 
-  return allPrereqs;
+  return allPrereqs
 }
 
 /**
@@ -53,33 +53,33 @@ function computeAllPostrequisites(
   cache: Map<string, Set<string>>
 ): ReadonlySet<string> {
   // Check cache first - must retrieve value before checking
-  const cached = cache.get(blockId);
+  const cached = cache.get(blockId)
   if (cached) {
-    return cached;
+    return cached
   }
 
-  const allPostreqs = new Set<string>();
-  const visited = new Set<string>();
+  const allPostreqs = new Set<string>()
+  const visited = new Set<string>()
 
   const dfs = (currentId: string): void => {
-    if (visited.has(currentId)) return;
-    visited.add(currentId);
+    if (visited.has(currentId)) return
+    visited.add(currentId)
 
-    const directPostreqs = postrequisites.get(currentId);
-    if (!directPostreqs) return;
+    const directPostreqs = postrequisites.get(currentId)
+    if (!directPostreqs) return
 
     for (const postreqId of directPostreqs) {
-      allPostreqs.add(postreqId);
-      dfs(postreqId);
+      allPostreqs.add(postreqId)
+      dfs(postreqId)
     }
-  };
+  }
 
-  dfs(blockId);
+  dfs(blockId)
 
   // Cache the result
-  cache.set(blockId, allPostreqs);
+  cache.set(blockId, allPostreqs)
 
-  return allPostreqs;
+  return allPostreqs
 }
 
 /**
@@ -91,59 +91,59 @@ function detectCyclesInGraph(
   postrequisites: Map<string, Set<string>>,
   getAllBlocksSet: () => Iterable<string>
 ): string[][] | null {
-  const colors = new Map<string, 'white' | 'gray' | 'black'>();
-  const parent = new Map<string, string>();
-  const cycles: string[][] = [];
+  const colors = new Map<string, 'white' | 'gray' | 'black'>()
+  const parent = new Map<string, string>()
+  const cycles: string[][] = []
 
   // Initialize all blocks as unvisited (white)
   for (const blockId of getAllBlocksSet()) {
-    colors.set(blockId, 'white');
+    colors.set(blockId, 'white')
   }
 
   const dfs = (blockId: string): boolean => {
-    colors.set(blockId, 'gray'); // Mark as being processed
+    colors.set(blockId, 'gray') // Mark as being processed
 
-    const postreqs = postrequisites.get(blockId);
+    const postreqs = postrequisites.get(blockId)
     if (postreqs) {
       for (const postreqId of postreqs) {
-        const color = colors.get(postreqId);
+        const color = colors.get(postreqId)
 
         if (color === 'gray') {
           // Found a back edge - cycle detected
-          const cycle: string[] = [postreqId];
-          let current: string | null = blockId;
+          const cycle: string[] = [postreqId]
+          let current: string | null = blockId
 
           while (current && current !== postreqId) {
-            cycle.unshift(current);
-            current = parent.get(current) ?? null;
+            cycle.unshift(current)
+            current = parent.get(current) ?? null
           }
 
-          cycle.unshift(postreqId); // Complete the cycle
-          cycles.push(cycle);
-          return true;
+          cycle.unshift(postreqId) // Complete the cycle
+          cycles.push(cycle)
+          return true
         }
         if (color === 'white') {
-          parent.set(postreqId, blockId);
+          parent.set(postreqId, blockId)
           if (dfs(postreqId)) {
-            return true;
+            return true
           }
         }
       }
     }
 
-    colors.set(blockId, 'black'); // Mark as fully processed
-    return false;
-  };
+    colors.set(blockId, 'black') // Mark as fully processed
+    return false
+  }
 
   // Run DFS from each unvisited block
   for (const blockId of getAllBlocksSet()) {
     if (colors.get(blockId) !== 'white') {
-      continue;
+      continue
     }
-    dfs(blockId);
+    dfs(blockId)
   }
 
-  return cycles.length > 0 ? cycles : null;
+  return cycles.length > 0 ? cycles : null
 }
 
 /**
@@ -156,41 +156,41 @@ function computeTopologicalOrder(
   getAllBlocksSet: () => Iterable<string>
 ): string[] | null {
   // Calculate in-degrees
-  const inDegree = new Map<string, number>();
+  const inDegree = new Map<string, number>()
   for (const blockId of getAllBlocksSet()) {
-    const prereqs = prerequisites.get(blockId);
-    inDegree.set(blockId, prereqs ? prereqs.size : 0);
+    const prereqs = prerequisites.get(blockId)
+    inDegree.set(blockId, prereqs ? prereqs.size : 0)
   }
 
   // Queue of blocks with no prerequisites
-  const queue: string[] = [];
+  const queue: string[] = []
   for (const [blockId, degree] of inDegree.entries()) {
     if (degree !== 0) {
-      continue;
+      continue
     }
-    queue.push(blockId);
+    queue.push(blockId)
   }
 
-  const order: string[] = [];
+  const order: string[] = []
 
   while (queue.length > 0) {
-    const blockId = queue.shift();
-    if (!blockId) continue;
+    const blockId = queue.shift()
+    if (!blockId) continue
 
-    order.push(blockId);
+    order.push(blockId)
 
     // Reduce in-degree of dependent blocks
-    const postreqs = postrequisites.get(blockId);
+    const postreqs = postrequisites.get(blockId)
     if (postreqs) {
       for (const postreqId of postreqs) {
-        const degree = inDegree.get(postreqId);
-        if (degree === undefined) continue;
+        const degree = inDegree.get(postreqId)
+        if (degree === undefined) continue
 
-        const newDegree = degree - 1;
-        inDegree.set(postreqId, newDegree);
+        const newDegree = degree - 1
+        inDegree.set(postreqId, newDegree)
 
         if (newDegree === 0) {
-          queue.push(postreqId);
+          queue.push(postreqId)
         }
       }
     }
@@ -198,10 +198,10 @@ function computeTopologicalOrder(
 
   // Check if all blocks were processed (no cycles)
   if (order.length !== inDegree.size) {
-    return null; // Cycle detected
+    return null // Cycle detected
   }
 
-  return order;
+  return order
 }
 
 /**
@@ -212,4 +212,4 @@ export const HorizontalRelationshipsAlgorithms = {
   computeAllPostrequisites,
   detectCyclesInGraph,
   computeTopologicalOrder,
-};
+}

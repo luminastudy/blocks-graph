@@ -1,15 +1,15 @@
-import type { Block } from '../types/block.js';
-import { GraphEngine } from '../core/graph-engine.js';
-import { GraphRenderer } from '../core/renderer.js';
-import { schemaV01Adaptor } from '../adaptors/v0.1/instance.js';
-import { createStyles } from './create-styles.js';
-import { createEmptyStateMessage } from './create-empty-state-message.js';
-import { createErrorMessage } from './create-error-message.js';
-import { attachBlockClickListeners } from './attach-block-click-listeners.js';
-import { renderGraph } from './render-graph.js';
-import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-version-error.js';
-import { BlocksFetchError } from '../errors/blocks-fetch-error.js';
-import { parseLayoutConfigFromAttributes } from './parse-layout-config-from-attributes.js';
+import type { Block } from '../types/block.js'
+import { GraphEngine } from '../core/graph-engine.js'
+import { GraphRenderer } from '../core/renderer.js'
+import { schemaV01Adaptor } from '../adaptors/v0.1/instance.js'
+import { createStyles } from './create-styles.js'
+import { createEmptyStateMessage } from './create-empty-state-message.js'
+import { createErrorMessage } from './create-error-message.js'
+import { attachBlockClickListeners } from './attach-block-click-listeners.js'
+import { renderGraph } from './render-graph.js'
+import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-version-error.js'
+import { BlocksFetchError } from '../errors/blocks-fetch-error.js'
+import { parseLayoutConfigFromAttributes } from './parse-layout-config-from-attributes.js'
 
 /**
  * Custom element for rendering block graphs
@@ -24,17 +24,17 @@ import { parseLayoutConfigFromAttributes } from './parse-layout-config-from-attr
  * ```
  */
 export class BlocksGraph extends HTMLElement {
-  private engine: GraphEngine;
-  private renderer: GraphRenderer;
-  private blocks: Block[] = [];
-  private selectedBlockId: string | null = null;
-  private selectionLevel: number = 0; // 0=default, 1=graph shown, 2=graph+sub-blocks shown
+  private engine: GraphEngine
+  private renderer: GraphRenderer
+  private blocks: Block[] = []
+  private selectedBlockId: string | null = null
+  private selectionLevel: number = 0 // 0=default, 1=graph shown, 2=graph+sub-blocks shown
 
   constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-    this.engine = new GraphEngine();
-    this.renderer = new GraphRenderer();
+    super()
+    this.attachShadow({ mode: 'open' })
+    this.engine = new GraphEngine()
+    this.renderer = new GraphRenderer()
   }
 
   /**
@@ -50,62 +50,66 @@ export class BlocksGraph extends HTMLElement {
       'horizontal-spacing',
       'vertical-spacing',
       'orientation',
-    ];
+    ]
   }
 
   /**
    * Called when the element is connected to the DOM
    */
   connectedCallback(): void {
-    this.render();
+    this.render()
   }
 
   /**
    * Called when an observed attribute changes
    */
-  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
+  attributeChangedCallback(
+    name: string,
+    oldValue: string | null,
+    newValue: string | null
+  ): void {
     if (oldValue === newValue) {
-      return;
+      return
     }
 
     switch (name) {
       case 'language':
         if (newValue === 'en' || newValue === 'he') {
-          this.renderer.updateConfig({ language: newValue });
+          this.renderer.updateConfig({ language: newValue })
         }
-        break;
+        break
       case 'show-prerequisites':
-        this.renderer.updateConfig({ showPrerequisites: newValue === 'true' });
-        break;
+        this.renderer.updateConfig({ showPrerequisites: newValue === 'true' })
+        break
       case 'show-parents':
-        this.renderer.updateConfig({ showParents: newValue === 'true' });
-        break;
+        this.renderer.updateConfig({ showParents: newValue === 'true' })
+        break
       case 'node-width':
       case 'node-height':
       case 'horizontal-spacing':
       case 'vertical-spacing':
       case 'orientation':
-        this.updateLayoutConfig();
-        break;
+        this.updateLayoutConfig()
+        break
     }
 
-    this.render();
+    this.render()
   }
 
   /**
    * Update layout configuration from attributes
    */
   private updateLayoutConfig(): void {
-    const config = parseLayoutConfigFromAttributes(this);
-    this.engine = new GraphEngine(config);
+    const config = parseLayoutConfigFromAttributes(this)
+    this.engine = new GraphEngine(config)
   }
 
   /**
    * Set blocks data directly
    */
   setBlocks(blocks: Block[]): void {
-    this.blocks = blocks;
-    this.render();
+    this.blocks = blocks
+    this.render()
   }
 
   /**
@@ -113,33 +117,36 @@ export class BlocksGraph extends HTMLElement {
    */
   loadFromJson(json: string, schemaVersion: 'v0.1' = 'v0.1'): void {
     if (schemaVersion === 'v0.1') {
-      this.blocks = schemaV01Adaptor.adaptFromJson(json);
-      this.render();
-    }
-    else {
-      throw new UnsupportedSchemaVersionError(schemaVersion);
+      this.blocks = schemaV01Adaptor.adaptFromJson(json)
+      this.render()
+    } else {
+      throw new UnsupportedSchemaVersionError(schemaVersion)
     }
   }
 
   /**
    * Load blocks from a URL
    */
-  async loadFromUrl(url: string, schemaVersion: 'v0.1' = 'v0.1'): Promise<void> {
+  async loadFromUrl(
+    url: string,
+    schemaVersion: 'v0.1' = 'v0.1'
+  ): Promise<void> {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url)
       if (!response.ok) {
-        throw new BlocksFetchError(url, response.statusText);
+        throw new BlocksFetchError(url, response.statusText)
       }
-      const json = await response.text();
-      this.loadFromJson(json, schemaVersion);
-    }
-    catch (error) {
-      console.error('Error loading blocks from URL:', error);
-      this.shadowRoot!.innerHTML = '';
-      this.shadowRoot!.appendChild(createStyles());
+      const json = await response.text()
+      this.loadFromJson(json, schemaVersion)
+    } catch (error) {
+      console.error('Error loading blocks from URL:', error)
+      this.shadowRoot!.innerHTML = ''
+      this.shadowRoot!.appendChild(createStyles())
       this.shadowRoot!.appendChild(
-        createErrorMessage(error instanceof Error ? error.message : 'Unknown error')
-      );
+        createErrorMessage(
+          error instanceof Error ? error.message : 'Unknown error'
+        )
+      )
     }
   }
 
@@ -150,28 +157,30 @@ export class BlocksGraph extends HTMLElement {
   private handleBlockClick(blockId: string): void {
     if (this.selectedBlockId === blockId) {
       // Same block clicked - advance selection level
-      this.selectionLevel++;
+      this.selectionLevel++
       if (this.selectionLevel > 2) {
         // Reset to default
-        this.selectedBlockId = null;
-        this.selectionLevel = 0;
+        this.selectedBlockId = null
+        this.selectionLevel = 0
       }
     } else {
       // Different block clicked - select it at level 1
-      this.selectedBlockId = blockId;
-      this.selectionLevel = 1;
+      this.selectedBlockId = blockId
+      this.selectionLevel = 1
     }
 
     // Dispatch custom event for block selection
-    this.dispatchEvent(new CustomEvent('block-selected', {
-      detail: {
-        blockId: this.selectedBlockId,
-        selectionLevel: this.selectionLevel
-      },
-    }));
+    this.dispatchEvent(
+      new CustomEvent('block-selected', {
+        detail: {
+          blockId: this.selectedBlockId,
+          selectionLevel: this.selectionLevel,
+        },
+      })
+    )
 
     // Re-render with new selection
-    this.render();
+    this.render()
   }
 
   /**
@@ -179,14 +188,14 @@ export class BlocksGraph extends HTMLElement {
    */
   private render(): void {
     // Clear previous content
-    this.shadowRoot!.innerHTML = '';
+    this.shadowRoot!.innerHTML = ''
 
     // Add styles
-    this.shadowRoot!.appendChild(createStyles());
+    this.shadowRoot!.appendChild(createStyles())
 
     if (this.blocks.length === 0) {
-      this.shadowRoot!.appendChild(createEmptyStateMessage());
-      return;
+      this.shadowRoot!.appendChild(createEmptyStateMessage())
+      return
     }
 
     try {
@@ -197,20 +206,21 @@ export class BlocksGraph extends HTMLElement {
         this.selectedBlockId,
         this.selectionLevel,
         this.getAttribute('orientation') ?? undefined
-      );
-      this.shadowRoot!.appendChild(svg);
+      )
+      this.shadowRoot!.appendChild(svg)
       attachBlockClickListeners(
         svg,
         blockCount,
-        (blockId) => this.handleBlockClick(blockId),
-        (event) => this.dispatchEvent(event)
-      );
-    }
-    catch (error) {
-      console.error('Error rendering graph:', error);
+        blockId => this.handleBlockClick(blockId),
+        event => this.dispatchEvent(event)
+      )
+    } catch (error) {
+      console.error('Error rendering graph:', error)
       this.shadowRoot!.appendChild(
-        createErrorMessage(error instanceof Error ? error.message : 'Unknown error')
-      );
+        createErrorMessage(
+          error instanceof Error ? error.message : 'Unknown error'
+        )
+      )
     }
   }
 
@@ -218,60 +228,60 @@ export class BlocksGraph extends HTMLElement {
    * Get current language
    */
   get language(): string {
-    return this.getAttribute('language') ?? 'en';
+    return this.getAttribute('language') ?? 'en'
   }
 
   /**
    * Set language
    */
   set language(value: string) {
-    this.setAttribute('language', value);
+    this.setAttribute('language', value)
   }
 
   /**
    * Get show-prerequisites setting
    */
   get showPrerequisites(): boolean {
-    return this.getAttribute('show-prerequisites') !== 'false';
+    return this.getAttribute('show-prerequisites') !== 'false'
   }
 
   /**
    * Set show-prerequisites
    */
   set showPrerequisites(value: boolean) {
-    this.setAttribute('show-prerequisites', String(value));
+    this.setAttribute('show-prerequisites', String(value))
   }
 
   /**
    * Get show-parents setting
    */
   get showParents(): boolean {
-    return this.getAttribute('show-parents') !== 'false';
+    return this.getAttribute('show-parents') !== 'false'
   }
 
   /**
    * Set show-parents
    */
   set showParents(value: boolean) {
-    this.setAttribute('show-parents', String(value));
+    this.setAttribute('show-parents', String(value))
   }
 
   /**
    * Get current orientation
    */
   get orientation(): string {
-    return this.getAttribute('orientation') ?? 'ttb';
+    return this.getAttribute('orientation') ?? 'ttb'
   }
 
   /**
    * Set orientation programmatically
    */
   set orientation(value: string) {
-    this.setAttribute('orientation', value);
+    this.setAttribute('orientation', value)
   }
 }
 
 // Register the custom element
 if (!customElements.get('blocks-graph')) {
-  customElements.define('blocks-graph', BlocksGraph);
+  customElements.define('blocks-graph', BlocksGraph)
 }

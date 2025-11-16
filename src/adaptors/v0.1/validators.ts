@@ -3,9 +3,9 @@
  * Uses JSON Schema validation from @tupe12334/block-schema
  */
 
-import type { BlockSchemaV01 } from './types.js';
-import { validateBlock } from './validator-setup.js';
+import type { BlockSchemaV01 } from './types.js'
+import { validateBlock } from './validator-setup.js'
 
 export function isBlockSchemaV01(obj: unknown): obj is BlockSchemaV01 {
-  return validateBlock(obj);
+  return validateBlock(obj)
 }

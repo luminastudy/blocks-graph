@@ -2,7 +2,7 @@
  * Default renderer configuration
  */
 
-import type { RendererConfig } from './renderer-config.js';
+import type { RendererConfig } from './renderer-config.js'
 
 export const DEFAULT_RENDERER_CONFIG: RendererConfig = {
   language: 'en',
@@ -33,4 +33,4 @@ export const DEFAULT_RENDERER_CONFIG: RendererConfig = {
       strokeWidth: 2,
     },
   },
-};
+}

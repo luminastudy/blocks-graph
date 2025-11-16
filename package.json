@@ -31,13 +31,16 @@
     "test:coverage": "vitest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,json,md}\"",
     "typecheck": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "prepublishOnly": "pnpm run build",
     "release": "release-it",
     "spell": "cspell lint --no-progress --show-suggestions \"**/*.{ts,tsx,js,jsx,mjs,md,json}\"",
-    "spell:check": "cspell lint --no-progress \"**/*.{ts,tsx,js,jsx,mjs,md,json}\""
+    "spell:check": "cspell lint --no-progress \"**/*.{ts,tsx,js,jsx,mjs,md,json}\"",
+    "prepare": "husky"
   },
   "keywords": [
     "visualization",
@@ -64,6 +67,8 @@
   },
   "packageManager": "pnpm@10.21.0",
   "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
     "@storybook/addon-a11y": "^8",
     "@storybook/addon-essentials": "^8",
     "@storybook/addon-interactions": "^8",
@@ -80,8 +85,11 @@
     "esbuild": "^0.25.12",
     "eslint": "^9.17.0",
     "eslint-config-agent": "^1.7.1",
+    "husky": "^9.1.7",
     "jsdom": "^25.0.1",
+    "lint-staged": "^16.2.6",
     "lit": "^3",
+    "prettier": "^3.6.2",
     "release-it": "^17.10.0",
     "storybook": "^8",
     "typescript": "^5.7.2",

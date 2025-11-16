@@ -33,6 +33,7 @@ This feature creates runnable example applications demonstrating the integration
 The @luminastudy/blocks-graph library is structured as a framework-agnostic Web Component with the following architecture:
 
 **Current Architecture Patterns:**
+
 - Web Component standard using Custom Elements API
 - ES Module distribution via esbuild bundler
 - TypeScript-first development with full type definitions
@@ -41,18 +42,21 @@ The @luminastudy/blocks-graph library is structured as a framework-agnostic Web 
 - Declarative configuration via HTML attributes (language, show-prerequisites, etc.)
 
 **Existing Domain Boundaries:**
+
 - Core rendering engine (`GraphEngine`, `GraphRenderer`)
 - Schema adaptors for version compatibility (`schemaV01Adaptor`)
 - Component layer (`BlocksGraph` custom element)
 - Type definitions for public API
 
 **Integration Points to Maintain:**
+
 - Examples must import from built `dist/index.js` bundle
 - Examples depend on successful `pnpm build` execution
 - Examples use the same v0.1 schema format as documented in README
 
 **Technical Debt Addressed:**
 The existing `example.html` file at the project root demonstrates HTML integration but lacks:
+
 - Proper project structure and organization
 - Framework integration patterns
 - Separation of sample data
@@ -99,6 +103,7 @@ graph TB
 ```
 
 **Architecture Integration:**
+
 - **Existing patterns preserved**: Examples follow the same Web Component integration pattern shown in README.md and existing example.html
 - **New components rationale**:
   - Structured examples directory provides organization and discoverability
@@ -112,12 +117,14 @@ graph TB
 This feature extends the existing technology stack without introducing architectural changes:
 
 **Existing Stack Alignment:**
+
 - **Pure HTML Example**: Uses native ES modules matching the library's ES module distribution
 - **React Example**: Uses Vite build tool (already present in project for Storybook)
 - **TypeScript**: React example uses TypeScript with the same target (ES2022) and strict settings as the library
 - **Package Management**: Uses pnpm workspace protocol for local library dependency
 
 **New Dependencies Introduced:**
+
 - React example adds: `react`, `react-dom`, `@types/react`, `@types/react-dom`, `@vitejs/plugin-react`
 - All dependencies are development-only and scoped to the React example subdirectory
 - No new dependencies added to the core library
@@ -134,6 +141,7 @@ React example requires React runtime and Vite plugin for JSX transformation. The
 **Context**: Both HTML and React examples require sample block data for demonstration. The data must comply with v0.1 schema and show meaningful relationships.
 
 **Alternatives:**
+
 1. **Inline data in each example** - Embed JSON directly in HTML/React code
 2. **Separate data files per example** - Create `examples/html/data.json` and `examples/react/data.json`
 3. **Shared data directory** - Single `examples/data/blocks-sample.json` referenced by both
@@ -141,16 +149,19 @@ React example requires React runtime and Vite plugin for JSX transformation. The
 **Selected Approach**: Shared data directory
 
 The shared data file is fetched or imported by each example:
+
 - HTML example: Fetch API to load JSON from relative path
 - React example: Static import or fetch of the data file
 
 **Rationale**:
+
 - **Consistency**: Ensures both examples demonstrate identical functionality with the same dataset
 - **Maintainability**: Single source of truth for sample data; updates apply to all examples
 - **Realism**: Demonstrates real-world pattern of loading external data files
 - **Scalability**: Future examples can reuse the same dataset
 
 **Trade-offs**:
+
 - **Gained**: Consistency, maintainability, demonstrates data loading patterns
 - **Sacrificed**: Slightly more complex setup (requires HTTP server for HTML example due to CORS); examples cannot run completely standalone by opening HTML file directly in browser
 
@@ -161,6 +172,7 @@ The shared data file is fetched or imported by each example:
 **Context**: React example needs to depend on the parent library package. Must ensure examples always use the current local development version, not a published registry version.
 
 **Alternatives:**
+
 1. **File path reference** - `"@luminastudy/blocks-graph": "file:../../"`
 2. **npm registry reference** - `"@luminastudy/blocks-graph": "^0.1.0"`
 3. **Workspace protocol** - `"@luminastudy/blocks-graph": "workspace:*"`
@@ -168,6 +180,7 @@ The shared data file is fetched or imported by each example:
 **Selected Approach**: Workspace protocol with pnpm
 
 Package.json includes:
+
 ```json
 {
   "dependencies": {
@@ -177,17 +190,20 @@ Package.json includes:
 ```
 
 React example imports the library:
+
 ```typescript
-import '@luminastudy/blocks-graph';
+import '@luminastudy/blocks-graph'
 ```
 
 **Rationale**:
+
 - **Development accuracy**: Always uses current local build, not stale published version
 - **pnpm alignment**: Project already uses pnpm; workspace protocol is the idiomatic approach
 - **Automatic linking**: pnpm automatically symlinks to parent package
 - **Version independence**: `workspace:*` tracks local changes without manual version updates
 
 **Trade-offs**:
+
 - **Gained**: Automatic synchronization with local library changes, idiomatic pnpm usage, no manual version management
 - **Sacrificed**: Examples require pnpm workspace structure; cannot be easily extracted as standalone projects without dependency adjustment
 
@@ -198,6 +214,7 @@ import '@luminastudy/blocks-graph';
 **Context**: React example requires a build tool for JSX transformation, TypeScript compilation, and development server. The parent project already uses Vite for Storybook.
 
 **Alternatives:**
+
 1. **Create React App (CRA)** - Official React starter tool
 2. **Webpack** - Mature, highly configurable bundler
 3. **Vite** - Modern build tool with fast HMR
@@ -206,23 +223,26 @@ import '@luminastudy/blocks-graph';
 **Selected Approach**: Vite with @vitejs/plugin-react
 
 React example configuration includes minimal Vite setup:
+
 ```typescript
 // vite.config.ts
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-});
+})
 ```
 
 **Rationale**:
+
 - **Consistency**: Project already uses Vite for Storybook; developers are familiar with it
 - **Performance**: Fast cold start and hot module replacement improve developer experience
 - **Simplicity**: Minimal configuration required; sensible defaults work for examples
 - **Modern standards**: Native ES modules, optimized builds, TypeScript support out of the box
 
 **Trade-offs**:
+
 - **Gained**: Fast development experience, consistency with existing project tooling, minimal configuration
 - **Sacrificed**: Examples tied to Vite ecosystem; migration to other build tools would require configuration changes
 
@@ -290,15 +310,15 @@ flowchart TD
 
 ## Requirements Traceability
 
-| Requirement | Summary | Components | Interfaces | Flows |
-|-------------|---------|------------|------------|-------|
-| 1.1-1.4 | Directory Structure | examples/ directory, README files | File system layout | N/A |
-| 2.1-2.7 | Pure HTML Example | examples/html/index.html | ES module import, loadFromJson() | Example Execution Flow, Data Loading Flow |
-| 3.1-3.9 | React Example | examples/react/src/App.tsx, vite.config.ts | React ref, useEffect hook, loadFromJson() | Example Execution Flow, Data Loading Flow |
-| 4.1-4.7 | Sample Data | examples/data/blocks-sample.json | v0.1 schema format | Data Loading Flow |
-| 5.1-5.6 | Runnable Configuration | package.json scripts, README instructions | pnpm/npm commands | Example Execution Flow |
-| 6.1-6.6 | Documentation | README.md files, inline comments | Markdown documentation | N/A |
-| 7.1-7.5 | Maintainability | workspace dependency, build integration | pnpm workspace protocol | Example Execution Flow (build step) |
+| Requirement | Summary                | Components                                 | Interfaces                                | Flows                                     |
+| ----------- | ---------------------- | ------------------------------------------ | ----------------------------------------- | ----------------------------------------- |
+| 1.1-1.4     | Directory Structure    | examples/ directory, README files          | File system layout                        | N/A                                       |
+| 2.1-2.7     | Pure HTML Example      | examples/html/index.html                   | ES module import, loadFromJson()          | Example Execution Flow, Data Loading Flow |
+| 3.1-3.9     | React Example          | examples/react/src/App.tsx, vite.config.ts | React ref, useEffect hook, loadFromJson() | Example Execution Flow, Data Loading Flow |
+| 4.1-4.7     | Sample Data            | examples/data/blocks-sample.json           | v0.1 schema format                        | Data Loading Flow                         |
+| 5.1-5.6     | Runnable Configuration | package.json scripts, README instructions  | pnpm/npm commands                         | Example Execution Flow                    |
+| 6.1-6.6     | Documentation          | README.md files, inline comments           | Markdown documentation                    | N/A                                       |
+| 7.1-7.5     | Maintainability        | workspace dependency, build integration    | pnpm workspace protocol                   | Example Execution Flow (build step)       |
 
 ## Components and Interfaces
 
@@ -307,11 +327,13 @@ flowchart TD
 #### examples/README.md
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Provide overview of all available examples and common setup instructions
 - **Domain Boundary**: Documentation layer - bridges user intent to specific examples
 - **Data Ownership**: Owns the high-level navigation and prerequisite information
 
 **Dependencies**
+
 - **Inbound**: Developers seeking example guidance
 - **Outbound**: Links to individual example subdirectories (html/, react/)
 - **External**: References parent library README.md for API documentation
@@ -319,23 +341,28 @@ flowchart TD
 **Contract Definition**
 
 Content structure:
+
 ```markdown
 # @luminastudy/blocks-graph Examples
 
 Overview of available examples
 
 ## Prerequisites
+
 - Node.js >= 18.0.0
 - pnpm >= 9.0.0
 
 ## Available Examples
+
 1. [Pure HTML Example](./html/) - Vanilla JavaScript integration
 2. [React Example](./react/) - React with TypeScript integration
 
 ## Building the Library
+
 Instructions for building parent library before running examples
 
 ## Common Troubleshooting
+
 CORS issues, module loading, server requirements
 ```
 
@@ -348,11 +375,13 @@ CORS issues, module loading, server requirements
 #### examples/data/blocks-sample.json
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Provide valid, realistic sample data compliant with v0.1 schema
 - **Domain Boundary**: Sample data layer - shared across all examples
 - **Data Ownership**: Owns the canonical sample dataset demonstrating block relationships
 
 **Dependencies**
+
 - **Inbound**: HTML example (fetch), React example (import or fetch)
 - **Outbound**: None (pure data file)
 - **External**: Complies with @tupe12334/block-schema v0.1 format
@@ -363,6 +392,7 @@ The v0.1 schema is defined by @tupe12334/block-schema package (already a depende
 **Contract Definition**
 
 Data structure (v0.1 schema):
+
 ```json
 [
   {
@@ -378,6 +408,7 @@ Data structure (v0.1 schema):
 ```
 
 **Schema Constraints**:
+
 - `id`: Valid UUID format (validated by ajv-formats)
 - `title.he_text`: Required non-empty string
 - `title.en_text`: Required non-empty string
@@ -385,6 +416,7 @@ Data structure (v0.1 schema):
 - `parents`: Required array of UUIDs (may be empty)
 
 **Sample Data Requirements**:
+
 - Minimum 5 blocks demonstrating various relationship patterns
 - At least 1 root block (no prerequisites)
 - At least 1 block with prerequisites showing dependency chain
@@ -401,11 +433,13 @@ Data structure (v0.1 schema):
 #### examples/html/index.html
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Demonstrate vanilla JavaScript integration of the Web Component without framework dependencies
 - **Domain Boundary**: HTML example application - self-contained demonstration
 - **Data Ownership**: Owns the DOM structure and user interaction state for the HTML example
 
 **Dependencies**
+
 - **Inbound**: None (user-facing application)
 - **Outbound**:
   - `../../dist/index.js` (Web Component bundle)
@@ -415,34 +449,37 @@ Data structure (v0.1 schema):
 **Contract Definition**
 
 HTML structure:
+
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <script type="module">
-    // Import Web Component from built library
-    import '../../dist/index.js';
+  <head>
+    <script type="module">
+      // Import Web Component from built library
+      import '../../dist/index.js'
 
-    // Fetch sample data and load into component
-    const response = await fetch('../data/blocks-sample.json');
-    const blocks = await response.json();
+      // Fetch sample data and load into component
+      const response = await fetch('../data/blocks-sample.json')
+      const blocks = await response.json()
 
-    const graph = document.getElementById('graph');
-    graph.loadFromJson(JSON.stringify(blocks), 'v0.1');
-  </script>
-</head>
-<body>
-  <blocks-graph
-    id="graph"
-    language="en"
-    show-prerequisites="true"
-    show-parents="true">
-  </blocks-graph>
-</body>
+      const graph = document.getElementById('graph')
+      graph.loadFromJson(JSON.stringify(blocks), 'v0.1')
+    </script>
+  </head>
+  <body>
+    <blocks-graph
+      id="graph"
+      language="en"
+      show-prerequisites="true"
+      show-parents="true"
+    >
+    </blocks-graph>
+  </body>
 </html>
 ```
 
 **Key Integration Points** (documented via inline comments):
+
 1. ES module import of library
 2. Custom element usage in HTML
 3. Attribute configuration (language, show-prerequisites, show-parents)
@@ -451,11 +488,13 @@ HTML structure:
 6. Dynamic attribute updates via JavaScript
 
 **Preconditions**:
+
 - Parent library built (dist/index.js exists)
 - Sample data exists (../data/blocks-sample.json)
 - Served via HTTP server (not file:// protocol, due to CORS and ES module restrictions)
 
 **Postconditions**:
+
 - Web Component registered and rendered
 - Sample data loaded and visualized
 - User can interact with graph (click blocks, change language)
@@ -465,34 +504,41 @@ HTML structure:
 #### examples/html/README.md
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Provide setup and execution instructions specific to the HTML example
 - **Domain Boundary**: HTML example documentation
 
 **Contract Definition**
 
 Content structure:
+
 ```markdown
 # Pure HTML Example
 
 ## Overview
+
 Demonstrates vanilla JavaScript integration
 
 ## Prerequisites
+
 - Built library (run `pnpm build` in parent directory)
 
 ## Running the Example
+
 1. From project root: `pnpm serve`
 2. Open http://localhost:8080/examples/html/
 
 Alternative: `npx http-server -c-1 examples/html`
 
 ## What This Example Demonstrates
+
 - ES module import of Web Component
 - Declarative usage via HTML attributes
 - Imperative API (loadFromJson method)
 - Event handling (blocks-rendered, block-selected)
 
 ## Troubleshooting
+
 - CORS errors: Must use HTTP server, not file:// protocol
 - Module not found: Run `pnpm build` in parent directory first
 ```
@@ -502,12 +548,14 @@ Alternative: `npx http-server -c-1 examples/html`
 #### examples/react/package.json
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Define React example dependencies, scripts, and workspace relationship
 - **Domain Boundary**: React example configuration
 
 **Contract Definition**
 
 Package configuration:
+
 ```json
 {
   "name": "blocks-graph-react-example",
@@ -535,6 +583,7 @@ Package configuration:
 ```
 
 **Dependency Rationale**:
+
 - `@luminastudy/blocks-graph`: Workspace protocol ensures local development version
 - `react`, `react-dom`: React 18 with concurrent features
 - `@vitejs/plugin-react`: JSX transformation and Fast Refresh
@@ -547,11 +596,13 @@ Package configuration:
 #### examples/react/src/App.tsx
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Demonstrate React integration of the Web Component using React best practices
 - **Domain Boundary**: React example application component
 - **Data Ownership**: Owns component state and ref to Web Component instance
 
 **Dependencies**
+
 - **Inbound**: None (root application component)
 - **Outbound**:
   - `@luminastudy/blocks-graph` (Web Component library)
@@ -561,6 +612,7 @@ Package configuration:
 **Contract Definition**
 
 React component interface:
+
 ```typescript
 import { useEffect, useRef, useState } from 'react';
 import '@luminastudy/blocks-graph';
@@ -614,6 +666,7 @@ export default App;
 ```
 
 **Key Integration Points** (documented via inline comments):
+
 1. Web Component import and registration
 2. TypeScript type definitions for custom element ref
 3. useRef hook to access Web Component imperative API
@@ -623,27 +676,32 @@ export default App;
 7. Event listener registration for Web Component events
 
 **Preconditions**:
+
 - Web Component library imported (registers custom element)
 - Sample data accessible at relative path
 
 **Postconditions**:
+
 - Web Component rendered within React tree
 - Sample data loaded on mount
 - User can interact with controls to update component attributes
 
 **Invariants**:
+
 - Ref always typed to include Web Component API methods
 - Data loading happens in useEffect, not during render
 
 #### examples/react/src/main.tsx
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: React application entry point
 - **Domain Boundary**: Application initialization layer
 
 **Contract Definition**
 
 Entry point code:
+
 ```typescript
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -663,15 +721,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 #### examples/react/vite.config.ts
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Configure Vite build tool for React example
 - **Domain Boundary**: Build configuration layer
 
 **Contract Definition**
 
 Vite configuration:
+
 ```typescript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
@@ -681,10 +741,11 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
-});
+})
 ```
 
 **Configuration Options**:
+
 - `plugins: [react()]`: Enables JSX transformation and Fast Refresh
 - `server.port`: Default development server port
 - `build.outDir`: Production build output directory
@@ -696,12 +757,14 @@ export default defineConfig({
 #### examples/react/tsconfig.json
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Configure TypeScript compiler for React example
 - **Domain Boundary**: TypeScript configuration layer
 
 **Contract Definition**
 
 TypeScript configuration:
+
 ```json
 {
   "compilerOptions": {
@@ -720,6 +783,7 @@ TypeScript configuration:
 ```
 
 **Configuration Alignment**:
+
 - Matches parent library's `target: ES2022` and strict mode
 - Adds `jsx: "react-jsx"` for React 18 JSX transform
 - Uses `moduleResolution: "Bundler"` matching Vite expectations
@@ -731,29 +795,35 @@ TypeScript configuration:
 #### examples/react/README.md
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Provide setup and execution instructions specific to the React example
 - **Domain Boundary**: React example documentation
 
 **Contract Definition**
 
 Content structure:
+
 ```markdown
 # React Example
 
 ## Overview
+
 Demonstrates React integration with TypeScript
 
 ## Prerequisites
+
 - Built library (run `pnpm build` in parent directory)
 - Node.js >= 18.0.0
 - pnpm >= 9.0.0
 
 ## Setup
+
 1. Install dependencies: `pnpm install`
 2. Start dev server: `pnpm dev`
 3. Open http://localhost:5173
 
 ## What This Example Demonstrates
+
 - Web Component import in React
 - TypeScript type definitions for custom elements
 - useRef for imperative API access
@@ -762,12 +832,14 @@ Demonstrates React integration with TypeScript
 - Event listener registration
 
 ## Project Structure
+
 - src/App.tsx - Main React component
 - src/main.tsx - Application entry point
 - vite.config.ts - Vite build configuration
 - tsconfig.json - TypeScript configuration
 
 ## Troubleshooting
+
 - Web Component not found: Run `pnpm build` in parent directory
 - Type errors: Ensure @luminastudy/blocks-graph is installed via pnpm workspace
 ```
@@ -780,13 +852,13 @@ The sample data follows the v0.1 block schema format defined by @tupe12334/block
 
 ```typescript
 interface BlockSchemaV01 {
-  id: string;              // UUID format (e.g., "550e8400-e29b-41d4-a716-446655440000")
+  id: string // UUID format (e.g., "550e8400-e29b-41d4-a716-446655440000")
   title: {
-    he_text: string;       // Hebrew title (e.g., "מבוא למתמטיקה")
-    en_text: string;       // English title (e.g., "Introduction to Mathematics")
-  };
-  prerequisites: string[]; // Array of block UUIDs (can be empty)
-  parents: string[];       // Array of block UUIDs (can be empty)
+    he_text: string // Hebrew title (e.g., "מבוא למתמטיקה")
+    en_text: string // English title (e.g., "Introduction to Mathematics")
+  }
+  prerequisites: string[] // Array of block UUIDs (can be empty)
+  parents: string[] // Array of block UUIDs (can be empty)
 }
 ```
 
@@ -800,6 +872,7 @@ The sample dataset demonstrates a mathematics curriculum with 5 interconnected b
 4. **Branch Block**: "Number Theory" (depends on Linear Algebra)
 
 **Validation Rules**:
+
 - All `id` fields are valid UUIDs (validated by AJV with ajv-formats)
 - All blocks have both `he_text` and `en_text` titles
 - All `prerequisites` and `parents` arrays reference valid block IDs within the dataset
@@ -807,6 +880,7 @@ The sample dataset demonstrates a mathematics curriculum with 5 interconnected b
 - At least one block has empty `prerequisites` array (root block)
 
 **Domain Concepts**:
+
 - **Root Block**: Block with no prerequisites, serves as entry point
 - **Prerequisite Relationship**: Represents required prior knowledge (directed edge)
 - **Parent Relationship**: Represents hierarchical structure (containment)
@@ -829,6 +903,7 @@ Examples do not implement custom error recovery beyond displaying error messages
 ### Error Categories and Responses
 
 **User Errors** (setup/configuration):
+
 - **Library not built**: Error shown when dist/index.js missing
   - Response: Display message "Library not built. Run `pnpm build` in parent directory."
   - Recovery: User runs build command as instructed
@@ -837,6 +912,7 @@ Examples do not implement custom error recovery beyond displaying error messages
   - Recovery: User starts appropriate server (http-server or vite dev)
 
 **System Errors** (infrastructure failures):
+
 - **CORS policy errors**: Browser blocks fetch of blocks-sample.json from file:// protocol
   - Response: README troubleshooting section explains CORS requirement
   - Recovery: User runs example via HTTP server instead of opening file directly
@@ -845,6 +921,7 @@ Examples do not implement custom error recovery beyond displaying error messages
   - Recovery: User checks network connection and server status
 
 **Business Logic Errors** (schema validation):
+
 - **Invalid schema format**: Sample data fails v0.1 validation
   - Response: Library's InvalidBlockSchemaError thrown, error message displayed in component
   - Recovery: This should not occur in examples (sample data is validated); if it does, indicates bug in sample data file
@@ -887,11 +964,13 @@ flowchart TD
 Examples are demonstration applications and do not include production monitoring capabilities. However, they do provide developer visibility through:
 
 **Console Logging**:
+
 - Library logs schema validation errors to console
 - Examples log data loading success/failure to console
 - Event listeners log interaction events (block-selected, blocks-rendered) for debugging
 
 **User-Visible Feedback**:
+
 - HTML example: Status message showing selected block and selection level
 - React example: UI state updates reflecting component state changes
 - Both examples: Error messages displayed when operations fail
@@ -905,6 +984,7 @@ Examples are demonstration applications and do not include production monitoring
 Testing focus is on validating that examples correctly integrate with the library, not on testing the library itself (which has its own test suite).
 
 **HTML Example Validation**:
+
 1. Validate that index.html imports the Web Component from correct path (../../dist/index.js)
 2. Validate that sample data fetch uses correct relative path (../data/blocks-sample.json)
 3. Validate that HTML includes required custom element tag (`<blocks-graph>`)
@@ -912,6 +992,7 @@ Testing focus is on validating that examples correctly integrate with the librar
 5. Check inline comments document key integration points
 
 **React Example Validation**:
+
 1. Validate package.json dependencies include workspace reference to parent library
 2. Validate tsconfig.json includes JSX configuration and matches parent TypeScript settings
 3. Validate vite.config.ts includes React plugin
@@ -919,6 +1000,7 @@ Testing focus is on validating that examples correctly integrate with the librar
 5. Validate App.tsx uses TypeScript types for custom element ref
 
 **Sample Data Validation**:
+
 1. Validate blocks-sample.json is valid JSON
 2. Validate all blocks comply with v0.1 schema (UUIDs, bilingual titles, prerequisites, parents arrays)
 3. Validate no circular dependencies in prerequisites
@@ -926,6 +1008,7 @@ Testing focus is on validating that examples correctly integrate with the librar
 5. Validate all prerequisite/parent references point to existing block IDs
 
 These validations can be implemented as:
+
 - Static analysis scripts (JSON schema validation, file path checks)
 - Linting rules (validate import paths, required attributes)
 - Manual checklist for PR reviews
@@ -935,6 +1018,7 @@ These validations can be implemented as:
 Integration testing validates that examples successfully load and run when the library is built.
 
 **HTML Example Integration**:
+
 1. Build parent library (`pnpm build`)
 2. Start HTTP server serving examples/html
 3. Load index.html in headless browser
@@ -944,6 +1028,7 @@ Integration testing validates that examples successfully load and run when the l
 7. Simulate block click, verify block-selected event fires
 
 **React Example Integration**:
+
 1. Build parent library (`pnpm build`)
 2. Install React example dependencies (`pnpm install`)
 3. Start Vite dev server (`pnpm dev`)
@@ -953,11 +1038,13 @@ Integration testing validates that examples successfully load and run when the l
 7. Verify attribute changes trigger re-renders
 
 **Cross-Example Consistency**:
+
 1. Verify both examples load the same sample data
 2. Verify both examples demonstrate the same core features (loadFromJson, attributes, events)
 3. Verify both examples use consistent terminology in documentation
 
 These integration tests can be implemented using:
+
 - Playwright (already in project for Storybook testing)
 - Custom npm scripts that run build + serve + verify steps
 - CI/CD pipeline checks
@@ -967,6 +1054,7 @@ These integration tests can be implemented using:
 End-to-end testing validates the developer experience of setting up and running examples.
 
 **Developer Onboarding Flow**:
+
 1. Clone repository
 2. Follow README instructions to build library
 3. Navigate to examples/html directory
@@ -977,6 +1065,7 @@ End-to-end testing validates the developer experience of setting up and running 
 8. Verify example runs successfully in browser
 
 **Common Troubleshooting Scenarios**:
+
 1. Attempt to run HTML example without building library first
    - Verify clear error message appears
    - Verify README troubleshooting section helps resolve
@@ -988,12 +1077,14 @@ End-to-end testing validates the developer experience of setting up and running 
    - Verify README documents installation step
 
 **Documentation Completeness**:
+
 1. Verify all prerequisites are listed in READMEs
 2. Verify all setup steps are documented
 3. Verify troubleshooting sections address common issues
 4. Verify inline code comments explain key integration points
 
 E2E tests can be:
+
 - Automated using Playwright scripts that follow README steps
 - Manual checklists for release validation
 - Documentation review process for new contributors
@@ -1003,15 +1094,18 @@ E2E tests can be:
 Performance testing is not critical for examples, as they are demonstration applications. However, basic performance validation ensures examples provide good developer experience:
 
 **Load Time Validation**:
+
 1. HTML example loads and renders within 2 seconds on typical connection
 2. React example dev server starts within 5 seconds
 3. Sample data fetch completes within 500ms
 
 **Build Time Validation**:
+
 1. React example production build completes within 10 seconds
 2. Parent library build completes within 10 seconds
 
 These can be validated through:
+
 - Lighthouse performance audits for HTML example
 - Vite build time logging for React example
 - Network throttling tests for data loading
@@ -1021,11 +1115,13 @@ These can be validated through:
 ### Threat Modeling
 
 **Attack Surface**:
+
 - Examples are demonstration applications, not production systems
 - Examples execute in browser sandbox with standard web security model
 - Examples do not handle user authentication, sensitive data, or external APIs (except static sample data)
 
 **Potential Threats**:
+
 1. **Malicious sample data**: Attacker modifies blocks-sample.json to include XSS payloads in titles
    - Mitigation: Web Component uses shadow DOM and SVG rendering, which provides XSS protection
    - Library already sanitizes text content when rendering
@@ -1040,6 +1136,7 @@ These can be validated through:
    - No sensitive data or credentials involved
 
 **Security Controls**:
+
 - Content Security Policy: Not implemented (examples run on localhost)
 - Input validation: Handled by library's schema validation (AJV)
 - Output encoding: Handled by library's SVG rendering
@@ -1048,11 +1145,13 @@ These can be validated through:
 ### Data Protection
 
 **Data Classification**:
+
 - Sample data is public, non-sensitive educational content
 - No personally identifiable information (PII)
 - No authentication tokens or credentials
 
 **Privacy Considerations**:
+
 - Examples do not collect analytics or telemetry
 - Examples do not make external network requests (except to load local sample data)
 - Examples do not use cookies or local storage
@@ -1105,3 +1204,4 @@ flowchart TD
     V1 --> V2[Verify React example runs]
     V2 --> V3[Verify documentation completeness]
     V3 --> V4[Verify sample data validity]
+```

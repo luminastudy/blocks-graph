@@ -11,6 +11,7 @@ This directory contains framework-specific wrapper components for the `@luminast
 A React wrapper component that eliminates the need for refs and provides a clean, props-based API.
 
 **Features**:
+
 - ✅ No refs needed - just pass props
 - ✅ Full TypeScript support with autocomplete
 - ✅ React-style event handlers (`onBlocksRendered`, `onBlockSelected`)
@@ -18,6 +19,7 @@ A React wrapper component that eliminates the need for refs and provides a clean
 - ✅ React 16.8+ compatible (hooks-based)
 
 **Usage**:
+
 ```tsx
 import { BlocksGraphReact } from '@luminastudy/blocks-graph/react';
 import type { Block } from '@luminastudy/blocks-graph';
@@ -41,6 +43,7 @@ function App() {
 
 **Location**: `src/wrappers/react/`
 **Files**:
+
 - `BlocksGraphReact.tsx` - Main wrapper component
 - `BlocksGraphReact.test.tsx` - Unit tests
 - `BlocksGraphReact.stories.tsx` - Storybook stories
@@ -82,18 +85,18 @@ While the Web Component works natively in all frameworks, framework-specific wra
 You can always use the Web Component directly without wrappers:
 
 ```javascript
-import '@luminastudy/blocks-graph';
+import '@luminastudy/blocks-graph'
 
 // In your HTML or framework template
-<blocks-graph
+;<blocks-graph
   language="en"
   show-prerequisites="true"
-  show-parents="true">
-</blocks-graph>
+  show-parents="true"
+></blocks-graph>
 
 // Access via JavaScript
-const graph = document.querySelector('blocks-graph');
-graph.loadFromJson(jsonString, 'v0.1');
+const graph = document.querySelector('blocks-graph')
+graph.loadFromJson(jsonString, 'v0.1')
 ```
 
 ## Contributing a Wrapper
@@ -112,6 +115,7 @@ To add a wrapper for a new framework:
 ### Wrapper Requirements
 
 Every wrapper should:
+
 - ✅ Support all Web Component features
 - ✅ Provide TypeScript types
 - ✅ Handle prop synchronization
@@ -134,6 +138,7 @@ Core Library (GraphEngine + GraphRenderer)
 ```
 
 The wrappers are **thin layers** that:
+
 - Translate framework concepts to Web Component API
 - Manage lifecycle and cleanup
 - Provide type safety
@@ -142,12 +147,14 @@ The wrappers are **thin layers** that:
 ## Testing
 
 Each wrapper includes:
+
 - **Unit Tests**: Component behavior and prop handling
 - **Integration Tests**: Interaction with Web Component
 - **Type Tests**: TypeScript compilation checks
 - **E2E Tests** (if applicable): Full user workflows
 
 Run tests:
+
 ```bash
 pnpm test                    # All tests
 pnpm test -- wrappers/react  # React wrapper tests only
@@ -156,6 +163,7 @@ pnpm test -- wrappers/react  # React wrapper tests only
 ## Documentation
 
 Each wrapper includes:
+
 - **JSDoc comments**: Inline API documentation
 - **README** (in wrapper directory): Detailed usage guide
 - **Storybook stories**: Interactive examples

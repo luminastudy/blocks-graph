@@ -5,6 +5,7 @@
 The @luminastudy/blocks-graph Web Component currently renders static SVG visualizations without interactive navigation capabilities. When graphs contain many blocks or occupy large dimensions, users cannot effectively view the entire structure or focus on specific areas. This feature introduces pan and zoom interactions to enable intuitive graph navigation.
 
 **Business Value:**
+
 - **Enhanced Usability**: Users can explore large graphs that exceed viewport dimensions without scrolling the entire page
 - **Improved Focus**: Zoom capabilities allow users to examine detailed block information or view high-level graph structure
 - **Better User Experience**: Mouse-based interactions provide familiar, intuitive navigation patterns consistent with other visualization tools

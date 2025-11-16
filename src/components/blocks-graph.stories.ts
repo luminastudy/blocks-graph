@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/web-components';
-import { html } from 'lit';
-import { expect, userEvent } from '@storybook/test';
-import '../index.js';
+import type { Meta, StoryObj } from '@storybook/web-components'
+import { html } from 'lit'
+import { expect, userEvent } from '@storybook/test'
+import '../index.js'
 
 // Sample data for stories
 const EXAMPLE_BLOCKS = [
@@ -53,7 +53,7 @@ const EXAMPLE_BLOCKS = [
     prerequisites: ['550e8400-e29b-41d4-a716-446655440001'],
     parents: ['550e8400-e29b-41d4-a716-446655440001'],
   },
-];
+]
 
 const meta: Meta = {
   title: 'Components/BlocksGraph',
@@ -113,7 +113,8 @@ const meta: Meta = {
     orientation: {
       control: 'select',
       options: ['ttb', 'ltr', 'rtl', 'btt'],
-      description: 'Graph orientation: ttb (top-to-bottom), ltr (left-to-right), rtl (right-to-left), btt (bottom-to-top)',
+      description:
+        'Graph orientation: ttb (top-to-bottom), ltr (left-to-right), rtl (right-to-left), btt (bottom-to-top)',
       table: {
         defaultValue: { summary: 'ttb' },
       },
@@ -129,10 +130,10 @@ const meta: Meta = {
       },
     },
   },
-};
+}
 
-export default meta;
-type Story = StoryObj;
+export default meta
+type Story = StoryObj
 
 /**
  * Default story showing the BlocksGraph component with sample mathematics curriculum data.
@@ -140,12 +141,16 @@ type Story = StoryObj;
  * Click again to toggle sub-blocks, or a third time to reset to default view.
  */
 export const Default: Story = {
-  render: (args) => {
+  render: args => {
     // Create a unique ID for this story instance to avoid conflicts
-    const storyId = `graph-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const storyId = `graph-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`
 
     return html`
-      <div style="width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 4px;">
+      <div
+        style="width: 100%; height: 600px; border: 1px solid #ddd; border-radius: 4px;"
+      >
         <blocks-graph
           id="${storyId}"
           language="${args.language}"
@@ -157,23 +162,26 @@ export const Default: Story = {
           vertical-spacing="${args.verticalSpacing || ''}"
           orientation="${args.orientation || 'ttb'}"
           @block-selected="${(e: CustomEvent) => {
-            console.log('Block selected:', e.detail);
+            console.log('Block selected:', e.detail)
           }}"
           @blocks-rendered="${(e: CustomEvent) => {
-            console.log('Blocks rendered:', e.detail);
+            console.log('Blocks rendered:', e.detail)
           }}"
         ></blocks-graph>
       </div>
       <script>
         // Load example data after a short delay to ensure the component is ready
         setTimeout(() => {
-          const graph = document.getElementById('${storyId}');
+          const graph = document.getElementById('${storyId}')
           if (graph && typeof graph.loadFromJson === 'function') {
-            graph.loadFromJson(${JSON.stringify(JSON.stringify(EXAMPLE_BLOCKS))}, 'v0.1');
+            graph.loadFromJson(
+              ${JSON.stringify(JSON.stringify(EXAMPLE_BLOCKS))},
+              'v0.1'
+            )
           }
-        }, 100);
+        }, 100)
       </script>
-    `;
+    `
   },
   args: {
     language: 'en',
@@ -182,36 +190,37 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     // Wait for the graph to render
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500))
 
     // Find the blocks-graph element
-    const graphElement = canvasElement.querySelector('blocks-graph');
-    expect(graphElement).toBeTruthy();
+    const graphElement = canvasElement.querySelector('blocks-graph')
+    expect(graphElement).toBeTruthy()
 
     // Check that the shadow DOM is rendered
-    expect(graphElement?.shadowRoot).toBeTruthy();
+    expect(graphElement?.shadowRoot).toBeTruthy()
 
     // Find SVG element in shadow DOM
-    const svg = graphElement?.shadowRoot?.querySelector('svg');
-    expect(svg).toBeTruthy();
+    const svg = graphElement?.shadowRoot?.querySelector('svg')
+    expect(svg).toBeTruthy()
 
     // Test interaction: click on a block
-    const blocks = graphElement?.shadowRoot?.querySelectorAll('g[data-block-id]');
+    const blocks =
+      graphElement?.shadowRoot?.querySelectorAll('g[data-block-id]')
     if (blocks && blocks.length > 0) {
-      const firstBlock = blocks[0] as HTMLElement;
+      const firstBlock = blocks[0] as HTMLElement
 
       // Click the first block to show its graph
-      await userEvent.click(firstBlock);
+      await userEvent.click(firstBlock)
 
       // Wait for re-render
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 300))
 
       // Verify that block-selected event was dispatched
       // (This is logged to console, which we can't easily test here)
-      console.log('Interaction test: clicked first block');
+      console.log('Interaction test: clicked first block')
     }
   },
-};
+}
 
 /**
  * Story demonstrating root block auto-hide behavior with Combinatorics curriculum.
@@ -219,39 +228,54 @@ export const Default: Story = {
  * and its 7 children should be shown automatically on initial render.
  */
 export const CombinatoricsRootAutoHide: Story = {
-  render: (args) => {
-    const storyId = `combinatorics-graph-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  render: args => {
+    const storyId = `combinatorics-graph-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`
 
     // Fetch the Combinatorics JSON from GitHub
     const fetchAndLoadData = async () => {
       try {
         // eslint-disable-next-line default/no-hardcoded-urls -- Example data for Storybook
-        const response = await fetch('https://raw.githubusercontent.com/luminastudy/the-open-university-combinatorics/refs/heads/main/lumin.json');
-        const data = await response.json();
+        const response = await fetch(
+          'https://raw.githubusercontent.com/luminastudy/the-open-university-combinatorics/refs/heads/main/lumina.json'
+        )
+        const data = await response.json()
 
-        const element = document.getElementById(storyId);
-        if (element && 'loadFromJson' in element && typeof element.loadFromJson === 'function') {
-          element.loadFromJson(JSON.stringify(data), 'v0.1');
+        const element = document.getElementById(storyId)
+        if (
+          element &&
+          'loadFromJson' in element &&
+          typeof element.loadFromJson === 'function'
+        ) {
+          element.loadFromJson(JSON.stringify(data), 'v0.1')
         }
       } catch (error) {
-        console.error('Failed to load Combinatorics data:', error);
+        console.error('Failed to load Combinatorics data:', error)
       }
-    };
+    }
 
     // Load data after component is ready
-    setTimeout(fetchAndLoadData, 100);
+    setTimeout(fetchAndLoadData, 100)
 
     return html`
       <div>
-        <div style="padding: 16px; background: #f5f5f5; border-radius: 4px; margin-bottom: 16px;">
+        <div
+          style="padding: 16px; background: #f5f5f5; border-radius: 4px; margin-bottom: 16px;"
+        >
           <h3 style="margin: 0 0 8px 0;">Expected Behavior</h3>
           <ul style="margin: 0; padding-left: 20px;">
-            <li><strong>Root block</strong> ("Combinatorics - The Open University") should be <strong>hidden</strong></li>
+            <li>
+              <strong>Root block</strong> ("Combinatorics - The Open
+              University") should be <strong>hidden</strong>
+            </li>
             <li><strong>7 children</strong> should be shown automatically</li>
             <li>Check browser console for debug output</li>
           </ul>
         </div>
-        <div style="width: 100%; height: 800px; border: 1px solid #ddd; border-radius: 4px;">
+        <div
+          style="width: 100%; height: 800px; border: 1px solid #ddd; border-radius: 4px;"
+        >
           <blocks-graph
             id="${storyId}"
             language="${args.language}"
@@ -261,14 +285,14 @@ export const CombinatoricsRootAutoHide: Story = {
           ></blocks-graph>
         </div>
       </div>
-    `;
+    `
   },
   args: {
     language: 'en',
     showPrerequisites: true,
     showParents: true,
   },
-};
+}
 
 /**
  * Story demonstrating all four graph orientations side by side.
@@ -281,11 +305,27 @@ export const CombinatoricsRootAutoHide: Story = {
 export const AllOrientations: Story = {
   render: () => {
     const orientations = [
-      { value: 'ttb', label: 'Top-to-Bottom (TTB)', description: 'Traditional hierarchical layout' },
-      { value: 'ltr', label: 'Left-to-Right (LTR)', description: 'Horizontal flow, ideal for timelines' },
-      { value: 'rtl', label: 'Right-to-Left (RTL)', description: 'Horizontal flow for RTL languages' },
-      { value: 'btt', label: 'Bottom-to-Top (BTT)', description: 'Inverted hierarchical layout' },
-    ];
+      {
+        value: 'ttb',
+        label: 'Top-to-Bottom (TTB)',
+        description: 'Traditional hierarchical layout',
+      },
+      {
+        value: 'ltr',
+        label: 'Left-to-Right (LTR)',
+        description: 'Horizontal flow, ideal for timelines',
+      },
+      {
+        value: 'rtl',
+        label: 'Right-to-Left (RTL)',
+        description: 'Horizontal flow for RTL languages',
+      },
+      {
+        value: 'btt',
+        label: 'Bottom-to-Top (BTT)',
+        description: 'Inverted hierarchical layout',
+      },
+    ]
 
     return html`
       <div style="padding: 16px;">
@@ -297,17 +337,25 @@ export const AllOrientations: Story = {
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
           ${orientations.map((orientation, index) => {
-            const storyId = `orientation-${orientation.value}-${Date.now()}-${index}`;
+            const storyId = `orientation-${
+              orientation.value
+            }-${Date.now()}-${index}`
 
             setTimeout(() => {
-              const graph = document.getElementById(storyId);
-              if (graph && 'loadFromJson' in graph && typeof graph.loadFromJson === 'function') {
-                graph.loadFromJson(JSON.stringify(EXAMPLE_BLOCKS), 'v0.1');
+              const graph = document.getElementById(storyId)
+              if (
+                graph &&
+                'loadFromJson' in graph &&
+                typeof graph.loadFromJson === 'function'
+              ) {
+                graph.loadFromJson(JSON.stringify(EXAMPLE_BLOCKS), 'v0.1')
               }
-            }, 100);
+            }, 100)
 
             return html`
-              <div style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;">
+              <div
+                style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;"
+              >
                 <div style="margin-bottom: 12px;">
                   <h3 style="margin: 0 0 4px 0; color: #333;">
                     ${orientation.label}
@@ -316,7 +364,9 @@ export const AllOrientations: Story = {
                     ${orientation.description}
                   </p>
                 </div>
-                <div style="width: 100%; height: 400px; border: 1px solid #e0e0e0; border-radius: 4px;">
+                <div
+                  style="width: 100%; height: 400px; border: 1px solid #e0e0e0; border-radius: 4px;"
+                >
                   <blocks-graph
                     id="${storyId}"
                     language="en"
@@ -330,21 +380,25 @@ export const AllOrientations: Story = {
                   ></blocks-graph>
                 </div>
               </div>
-            `;
+            `
           })}
         </div>
 
-        <div style="margin-top: 24px; padding: 16px; background: #f5f5f5; border-radius: 4px;">
+        <div
+          style="margin-top: 24px; padding: 16px; background: #f5f5f5; border-radius: 4px;"
+        >
           <h4 style="margin: 0 0 8px 0;">Usage Example</h4>
-          <pre style="margin: 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto;"><code>&lt;blocks-graph orientation="ltr"&gt;&lt;/blocks-graph&gt;
+          <pre
+            style="margin: 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto;"
+          ><code>&lt;blocks-graph orientation="ltr"&gt;&lt;/blocks-graph&gt;
 &lt;blocks-graph orientation="rtl"&gt;&lt;/blocks-graph&gt;
 &lt;blocks-graph orientation="ttb"&gt;&lt;/blocks-graph&gt;
 &lt;blocks-graph orientation="btt"&gt;&lt;/blocks-graph&gt;</code></pre>
         </div>
       </div>
-    `;
+    `
   },
   parameters: {
     layout: 'fullscreen',
   },
-};
+}

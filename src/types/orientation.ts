@@ -26,5 +26,4 @@
  * <blocks-graph orientation="ltr"></blocks-graph>
  * ```
  */
-export type Orientation = 'ttb' | 'ltr' | 'rtl' | 'btt';
-
+export type Orientation = 'ttb' | 'ltr' | 'rtl' | 'btt'

@@ -22,6 +22,7 @@ This example includes **two different implementations**:
 ## Overview
 
 This React example showcases:
+
 - **React wrapper component** for clean, declarative API
 - Web Component import and registration in React
 - Type-safe ref access to Web Component imperative API (alternative approach)
@@ -34,6 +35,7 @@ This React example showcases:
 ## Prerequisites
 
 Before running this example, ensure you have:
+
 - **Node.js** >= 18.0.0
 - **pnpm** >= 9.0.0 (project uses pnpm workspaces)
 - **Modern browser** with Web Component support
@@ -62,6 +64,7 @@ pnpm install
 ```
 
 This will install:
+
 - React 18 and ReactDOM
 - TypeScript and type definitions
 - Vite and React plugin
@@ -78,6 +81,7 @@ pnpm dev
 The application will be available at: `http://localhost:5173`
 
 The dev server features:
+
 - ⚡ Fast Hot Module Replacement (HMR)
 - 🔥 Instant updates when you edit code
 - 🎯 TypeScript type checking
@@ -102,7 +106,7 @@ pnpm preview
 ### Web Component Import in React
 
 ```typescript
-import '@luminastudy/blocks-graph';
+import '@luminastudy/blocks-graph'
 ```
 
 Importing the library registers the `blocks-graph` custom element globally, making it available for use in JSX.
@@ -111,10 +115,10 @@ Importing the library registers the `blocks-graph` custom element globally, maki
 
 ```typescript
 interface BlocksGraphElement extends HTMLElement {
-  loadFromJson: (json: string, version: 'v0.1') => void;
-  language: string;
-  showPrerequisites: boolean;
-  showParents: boolean;
+  loadFromJson: (json: string, version: 'v0.1') => void
+  language: string
+  showPrerequisites: boolean
+  showParents: boolean
 }
 ```
 
@@ -123,11 +127,11 @@ Custom interface defines the Web Component's API for type-safe access via React 
 ### useRef for Imperative API Access
 
 ```typescript
-const graphRef = useRef<BlocksGraphElement>(null);
+const graphRef = useRef<BlocksGraphElement>(null)
 
 // Later...
 if (graphRef.current) {
-  graphRef.current.loadFromJson(JSON.stringify(blocks), 'v0.1');
+  graphRef.current.loadFromJson(JSON.stringify(blocks), 'v0.1')
 }
 ```
 
@@ -138,16 +142,16 @@ React ref provides access to the Web Component instance for calling imperative m
 ```typescript
 useEffect(() => {
   const loadData = async () => {
-    const response = await fetch('/data/blocks-sample.json');
-    const blocks = await response.json();
+    const response = await fetch('/data/blocks-sample.json')
+    const blocks = await response.json()
 
     if (graphRef.current) {
-      graphRef.current.loadFromJson(JSON.stringify(blocks), 'v0.1');
+      graphRef.current.loadFromJson(JSON.stringify(blocks), 'v0.1')
     }
-  };
+  }
 
-  loadData();
-}, []); // Empty array = run once on mount
+  loadData()
+}, []) // Empty array = run once on mount
 ```
 
 Data loading happens in useEffect to ensure it runs after the component renders and the ref is populated.
@@ -155,14 +159,14 @@ Data loading happens in useEffect to ensure it runs after the component renders 
 ### State Management
 
 ```typescript
-const [language, setLanguage] = useState<'en' | 'he'>('en');
+const [language, setLanguage] = useState<'en' | 'he'>('en')
 
 // Sync state with Web Component attribute
 useEffect(() => {
   if (graphRef.current) {
-    graphRef.current.language = language;
+    graphRef.current.language = language
   }
-}, [language]);
+}, [language])
 ```
 
 React state drives UI controls and syncs with Web Component attributes.
@@ -171,19 +175,19 @@ React state drives UI controls and syncs with Web Component attributes.
 
 ```typescript
 useEffect(() => {
-  const graph = graphRef.current;
-  if (!graph) return;
+  const graph = graphRef.current
+  if (!graph) return
 
   const handleBlocksRendered = (event: Event) => {
-    console.log('Blocks rendered:', (event as CustomEvent).detail);
-  };
+    console.log('Blocks rendered:', (event as CustomEvent).detail)
+  }
 
-  graph.addEventListener('blocks-rendered', handleBlocksRendered);
+  graph.addEventListener('blocks-rendered', handleBlocksRendered)
 
   return () => {
-    graph.removeEventListener('blocks-rendered', handleBlocksRendered);
-  };
-}, []);
+    graph.removeEventListener('blocks-rendered', handleBlocksRendered)
+  }
+}, [])
 ```
 
 Event listeners are registered in useEffect with cleanup to avoid memory leaks.
@@ -228,6 +232,7 @@ examples/react/
 **Cause**: The parent library hasn't been built or workspace dependency isn't resolved.
 
 **Solution**:
+
 1. Run `pnpm build` from the project root to build the library
 2. Run `pnpm install` in `examples/react/` to resolve the workspace dependency
 3. Verify `node_modules/@luminastudy/blocks-graph` is a symlink to the parent directory
@@ -237,6 +242,7 @@ examples/react/
 **Cause**: Sample data file not found in public directory.
 
 **Solution**:
+
 1. Verify `public/data/blocks-sample.json` exists
 2. If missing, copy from `examples/data/blocks-sample.json`
 3. Restart the Vite dev server
@@ -252,6 +258,7 @@ examples/react/
 **Cause**: Port 5173 is already in use.
 
 **Solution**:
+
 1. Stop the process using port 5173
 2. Or modify the port in `vite.config.ts`:
    ```typescript
@@ -263,11 +270,13 @@ examples/react/
 ### Web Component Not Rendering
 
 **Possible Causes**:
+
 1. Library not built
 2. Import failed
 3. Browser doesn't support Web Components
 
 **Solution**:
+
 1. Check browser console for import errors
 2. Verify `dist/index.js` exists in parent directory
 3. Use a modern browser (Chrome 61+, Firefox 60+, Safari 11+, Edge 79+)
@@ -277,6 +286,7 @@ examples/react/
 **Cause**: Vite HMR connection issues.
 
 **Solution**:
+
 1. Restart the dev server
 2. Clear browser cache
 3. Check browser console for HMR errors
@@ -292,6 +302,7 @@ This example uses pnpm workspace protocol:
 ```
 
 This means:
+
 - ✅ Always uses the local development version of the library
 - ✅ Changes to the library are immediately available (after rebuild)
 - ✅ No need to publish the library to npm for local development
@@ -306,6 +317,7 @@ Web Components have imperative APIs (methods like `loadFromJson`). React's useRe
 ### Why Multiple useEffect Hooks?
 
 Following React best practices, we separate concerns:
+
 - One for data loading (runs once on mount)
 - One for each state sync (runs when state changes)
 - One for event listeners (runs once, with cleanup)
@@ -313,6 +325,7 @@ Following React best practices, we separate concerns:
 ### Why Custom Type Interface?
 
 TypeScript doesn't know about the custom element's API by default. Defining `BlocksGraphElement` interface provides:
+
 - Type safety for method calls
 - Autocomplete in IDE
 - Compile-time error detection
@@ -320,6 +333,7 @@ TypeScript doesn't know about the custom element's API by default. Defining `Blo
 ## Next Steps
 
 After exploring this example:
+
 - Modify the sample data to test different block relationships
 - Add more interactive controls (node size, spacing, etc.)
 - Experiment with different React state patterns

@@ -1,4 +1,4 @@
-import type { Orientation } from './orientation.js';
+import type { Orientation } from './orientation.js'
 
 /**
  * Type guard to check if a value is a valid orientation.
@@ -25,7 +25,6 @@ import type { Orientation } from './orientation.js';
  */
 export function isValidOrientation(value: unknown): value is Orientation {
   return (
-    typeof value === 'string' &&
-    ['ttb', 'ltr', 'rtl', 'btt'].includes(value)
-  );
+    typeof value === 'string' && ['ttb', 'ltr', 'rtl', 'btt'].includes(value)
+  )
 }

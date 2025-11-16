@@ -39,12 +39,14 @@ The blocks-graph library follows a clean separation of concerns with three prima
 **Rendering Layer** (`GraphRenderer`): SVG generation module creating visual elements from positioned blocks. Hardcoded to draw edges from bottom-center to top-center connection points.
 
 **Existing Patterns Preserved**:
+
 - Configuration object pattern with defaults merged with user overrides
 - Attribute-to-property synchronization in Web Component
 - Immutable position calculation returning new PositionedBlock arrays
 - Separation of graph topology (GraphEngine) from visual presentation (GraphRenderer)
 
 **Integration Points Maintained**:
+
 - GraphLayoutConfig interface extension (additive change only)
 - BlocksGraph.observedAttributes array (append new attribute)
 - GraphEngine constructor signature (backward compatible with optional property)
@@ -72,6 +74,7 @@ graph TB
 This feature extends the existing TypeScript-based architecture without introducing new dependencies or patterns.
 
 **Existing Stack Alignment**:
+
 - **TypeScript 5.7.2**: Extends existing interfaces with union types for orientation values
 - **Web Components**: Adds one new observed attribute following existing attribute patterns
 - **esbuild**: No build configuration changes; compiles new types and logic identically
@@ -88,6 +91,7 @@ This feature extends the existing TypeScript-based architecture without introduc
 **Context**: Orientation fundamentally changes how positions are calculated, not just how elements are drawn. The question arose whether orientation belongs in GraphLayoutConfig or RendererConfig.
 
 **Alternatives**:
+
 1. Add orientation to RendererConfig and transform coordinates during rendering
 2. Add orientation to GraphLayoutConfig and calculate positions based on direction
 3. Create separate OrientationConfig injected into both components
@@ -95,12 +99,14 @@ This feature extends the existing TypeScript-based architecture without introduc
 **Selected Approach**: Add orientation to GraphLayoutConfig as an optional property.
 
 **Rationale**:
+
 - Orientation affects the layout algorithm's axis selection (x vs y for levels)
 - Position calculation is GraphEngine's responsibility; renderer should receive pre-calculated positions
 - Separation of concerns: GraphEngine handles "where", GraphRenderer handles "how"
 - Matches existing pattern where layout dimensions live in GraphLayoutConfig
 
 **Trade-offs**:
+
 - ✅ Gain: Clean separation, positions are orientation-aware before rendering
 - ✅ Gain: Renderer complexity remains minimal (only connection point logic changes)
 - ⚠️ Sacrifice: Renderer must know orientation to calculate edge connection points (acceptable coupling)
@@ -110,6 +116,7 @@ This feature extends the existing TypeScript-based architecture without introduc
 **Context**: Horizontal orientations (LTR, RTL) need to lay out blocks left-to-right instead of top-to-bottom, requiring a fundamental change to position calculation.
 
 **Alternatives**:
+
 1. Duplicate the entire layoutGraph method with x/y swapped versions
 2. Create an abstract coordinate system with axis transformation
 3. Conditionally swap spacing parameters and use swapped coordinates in a single algorithm
@@ -117,12 +124,14 @@ This feature extends the existing TypeScript-based architecture without introduc
 **Selected Approach**: Use conditional logic to swap primary axis (x vs y) and spacing parameters within the existing layoutGraph method.
 
 **Rationale**:
+
 - Avoids code duplication (DRY principle)
 - Maintains single algorithm with orientation-specific branches
 - Clear mapping: vertical orientations use y-axis progression, horizontal use x-axis progression
 - Spacing parameters swap roles: vertical spacing becomes level spacing for LTR/RTL
 
 **Trade-offs**:
+
 - ✅ Gain: Single source of truth for layout logic
 - ✅ Gain: Easier to maintain and test (one algorithm, multiple configurations)
 - ⚠️ Sacrifice: Slightly more complex conditional logic (acceptable for maintainability)
@@ -132,6 +141,7 @@ This feature extends the existing TypeScript-based architecture without introduc
 **Context**: Each orientation requires edges to connect from different sides of blocks (bottom→top for TTB, right→left for LTR, etc.).
 
 **Alternatives**:
+
 1. Create four separate edge rendering methods (one per orientation)
 2. Use a lookup table mapping orientation to connection point formulas
 3. Add conditional logic calculating connection points based on orientation
@@ -139,12 +149,14 @@ This feature extends the existing TypeScript-based architecture without introduc
 **Selected Approach**: Extend renderEdges with conditional logic determining connection points based on orientation from config.
 
 **Rationale**:
+
 - Edge rendering is already encapsulated in a single method
 - Connection point calculation is straightforward arithmetic (no complex algorithms)
 - Conditional branches are clear and self-documenting
 - Renderer already accesses config for styling; adding orientation check is natural
 
 **Trade-offs**:
+
 - ✅ Gain: Minimal code changes to existing renderer structure
 - ✅ Gain: Clear intent with explicit orientation checks
 - ⚠️ Sacrifice: Method grows slightly longer (within acceptable limits per ESLint config)
@@ -213,19 +225,19 @@ flowchart TD
 
 ## Requirements Traceability
 
-| Requirement | Summary | Components | Interfaces | Flows |
-|-------------|---------|------------|------------|-------|
-| 1.1-1.4 | Four orientation modes | GraphEngine.layoutGraph | GraphLayoutConfig.orientation | Layout Calculation Flow |
-| 1.5-1.6 | Default and validation | BlocksGraph.attributeChangedCallback | GraphLayoutConfig.orientation | - |
-| 1.7-1.8 | Spacing adaptation | GraphEngine.layoutGraph | GraphLayoutConfig.orientation | Layout Calculation Flow |
-| 2.1-2.4 | Attribute integration | BlocksGraph.observedAttributes, attributeChangedCallback | BlocksGraph.orientation | Orientation Change Flow |
-| 3.1-3.4 | JavaScript API | BlocksGraph.orientation getter/setter | BlocksGraph.orientation | Orientation Change Flow |
-| 4.1-4.6 | Layout engine | GraphEngine.layoutGraph | GraphLayoutConfig.orientation | Layout Calculation Flow |
-| 5.1-5.5 | Edge rendering | GraphRenderer.renderEdges | RendererConfig (orientation reference) | Orientation Change Flow |
-| 6.1-6.4 | Type safety | OrientationType, GraphLayoutConfig | TypeScript types | - |
-| 7.1-7.4 | Backward compatibility | All components | All interfaces | - |
-| 9.1-9.3 | Schema validation | SchemaV01Adaptor (unchanged) | - | - |
-| 10.1-10.3 | Performance | GraphEngine.layoutGraph | - | Layout Calculation Flow |
+| Requirement | Summary                | Components                                               | Interfaces                             | Flows                   |
+| ----------- | ---------------------- | -------------------------------------------------------- | -------------------------------------- | ----------------------- |
+| 1.1-1.4     | Four orientation modes | GraphEngine.layoutGraph                                  | GraphLayoutConfig.orientation          | Layout Calculation Flow |
+| 1.5-1.6     | Default and validation | BlocksGraph.attributeChangedCallback                     | GraphLayoutConfig.orientation          | -                       |
+| 1.7-1.8     | Spacing adaptation     | GraphEngine.layoutGraph                                  | GraphLayoutConfig.orientation          | Layout Calculation Flow |
+| 2.1-2.4     | Attribute integration  | BlocksGraph.observedAttributes, attributeChangedCallback | BlocksGraph.orientation                | Orientation Change Flow |
+| 3.1-3.4     | JavaScript API         | BlocksGraph.orientation getter/setter                    | BlocksGraph.orientation                | Orientation Change Flow |
+| 4.1-4.6     | Layout engine          | GraphEngine.layoutGraph                                  | GraphLayoutConfig.orientation          | Layout Calculation Flow |
+| 5.1-5.5     | Edge rendering         | GraphRenderer.renderEdges                                | RendererConfig (orientation reference) | Orientation Change Flow |
+| 6.1-6.4     | Type safety            | OrientationType, GraphLayoutConfig                       | TypeScript types                       | -                       |
+| 7.1-7.4     | Backward compatibility | All components                                           | All interfaces                         | -                       |
+| 9.1-9.3     | Schema validation      | SchemaV01Adaptor (unchanged)                             | -                                      | -                       |
+| 10.1-10.3   | Performance            | GraphEngine.layoutGraph                                  | -                                      | Layout Calculation Flow |
 
 ## Components and Interfaces
 
@@ -234,11 +246,13 @@ flowchart TD
 #### Type Definitions
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Define type-safe orientation values and extend layout configuration
 - **Domain Boundary**: Type system layer providing compile-time safety
 - **Data Ownership**: Type definitions only; no runtime data
 
 **Dependencies**
+
 - **Inbound**: GraphEngine, GraphRenderer, BlocksGraph consume these types
 - **Outbound**: None (foundational types)
 - **External**: None
@@ -249,17 +263,17 @@ flowchart TD
 /**
  * Supported graph orientation modes
  */
-type Orientation = 'ttb' | 'ltr' | 'rtl' | 'btt';
+type Orientation = 'ttb' | 'ltr' | 'rtl' | 'btt'
 
 /**
  * Extended graph layout configuration with orientation support
  */
 interface GraphLayoutConfig {
-  nodeWidth: number;
-  nodeHeight: number;
-  horizontalSpacing: number;
-  verticalSpacing: number;
-  orientation?: Orientation; // New optional property
+  nodeWidth: number
+  nodeHeight: number
+  horizontalSpacing: number
+  verticalSpacing: number
+  orientation?: Orientation // New optional property
 }
 
 /**
@@ -271,7 +285,7 @@ const DEFAULT_LAYOUT_CONFIG: GraphLayoutConfig = {
   horizontalSpacing: 80,
   verticalSpacing: 100,
   orientation: 'ttb', // Explicit default
-};
+}
 ```
 
 **Preconditions**: None (types are compile-time constructs)
@@ -283,12 +297,14 @@ const DEFAULT_LAYOUT_CONFIG: GraphLayoutConfig = {
 #### GraphEngine
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Calculate block positions based on graph topology and orientation
 - **Domain Boundary**: Layout calculation domain; owns positioning algorithm
 - **Data Ownership**: Temporary computation state during layout; produces PositionedBlock arrays
 - **Transaction Boundary**: Pure function; no side effects or persistent state
 
 **Dependencies**
+
 - **Inbound**: BlocksGraph component calls process() method
 - **Outbound**: Depends on GraphLayoutConfig type definition
 - **External**: None
@@ -299,72 +315,78 @@ const DEFAULT_LAYOUT_CONFIG: GraphLayoutConfig = {
 
 ```typescript
 class GraphEngine {
-  private config: GraphLayoutConfig;
+  private config: GraphLayoutConfig
 
   constructor(config: Partial<GraphLayoutConfig> = {}) {
-    this.config = { ...DEFAULT_LAYOUT_CONFIG, ...config };
+    this.config = { ...DEFAULT_LAYOUT_CONFIG, ...config }
   }
 
   layoutGraph(graph: BlockGraph): PositionedBlock[] {
-    const levels = this.calculateLevels(graph);
-    const blocksByLevel = this.groupBlocksByLevel(levels);
-    const orientation = this.config.orientation ?? 'ttb';
+    const levels = this.calculateLevels(graph)
+    const blocksByLevel = this.groupBlocksByLevel(levels)
+    const orientation = this.config.orientation ?? 'ttb'
 
     // Determine axis and direction
-    const isVertical = orientation === 'ttb' || orientation === 'btt';
-    const isReversed = orientation === 'btt' || orientation === 'rtl';
+    const isVertical = orientation === 'ttb' || orientation === 'btt'
+    const isReversed = orientation === 'btt' || orientation === 'rtl'
 
     // Calculate max level for reversed orientations
     const maxLevel = isReversed
       ? Math.max(...Array.from(blocksByLevel.keys()))
-      : 0;
+      : 0
 
-    const positions = new Map<string, BlockPosition>();
+    const positions = new Map<string, BlockPosition>()
 
     for (const [level, blockIds] of blocksByLevel.entries()) {
       // Calculate level position based on orientation
-      const adjustedLevel = isReversed ? maxLevel - level : level;
+      const adjustedLevel = isReversed ? maxLevel - level : level
 
       if (isVertical) {
         // TTB or BTT: levels progress along y-axis
-        const y = adjustedLevel * (this.config.nodeHeight + this.config.verticalSpacing);
+        const y =
+          adjustedLevel * (this.config.nodeHeight + this.config.verticalSpacing)
         blockIds.forEach((blockId, index) => {
           positions.set(blockId, {
             x: index * (this.config.nodeWidth + this.config.horizontalSpacing),
             y,
             width: this.config.nodeWidth,
             height: this.config.nodeHeight,
-          });
-        });
+          })
+        })
       } else {
         // LTR or RTL: levels progress along x-axis
-        const x = adjustedLevel * (this.config.nodeWidth + this.config.horizontalSpacing);
+        const x =
+          adjustedLevel *
+          (this.config.nodeWidth + this.config.horizontalSpacing)
         blockIds.forEach((blockId, index) => {
           positions.set(blockId, {
             x,
             y: index * (this.config.nodeHeight + this.config.verticalSpacing),
             width: this.config.nodeWidth,
             height: this.config.nodeHeight,
-          });
-        });
+          })
+        })
       }
     }
 
-    return this.buildPositionedBlocks(graph, positions);
+    return this.buildPositionedBlocks(graph, positions)
   }
 }
 ```
 
 **Preconditions**:
+
 - `graph` must be a valid BlockGraph with blocks and edges
 - `config.orientation` must be undefined or one of the four valid orientation values
 
 **Postconditions**:
+
 - Returns PositionedBlock array with coordinates matching the specified orientation
 - All blocks in graph have corresponding positions
 - Spacing ratios are consistent across orientations
 
 **Invariants**:
+
 - O(n) time complexity where n = number of blocks
 - Position calculations are deterministic (same input → same output)
 - No blocks overlap (positions respect spacing configuration)
@@ -376,12 +398,14 @@ class GraphEngine {
 #### GraphRenderer
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Generate SVG elements from positioned blocks with orientation-aware edge connections
 - **Domain Boundary**: Visual presentation domain; owns SVG creation
 - **Data Ownership**: Temporary DOM elements during render; produces SVG tree
 - **Transaction Boundary**: Pure rendering; no state mutation
 
 **Dependencies**
+
 - **Inbound**: BlocksGraph component calls render() method
 - **Outbound**: Depends on RendererConfig type definition
 - **External**: Browser DOM API (SVG element creation)
@@ -392,10 +416,10 @@ class GraphEngine {
 
 ```typescript
 class GraphRenderer {
-  private config: RendererConfig;
+  private config: RendererConfig
 
   constructor(config: Partial<RendererConfig> = {}) {
-    this.config = { ...DEFAULT_RENDERER_CONFIG, ...config };
+    this.config = { ...DEFAULT_RENDERER_CONFIG, ...config }
   }
 
   private renderEdges(
@@ -403,37 +427,42 @@ class GraphRenderer {
     positioned: PositionedBlock[],
     orientation: Orientation = 'ttb'
   ): SVGGElement {
-    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    group.setAttribute('class', 'edges');
+    const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    group.setAttribute('class', 'edges')
 
-    const positionMap = new Map(positioned.map(pb => [pb.block.id, pb.position]));
+    const positionMap = new Map(
+      positioned.map(pb => [pb.block.id, pb.position])
+    )
 
     for (const edge of graph.edges) {
-      const fromPos = positionMap.get(edge.from);
-      const toPos = positionMap.get(edge.to);
+      const fromPos = positionMap.get(edge.from)
+      const toPos = positionMap.get(edge.to)
 
-      if (!fromPos || !toPos) continue;
-      if (!this.shouldRenderEdge(edge)) continue;
+      if (!fromPos || !toPos) continue
+      if (!this.shouldRenderEdge(edge)) continue
 
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      const line = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'line'
+      )
 
       // Calculate connection points based on orientation
       const { x1, y1, x2, y2 } = this.calculateConnectionPoints(
         fromPos,
         toPos,
         orientation
-      );
+      )
 
-      line.setAttribute('x1', String(x1));
-      line.setAttribute('y1', String(y1));
-      line.setAttribute('x2', String(x2));
-      line.setAttribute('y2', String(y2));
+      line.setAttribute('x1', String(x1))
+      line.setAttribute('y1', String(y1))
+      line.setAttribute('x2', String(x2))
+      line.setAttribute('y2', String(y2))
 
-      this.applyEdgeStyles(line, edge);
-      group.appendChild(line);
+      this.applyEdgeStyles(line, edge)
+      group.appendChild(line)
     }
 
-    return group;
+    return group
   }
 
   private calculateConnectionPoints(
@@ -448,43 +477,46 @@ class GraphRenderer {
           y1: fromPos.y + fromPos.height, // Bottom center
           x2: toPos.x + toPos.width / 2,
           y2: toPos.y, // Top center
-        };
+        }
       case 'btt':
         return {
           x1: fromPos.x + fromPos.width / 2,
           y1: fromPos.y, // Top center
           x2: toPos.x + toPos.width / 2,
           y2: toPos.y + toPos.height, // Bottom center
-        };
+        }
       case 'ltr':
         return {
           x1: fromPos.x + fromPos.width, // Right center
           y1: fromPos.y + fromPos.height / 2,
           x2: toPos.x, // Left center
           y2: toPos.y + toPos.height / 2,
-        };
+        }
       case 'rtl':
         return {
           x1: fromPos.x, // Left center
           y1: fromPos.y + fromPos.height / 2,
           x2: toPos.x + toPos.width, // Right center
           y2: toPos.y + toPos.height / 2,
-        };
+        }
     }
   }
 }
 ```
 
 **Preconditions**:
+
 - `positioned` contains valid BlockPosition data for all blocks in `graph`
 - `orientation` is one of the four valid values
 
 **Postconditions**:
+
 - Returns SVGGElement with correctly connected edges
 - Edge connection points align with orientation direction
 - All visible edges are rendered
 
 **Invariants**:
+
 - Edge styling remains consistent across orientations
 - Connection points are always at block boundaries (center of respective side)
 
@@ -495,12 +527,14 @@ class GraphRenderer {
 #### BlocksGraph
 
 **Responsibility & Boundaries**
+
 - **Primary Responsibility**: Manage Web Component lifecycle, attribute observation, and coordinate layout/rendering
 - **Domain Boundary**: Component layer; owns DOM integration
 - **Data Ownership**: Block data array, selection state, component configuration
 - **Transaction Boundary**: Component render cycle
 
 **Dependencies**
+
 - **Inbound**: Browser Custom Elements API, developer usage
 - **Outbound**: GraphEngine, GraphRenderer
 - **External**: Shadow DOM API
@@ -519,7 +553,7 @@ class BlocksGraph extends HTMLElement {
       'horizontal-spacing',
       'vertical-spacing',
       'orientation', // New attribute
-    ];
+    ]
   }
 
   attributeChangedCallback(
@@ -527,52 +561,52 @@ class BlocksGraph extends HTMLElement {
     oldValue: string | null,
     newValue: string | null
   ): void {
-    if (oldValue === newValue) return;
+    if (oldValue === newValue) return
 
     switch (name) {
       case 'orientation':
-        this.updateLayoutConfig();
-        break;
+        this.updateLayoutConfig()
+        break
       // ... existing cases
     }
 
-    this.render();
+    this.render()
   }
 
   private updateLayoutConfig(): void {
-    const config: Partial<GraphLayoutConfig> = {};
+    const config: Partial<GraphLayoutConfig> = {}
 
     // ... existing attribute parsing
 
-    const orientation = this.getAttribute('orientation');
+    const orientation = this.getAttribute('orientation')
     if (orientation && this.isValidOrientation(orientation)) {
-      config.orientation = orientation as Orientation;
+      config.orientation = orientation as Orientation
     } else if (orientation) {
       console.warn(
         `Invalid orientation "${orientation}". Using default "ttb". ` +
-        `Valid values: ttb, ltr, rtl, btt`
-      );
+          `Valid values: ttb, ltr, rtl, btt`
+      )
     }
 
-    this.engine = new GraphEngine(config);
+    this.engine = new GraphEngine(config)
   }
 
   private isValidOrientation(value: string): value is Orientation {
-    return ['ttb', 'ltr', 'rtl', 'btt'].includes(value);
+    return ['ttb', 'ltr', 'rtl', 'btt'].includes(value)
   }
 
   /**
    * Get current orientation
    */
   get orientation(): string {
-    return this.getAttribute('orientation') ?? 'ttb';
+    return this.getAttribute('orientation') ?? 'ttb'
   }
 
   /**
    * Set orientation programmatically
    */
   set orientation(value: string) {
-    this.setAttribute('orientation', value);
+    this.setAttribute('orientation', value)
   }
 }
 ```
@@ -647,6 +681,7 @@ classDiagram
 ```
 
 **Business Rules & Invariants**:
+
 - Orientation must be one of four valid values; invalid values default to 'ttb' with warning
 - Spacing parameters swap semantic meaning for horizontal orientations (horizontal spacing = level spacing)
 - All blocks in a graph use the same orientation (no mixed modes within single render)
@@ -661,18 +696,21 @@ The orientation feature follows defensive programming with graceful degradation 
 ### Error Categories and Responses
 
 **User Errors (Invalid Input)**:
+
 - **Invalid orientation value**: Log console warning with valid options, fall back to 'ttb' default
   - Example: `orientation="diagonal"` → Warning logged, renders as 'ttb'
   - Validation: `isValidOrientation()` method checks against allowed values
   - Recovery: Automatic fallback ensures component never breaks
 
 **Developer Errors (Type Mismatch)**:
+
 - **TypeScript type error**: Compile-time error prevents invalid values in typed code
   - Example: `config.orientation = "invalid"` → TypeScript compilation fails
   - Validation: Union type `"ttb" | "ltr" | "rtl" | "btt"` enforces valid values
   - Prevention: IDE autocomplete suggests only valid options
 
 **System Errors (Edge Cases)**:
+
 - **Undefined orientation in config**: Defaults to 'ttb' via optional property with default value
   - Example: `new GraphEngine({})` → Uses `orientation: 'ttb'` from defaults
   - Validation: Default merge in constructor ensures orientation always defined
@@ -681,16 +719,18 @@ The orientation feature follows defensive programming with graceful degradation 
 ### Monitoring
 
 **Error Tracking**: Console warnings for invalid orientation values include:
+
 - Provided value for debugging
 - List of valid values for correction
 - Fallback behavior notification
 
 **Logging**: Validation warnings logged at console.warn level:
+
 ```typescript
 console.warn(
   `Invalid orientation "${value}". Using default "ttb". ` +
-  `Valid values: ttb, ltr, rtl, btt`
-);
+    `Valid values: ttb, ltr, rtl, btt`
+)
 ```
 
 **Health Monitoring**: No additional health checks required; invalid orientation is non-critical and self-healing.
@@ -700,11 +740,13 @@ console.warn(
 ### Unit Tests
 
 **Type Definition Tests** (`src/types/orientation.test.ts`):
+
 - Verify Orientation type accepts all four valid values
 - Verify TypeScript compiler rejects invalid orientation strings
 - Test GraphLayoutConfig interface includes optional orientation property
 
 **GraphEngine Layout Tests** (`src/core/graph-engine.test.ts`):
+
 - Test TTB orientation produces y-axis progression with downward direction
 - Test BTT orientation produces y-axis progression with upward direction (reversed levels)
 - Test LTR orientation produces x-axis progression with rightward direction
@@ -714,6 +756,7 @@ console.warn(
 - Test position calculation maintains O(n) complexity
 
 **GraphRenderer Edge Tests** (`src/core/renderer.test.ts`):
+
 - Test TTB connection points: bottom-center → top-center
 - Test BTT connection points: top-center → bottom-center
 - Test LTR connection points: right-center → left-center
@@ -721,6 +764,7 @@ console.warn(
 - Test edge style consistency across orientations
 
 **BlocksGraph Component Tests** (`src/components/blocks-graph.test.ts`):
+
 - Test orientation attribute added to observedAttributes array
 - Test attributeChangedCallback triggers updateLayoutConfig on orientation change
 - Test invalid orientation logs warning and falls back to 'ttb'
@@ -730,6 +774,7 @@ console.warn(
 ### Integration Tests
 
 **Attribute Integration** (`src/components/blocks-graph.integration.test.ts`):
+
 - Test setting orientation attribute via HTML triggers re-layout
 - Test changing orientation dynamically preserves block data
 - Test changing orientation preserves selection state
@@ -737,12 +782,14 @@ console.warn(
 - Test re-render occurs without manual data reload after orientation change
 
 **Layout Engine Integration** (`src/core/graph-engine.integration.test.ts`):
+
 - Test GraphEngine receives orientation from BlocksGraph config
 - Test layoutGraph produces correct positions for all four orientations with sample graph
 - Test switching between orientations produces different but valid positions
 - Test spacing parameters swap roles correctly for horizontal orientations
 
 **End-to-End Rendering** (`src/components/blocks-graph.e2e.test.ts`):
+
 - Test complete render cycle with TTB orientation produces expected SVG structure
 - Test dynamic orientation change from TTB to LTR updates SVG correctly
 - Test edges connect correctly for each orientation in rendered output
@@ -752,6 +799,7 @@ console.warn(
 ### Performance Tests
 
 **Layout Performance** (`src/core/graph-engine.performance.test.ts`):
+
 - Benchmark layoutGraph with 100 blocks for each orientation (expect <50ms)
 - Benchmark orientation change with 100 blocks (expect <100ms including re-render)
 - Verify O(n) complexity: 1000 blocks completes within 10x the 100-block time
@@ -760,6 +808,7 @@ console.warn(
 ## Security Considerations
 
 **No Security Implications**: This feature is purely client-side layout calculation with no:
+
 - User input processing beyond enumerated values
 - Network requests or external data fetching
 - Sensitive data handling
@@ -780,6 +829,7 @@ console.warn(
 **Migration Path**: None required. Existing implementations work without modification. Developers opt into orientation feature by adding the attribute/property.
 
 **Compatibility Testing**:
+
 - All existing unit tests pass without modification
 - Existing examples render identically
 - README examples work as documented without updates

@@ -3,6 +3,7 @@
 ## Active Specifications
 
 ### connector-style-configuration
+
 **Status**: Initialized
 **Description**: Enable developers to customize connector/edge styles with advanced options including colors, widths, dash patterns, arrow markers, curves, and animations. Supports multiple configuration methods (programmatic API, web component attributes, CSS variables, per-edge styling).
 
@@ -10,6 +11,7 @@
 **Spec Location**: `.kiro/specs/connector-style-configuration/`
 
 ### runnable-examples
+
 **Status**: Completed
 **Description**: Create an examples folder with runnable demonstrations showing how to use the @luminastudy/blocks-graph library in both React and pure HTML contexts.
 
@@ -17,6 +19,7 @@
 **Spec Location**: `.kiro/specs/runnable-examples/`
 
 ### graph-orientation
+
 **Status**: Initialized
 **Description**: Add configurable graph orientation options (top-to-bottom, right-to-left, left-to-right) to control how nodes are organized and displayed in the graph visualization.
 
@@ -24,6 +27,7 @@
 **Spec Location**: `.kiro/specs/graph-orientation/`
 
 ### pan-zoom-interaction
+
 **Status**: Initialized
 **Description**: Enable users to pan around the graph by dragging and zoom in/out using mouse scroll wheel for better navigation of large graphs.
 

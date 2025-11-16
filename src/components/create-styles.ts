@@ -2,7 +2,7 @@
  * Create and return a style element for the blocks graph
  */
 export function createStyles(): HTMLStyleElement {
-  const style = document.createElement('style');
+  const style = document.createElement('style')
   style.textContent = `
     :host {
       display: block;
@@ -34,6 +34,6 @@ export function createStyles(): HTMLStyleElement {
       padding: 1rem;
       font-family: system-ui, -apple-system, sans-serif;
     }
-  `;
-  return style;
+  `
+  return style
 }

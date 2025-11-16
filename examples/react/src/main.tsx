@@ -1,10 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 // Import the new wrapper-based example by default (Recommended)
-import AppWithWrapper from './AppWithWrapper';
+import AppWithWrapper from './AppWithWrapper'
 // Import the original ref-based example (Alternative)
 // import App from './App';
-import './index.css';
+import './index.css'
 
 /*
  * React 18 Entry Point:
@@ -19,4 +19,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <AppWithWrapper />
     {/* <App /> - Uncomment to use ref-based approach */}
   </React.StrictMode>
-);
+)

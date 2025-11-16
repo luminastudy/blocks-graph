@@ -13,6 +13,7 @@ This document summarizes the React wrapper implementation for `@luminastudy/bloc
 A functional React component using hooks that wraps the `<blocks-graph>` Web Component.
 
 **Key Features**:
+
 - ✅ No refs needed - just pass props
 - ✅ Full TypeScript support
 - ✅ React-style event handlers
@@ -20,6 +21,7 @@ A functional React component using hooks that wraps the `<blocks-graph>` Web Com
 - ✅ Proper cleanup on unmount
 
 **Props Supported**:
+
 - **Data**: `blocks`, `blocksV01`, `jsonUrl`
 - **Configuration**: `language`, `orientation`, `showPrerequisites`, `showParents`, node sizing, spacing
 - **Events**: `onBlocksRendered`, `onBlockSelected`
@@ -28,10 +30,12 @@ A functional React component using hooks that wraps the `<blocks-graph>` Web Com
 ### 2. TypeScript Support
 
 **Files**:
+
 - `src/wrappers/react/index.ts` - Public exports
 - `src/wrappers/react/jsx.d.ts` - JSX type declarations
 
 **Types Exported**:
+
 - `BlocksGraphReact` - Main component
 - `BlocksGraphProps` - Component props interface
 - `Block` - Internal block format
@@ -43,6 +47,7 @@ A functional React component using hooks that wraps the `<blocks-graph>` Web Com
 **File**: `src/wrappers/react/BlocksGraphReact.test.tsx`
 
 Comprehensive test suite covering:
+
 - Component rendering
 - Props application
 - Event handling
@@ -50,6 +55,7 @@ Comprehensive test suite covering:
 - Cleanup on unmount
 
 **Test Coverage**:
+
 - 15 test cases
 - Props synchronization
 - Event listeners
@@ -58,12 +64,14 @@ Comprehensive test suite covering:
 ### 4. Documentation
 
 **Files Created**:
+
 - `src/wrappers/README.md` - Wrappers directory overview
 - `src/wrappers/react/README.md` - React wrapper detailed guide
 - Updated `README.md` - Main README with React wrapper section
 - Updated `examples/react/README.md` - Example documentation
 
 **Documentation Includes**:
+
 - Installation instructions
 - Usage examples
 - Full props API reference
@@ -74,11 +82,13 @@ Comprehensive test suite covering:
 ### 5. Example Integration
 
 **Files Updated**:
+
 - `examples/react/src/AppWithWrapper.tsx` - New example using wrapper
 - `examples/react/src/main.tsx` - Switched to wrapper by default
 - `examples/react/README.md` - Documentation for both approaches
 
 **Example Features**:
+
 - Data loading from API
 - State management
 - Interactive controls
@@ -88,12 +98,14 @@ Comprehensive test suite covering:
 ### 6. Build Configuration
 
 **Files Updated**:
+
 - `package.json` - Added `/react` export path, peer dependencies
 - `tsconfig.json` - Added `jsx: "react-jsx"`
 - `build.mjs` - Added React wrapper bundle
 - Added `@types/react` and testing libraries as dev dependencies
 
 **Build Output**:
+
 ```
 dist/index.js                      305.4kb (main library)
 dist/wrappers/react/index.js       308.0kb (React wrapper)
@@ -176,39 +188,40 @@ The wrapper uses separate `useEffect` hooks for each prop category:
 <BlocksGraphReact
   blocks={blocks}
   language="en"
-  onBlockSelected={(e) => console.log(e.detail)}
+  onBlockSelected={e => console.log(e.detail)}
 />
 ```
 
 ### Direct Web Component (requires refs)
 
 ```tsx
-const graphRef = useRef(null);
+const graphRef = useRef(null)
 
 useEffect(() => {
   if (graphRef.current) {
-    graphRef.current.loadFromJson(JSON.stringify(blocks), 'v0.1');
+    graphRef.current.loadFromJson(JSON.stringify(blocks), 'v0.1')
   }
-}, [blocks]);
+}, [blocks])
 
 useEffect(() => {
   if (graphRef.current) {
-    graphRef.current.language = language;
+    graphRef.current.language = language
   }
-}, [language]);
+}, [language])
 
 useEffect(() => {
-  const handler = (e) => console.log(e.detail);
-  graphRef.current?.addEventListener('block-selected', handler);
-  return () => graphRef.current?.removeEventListener('block-selected', handler);
-}, []);
+  const handler = e => console.log(e.detail)
+  graphRef.current?.addEventListener('block-selected', handler)
+  return () => graphRef.current?.removeEventListener('block-selected', handler)
+}, [])
 
-<blocks-graph ref={graphRef} />
+;<blocks-graph ref={graphRef} />
 ```
 
 ## Files Added/Modified
 
 ### New Files (10)
+
 1. `src/wrappers/react/BlocksGraphReact.tsx`
 2. `src/wrappers/react/BlocksGraphReact.test.tsx`
 3. `src/wrappers/react/index.ts`
@@ -219,6 +232,7 @@ useEffect(() => {
 8. `REACT-WRAPPER.md` (this file)
 
 ### Modified Files (7)
+
 1. `package.json` - Exports, peer dependencies
 2. `tsconfig.json` - JSX mode
 3. `build.mjs` - React wrapper build
@@ -247,6 +261,7 @@ useEffect(() => {
 ## Browser Support
 
 Same as React and Web Components:
+
 - Chrome 61+
 - Firefox 60+
 - Safari 11+
@@ -255,11 +270,13 @@ Same as React and Web Components:
 ## Future Enhancements
 
 ### Planned Wrappers
+
 - Vue 3 wrapper (`@luminastudy/blocks-graph/vue`)
 - Angular wrapper (`@luminastudy/blocks-graph/angular`)
 - Svelte wrapper (`@luminastudy/blocks-graph/svelte`)
 
 ### Potential Improvements
+
 - React Server Components support
 - Suspense integration for data loading
 - React 19 features integration
@@ -269,6 +286,7 @@ Same as React and Web Components:
 ## Testing
 
 Run tests:
+
 ```bash
 pnpm test                              # All tests
 pnpm test -- wrappers/react            # React wrapper tests only
@@ -276,6 +294,7 @@ pnpm test:ui                           # Interactive test UI
 ```
 
 Build:
+
 ```bash
 pnpm build                             # Full build (types + bundles)
 pnpm typecheck                         # Type check only
@@ -286,23 +305,25 @@ pnpm typecheck                         # Type check only
 For existing users who want to switch to the wrapper:
 
 **Before**:
+
 ```tsx
-import { useEffect, useRef } from 'react';
-import '@luminastudy/blocks-graph';
+import { useEffect, useRef } from 'react'
+import '@luminastudy/blocks-graph'
 
-const graphRef = useRef(null);
+const graphRef = useRef(null)
 useEffect(() => {
-  graphRef.current?.loadFromJson(json, 'v0.1');
-}, []);
+  graphRef.current?.loadFromJson(json, 'v0.1')
+}, [])
 
-<blocks-graph ref={graphRef} language="en" />
+;<blocks-graph ref={graphRef} language="en" />
 ```
 
 **After**:
-```tsx
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react';
 
-<BlocksGraphReact blocks={blocks} language="en" />
+```tsx
+import { BlocksGraphReact } from '@luminastudy/blocks-graph/react'
+
+;<BlocksGraphReact blocks={blocks} language="en" />
 ```
 
 ## License
@@ -312,6 +333,7 @@ MIT - Same as the core library
 ## Contributing
 
 To add features to the React wrapper:
+
 1. Update `BlocksGraphReact.tsx`
 2. Add tests in `BlocksGraphReact.test.tsx`
 3. Update `README.md` documentation

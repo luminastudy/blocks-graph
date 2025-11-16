@@ -15,6 +15,7 @@ These examples showcase the framework-agnostic nature of the Web Component libra
 **Best For**: Understanding Web Component basics without framework overhead
 
 Demonstrates:
+
 - ES module import and component registration
 - Declarative HTML usage with attributes
 - Imperative API for data loading (`loadFromJson` method)
@@ -22,6 +23,7 @@ Demonstrates:
 - Dynamic attribute updates via JavaScript
 
 **Quick Start**:
+
 ```bash
 # From project root
 pnpm build           # Build the library first
@@ -40,6 +42,7 @@ pnpm serve          # Start HTTP server
 **Best For**: Understanding framework integration patterns and React best practices
 
 Demonstrates:
+
 - Web Component integration in React with TypeScript
 - Type-safe ref access to imperative API
 - useEffect hooks for data loading lifecycle
@@ -48,6 +51,7 @@ Demonstrates:
 - Modern React patterns (hooks, functional components)
 
 **Quick Start**:
+
 ```bash
 # From project root
 pnpm build                    # Build the library first
@@ -101,6 +105,7 @@ This creates the `dist/index.js` bundle that all examples import.
 ### When to Rebuild
 
 Rebuild the library whenever you:
+
 - Clone the repository for the first time
 - Pull updates from the repository
 - Make changes to the library source code (`src/`)
@@ -122,6 +127,7 @@ All examples use the same sample dataset located in `examples/data/blocks-sample
 ### Sample Data Structure
 
 The dataset demonstrates a mathematics curriculum with:
+
 - **5 blocks** showing educational progression
 - **Bilingual titles** (English and Hebrew)
 - **Prerequisite relationships** (dependency chains)
@@ -145,6 +151,7 @@ Want to experiment with your own data? Edit `examples/data/blocks-sample.json` f
 ```
 
 **Schema Rules**:
+
 - `id`: Must be valid UUID format
 - `title.he_text`: Required (Hebrew text)
 - `title.en_text`: Required (English text)
@@ -159,6 +166,7 @@ Want to experiment with your own data? Edit `examples/data/blocks-sample.json` f
 **Cause**: The library hasn't been built yet.
 
 **Solution**:
+
 ```bash
 cd ../..  # Navigate to project root
 pnpm build
@@ -171,6 +179,7 @@ pnpm build
 **Solution**: You **must** use an HTTP server. ES modules and fetch requests require proper HTTP protocol.
 
 Options:
+
 ```bash
 # Option 1: pnpm serve (from project root)
 pnpm serve
@@ -185,10 +194,12 @@ python -m http.server 8080
 ### "Failed to fetch" Sample Data
 
 **Causes**:
+
 1. Not using HTTP server (for HTML example)
 2. Sample data file missing
 
 **Solution**:
+
 1. Use HTTP server (see above)
 2. Verify `examples/data/blocks-sample.json` exists
 
@@ -197,6 +208,7 @@ python -m http.server 8080
 **Cause**: pnpm workspace not resolving parent library.
 
 **Solution**:
+
 ```bash
 # From project root
 pnpm install  # Reinstall all workspace dependencies
@@ -209,11 +221,13 @@ ls -la examples/react/node_modules/@luminastudy/blocks-graph
 ### Web Component Not Rendering
 
 **Possible Causes**:
+
 1. Browser doesn't support Web Components
 2. Library not imported
 3. JavaScript errors
 
 **Solution**:
+
 1. Use a modern browser (see Browser Requirements above)
 2. Check browser console for errors
 3. Verify library was built successfully
@@ -223,6 +237,7 @@ ls -la examples/react/node_modules/@luminastudy/blocks-graph
 **Cause**: Type definitions missing or incorrect.
 
 **Solution**:
+
 ```bash
 # From examples/react/
 pnpm install  # Ensure all type packages installed
@@ -245,17 +260,18 @@ All examples use ES modules (`import`/`export` syntax). This requires:
 
 ### Browser Support Matrix
 
-| Browser | Minimum Version | Notes |
-|---------|----------------|-------|
-| Chrome  | 61+  | Full support |
-| Firefox | 60+  | Full support |
-| Safari  | 11+  | Full support |
-| Edge    | 79+  | Chromium-based only |
-| IE      | None | Not supported |
+| Browser | Minimum Version | Notes               |
+| ------- | --------------- | ------------------- |
+| Chrome  | 61+             | Full support        |
+| Firefox | 60+             | Full support        |
+| Safari  | 11+             | Full support        |
+| Edge    | 79+             | Chromium-based only |
+| IE      | None            | Not supported       |
 
 ### Transpilation
 
 Examples do not include transpilation for older browsers. For production use in older browsers, you'll need to:
+
 1. Add Babel for JavaScript transpilation
 2. Add polyfills for missing APIs
 3. Consider Web Component polyfills for older browsers

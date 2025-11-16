@@ -53,6 +53,7 @@ Check that the workflow files are present:
 ### 4. Test CI Pipeline
 
 1. Create a new branch:
+
    ```bash
    git checkout -b test-ci
    ```
@@ -60,6 +61,7 @@ Check that the workflow files are present:
 2. Make a small change (e.g., update README)
 
 3. Push the branch:
+
    ```bash
    git push origin test-ci
    ```
@@ -106,6 +108,7 @@ pnpm release
 ```
 
 This will:
+
 1. Run all quality checks
 2. Update version in package.json
 3. Create git tag
@@ -146,11 +149,13 @@ After the publish workflow completes:
    - Verify it completed successfully
 
 2. **Check npm Registry**
+
    ```bash
    npm view @luminastudy/blocks-graph
    ```
 
 3. **Test Installation**
+
    ```bash
    mkdir test-install && cd test-install
    npm init -y
@@ -167,10 +172,12 @@ After the publish workflow completes:
 ### CI Workflow (ci.yml)
 
 **Triggers:**
+
 - Push to `main` or `develop` branches
 - Pull requests to `main` or `develop`
 
 **Jobs:**
+
 1. **Quality Checks** - Spell check, lint, type check
 2. **Tests** - Run on Node 18, 20, 22
 3. **Build** - Verify library builds successfully
@@ -179,9 +186,11 @@ After the publish workflow completes:
 ### Publish Workflow (publish.yml)
 
 **Triggers:**
+
 - Push tags matching `v*.*.*` (e.g., v0.1.0, v1.2.3)
 
 **Steps:**
+
 1. Verify tag format
 2. Run all quality checks
 3. Run all tests
@@ -191,6 +200,7 @@ After the publish workflow completes:
 7. Create GitHub release
 
 **Security:**
+
 - Uses npm provenance for supply chain security
 - Requires `NPM_TOKEN` secret
 - OIDC token authentication
@@ -198,14 +208,17 @@ After the publish workflow completes:
 ### Release Workflow (release.yml)
 
 **Triggers:**
+
 - Manual dispatch from GitHub Actions UI
 
 **Purpose:**
+
 - Simplifies version bumping
 - Creates proper git tags
 - Triggers publish workflow
 
 **Usage:**
+
 1. Go to Actions → Create Release
 2. Click "Run workflow"
 3. Enter version number (e.g., 0.2.0)
@@ -219,6 +232,7 @@ After the publish workflow completes:
 **Problem:** Invalid or expired NPM_TOKEN
 
 **Solution:**
+
 1. Create new automation token on npmjs.com
 2. Update `NPM_TOKEN` in GitHub secrets
 3. Re-run the workflow
@@ -228,6 +242,7 @@ After the publish workflow completes:
 **Problem:** Git tag doesn't match package.json version
 
 **Solution:**
+
 ```bash
 # Delete incorrect tag
 git tag -d v0.1.0
@@ -244,6 +259,7 @@ git push origin v0.1.0
 **Problem:** Environment differences
 
 **Solution:**
+
 1. Check Node.js version (CI uses 18, 20, 22)
 2. Check for hardcoded paths
 3. Verify all dependencies are in package.json
@@ -254,6 +270,7 @@ git push origin v0.1.0
 **Problem:** npm package includes unnecessary files
 
 **Solution:**
+
 1. Check `.npmignore` is comprehensive
 2. Verify `files` field in package.json
 3. Run `npm pack --dry-run` to see what's included

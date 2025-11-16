@@ -29,88 +29,89 @@ pnpm add @luminastudy/blocks-graph
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <script type="module">
-    import '@luminastudy/blocks-graph';
-  </script>
-</head>
-<body>
-  <blocks-graph
-    id="graph"
-    language="en"
-    show-prerequisites="true"
-    show-parents="true">
-  </blocks-graph>
+  <head>
+    <script type="module">
+      import '@luminastudy/blocks-graph'
+    </script>
+  </head>
+  <body>
+    <blocks-graph
+      id="graph"
+      language="en"
+      show-prerequisites="true"
+      show-parents="true"
+    >
+    </blocks-graph>
 
-  <script type="module">
-    const graph = document.getElementById('graph');
+    <script type="module">
+      const graph = document.getElementById('graph')
 
-    // Load from JSON
-    const blocks = [
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440000",
-        "title": {
-          "he_text": "מבוא למתמטיקה",
-          "en_text": "Introduction to Mathematics"
+      // Load from JSON
+      const blocks = [
+        {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          title: {
+            he_text: 'מבוא למתמטיקה',
+            en_text: 'Introduction to Mathematics',
+          },
+          prerequisites: [],
+          parents: [],
         },
-        "prerequisites": [],
-        "parents": []
-      },
-      {
-        "id": "550e8400-e29b-41d4-a716-446655440001",
-        "title": {
-          "he_text": "אלגברה ליניארית",
-          "en_text": "Linear Algebra"
+        {
+          id: '550e8400-e29b-41d4-a716-446655440001',
+          title: {
+            he_text: 'אלגברה ליניארית',
+            en_text: 'Linear Algebra',
+          },
+          prerequisites: ['550e8400-e29b-41d4-a716-446655440000'],
+          parents: ['550e8400-e29b-41d4-a716-446655440000'],
         },
-        "prerequisites": ["550e8400-e29b-41d4-a716-446655440000"],
-        "parents": ["550e8400-e29b-41d4-a716-446655440000"]
-      }
-    ];
+      ]
 
-    graph.loadFromJson(JSON.stringify(blocks), 'v0.1');
-  </script>
-</body>
+      graph.loadFromJson(JSON.stringify(blocks), 'v0.1')
+    </script>
+  </body>
 </html>
 ```
 
 ### JavaScript/TypeScript
 
 ```typescript
-import { BlocksGraph } from '@luminastudy/blocks-graph';
+import { BlocksGraph } from '@luminastudy/blocks-graph'
 
 // The element is automatically registered
-const graph = document.querySelector('blocks-graph');
+const graph = document.querySelector('blocks-graph')
 
 // Load from URL
-await graph.loadFromUrl('https://example.com/blocks.json', 'v0.1');
+await graph.loadFromUrl('https://example.com/blocks.json', 'v0.1')
 
 // Or load from JSON string
-graph.loadFromJson(jsonString, 'v0.1');
+graph.loadFromJson(jsonString, 'v0.1')
 
 // Or set blocks directly (using internal format)
-import { schemaV01Adaptor } from '@luminastudy/blocks-graph';
-const blocks = schemaV01Adaptor.adaptFromJson(jsonString);
-graph.setBlocks(blocks);
+import { schemaV01Adaptor } from '@luminastudy/blocks-graph'
+const blocks = schemaV01Adaptor.adaptFromJson(jsonString)
+graph.setBlocks(blocks)
 ```
 
 ### React (Recommended: Using Wrapper Component)
 
 ```tsx
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react';
-import type { Block } from '@luminastudy/blocks-graph';
+import { BlocksGraphReact } from '@luminastudy/blocks-graph/react'
+import type { Block } from '@luminastudy/blocks-graph'
 
 function App() {
   const blocks: Block[] = [
     {
-      id: "550e8400-e29b-41d4-a716-446655440000",
+      id: '550e8400-e29b-41d4-a716-446655440000',
       title: {
-        he: "מבוא למתמטיקה",
-        en: "Introduction to Mathematics"
+        he: 'מבוא למתמטיקה',
+        en: 'Introduction to Mathematics',
       },
       prerequisites: [],
-      parents: []
-    }
-  ];
+      parents: [],
+    },
+  ]
 
   return (
     <BlocksGraphReact
@@ -119,14 +120,15 @@ function App() {
       orientation="ttb"
       showPrerequisites={true}
       showParents={true}
-      onBlockSelected={(e) => console.log('Selected:', e.detail)}
+      onBlockSelected={e => console.log('Selected:', e.detail)}
       style={{ width: '100%', height: '600px' }}
     />
-  );
+  )
 }
 ```
 
 **Benefits of the React wrapper:**
+
 - ✅ No refs needed - just pass props
 - ✅ Full TypeScript support with autocomplete
 - ✅ React-style event handlers
@@ -138,18 +140,18 @@ function App() {
 You can also use the Web Component directly with refs:
 
 ```tsx
-import { useEffect, useRef } from 'react';
-import '@luminastudy/blocks-graph';
+import { useEffect, useRef } from 'react'
+import '@luminastudy/blocks-graph'
 
 function App() {
-  const graphRef = useRef<HTMLElement>(null);
+  const graphRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     if (graphRef.current) {
-      const graph = graphRef.current as any;
-      graph.loadFromUrl('https://example.com/blocks.json', 'v0.1');
+      const graph = graphRef.current as any
+      graph.loadFromUrl('https://example.com/blocks.json', 'v0.1')
     }
-  }, []);
+  }, [])
 
   return (
     <blocks-graph
@@ -159,7 +161,7 @@ function App() {
       show-parents="true"
       style={{ width: '100%', height: '600px' }}
     />
-  );
+  )
 }
 ```
 
@@ -178,14 +180,14 @@ function App() {
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import '@luminastudy/blocks-graph';
+import { ref, onMounted } from 'vue'
+import '@luminastudy/blocks-graph'
 
-const graph = ref(null);
+const graph = ref(null)
 
 onMounted(async () => {
-  await graph.value.loadFromUrl('https://example.com/blocks.json', 'v0.1');
-});
+  await graph.value.loadFromUrl('https://example.com/blocks.json', 'v0.1')
+})
 </script>
 ```
 
@@ -195,51 +197,51 @@ The `BlocksGraphReact` wrapper component accepts the following props:
 
 ### Data Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `blocks` | `Block[]` | Array of blocks in internal format |
+| Prop        | Type               | Description                                            |
+| ----------- | ------------------ | ------------------------------------------------------ |
+| `blocks`    | `Block[]`          | Array of blocks in internal format                     |
 | `blocksV01` | `BlockSchemaV01[]` | Array of blocks in v0.1 schema format (auto-converted) |
-| `jsonUrl` | `string` | URL to load blocks from |
+| `jsonUrl`   | `string`           | URL to load blocks from                                |
 
 ### Configuration Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `language` | `'en' \| 'he'` | `'en'` | Language to display block titles |
-| `orientation` | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'` | `'ttb'` | Graph orientation direction |
-| `showPrerequisites` | `boolean` | `true` | Show prerequisite relationships |
-| `showParents` | `boolean` | `true` | Show parent relationships |
-| `nodeWidth` | `number` | `200` | Width of each block node in pixels |
-| `nodeHeight` | `number` | `80` | Height of each block node in pixels |
-| `horizontalSpacing` | `number` | `80` | Horizontal spacing between nodes |
-| `verticalSpacing` | `number` | `100` | Vertical spacing between levels |
+| Prop                | Type                               | Default | Description                         |
+| ------------------- | ---------------------------------- | ------- | ----------------------------------- |
+| `language`          | `'en' \| 'he'`                     | `'en'`  | Language to display block titles    |
+| `orientation`       | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'` | `'ttb'` | Graph orientation direction         |
+| `showPrerequisites` | `boolean`                          | `true`  | Show prerequisite relationships     |
+| `showParents`       | `boolean`                          | `true`  | Show parent relationships           |
+| `nodeWidth`         | `number`                           | `200`   | Width of each block node in pixels  |
+| `nodeHeight`        | `number`                           | `80`    | Height of each block node in pixels |
+| `horizontalSpacing` | `number`                           | `80`    | Horizontal spacing between nodes    |
+| `verticalSpacing`   | `number`                           | `100`   | Vertical spacing between levels     |
 
 ### Event Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `onBlocksRendered` | `(event: CustomEvent<{ blockCount: number }>) => void` | Called when blocks are rendered |
-| `onBlockSelected` | `(event: CustomEvent<{ blockId: string \| null; selectionLevel: number }>) => void` | Called when a block is selected |
+| Prop               | Type                                                                                | Description                     |
+| ------------------ | ----------------------------------------------------------------------------------- | ------------------------------- |
+| `onBlocksRendered` | `(event: CustomEvent<{ blockCount: number }>) => void`                              | Called when blocks are rendered |
+| `onBlockSelected`  | `(event: CustomEvent<{ blockId: string \| null; selectionLevel: number }>) => void` | Called when a block is selected |
 
 ### Standard Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `className` | `string` | CSS class name |
-| `style` | `CSSProperties` | Inline styles |
+| Prop        | Type            | Description    |
+| ----------- | --------------- | -------------- |
+| `className` | `string`        | CSS class name |
+| `style`     | `CSSProperties` | Inline styles  |
 
 ## Web Component Attributes
 
-| Attribute | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `language` | `'en' \| 'he'` | `'en'` | Language to display block titles |
-| `show-prerequisites` | `boolean` | `true` | Show prerequisite relationships |
-| `show-parents` | `boolean` | `true` | Show parent relationships |
-| `node-width` | `number` | `200` | Width of each block node in pixels |
-| `node-height` | `number` | `80` | Height of each block node in pixels |
-| `horizontal-spacing` | `number` | `80` | Horizontal spacing between nodes |
-| `vertical-spacing` | `number` | `100` | Vertical spacing between levels |
-| `orientation` | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'` | `'ttb'` | Graph orientation: `ttb` (top-to-bottom), `ltr` (left-to-right), `rtl` (right-to-left), `btt` (bottom-to-top) |
+| Attribute            | Type                               | Default | Description                                                                                                   |
+| -------------------- | ---------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| `language`           | `'en' \| 'he'`                     | `'en'`  | Language to display block titles                                                                              |
+| `show-prerequisites` | `boolean`                          | `true`  | Show prerequisite relationships                                                                               |
+| `show-parents`       | `boolean`                          | `true`  | Show parent relationships                                                                                     |
+| `node-width`         | `number`                           | `200`   | Width of each block node in pixels                                                                            |
+| `node-height`        | `number`                           | `80`    | Height of each block node in pixels                                                                           |
+| `horizontal-spacing` | `number`                           | `80`    | Horizontal spacing between nodes                                                                              |
+| `vertical-spacing`   | `number`                           | `100`   | Vertical spacing between levels                                                                               |
+| `orientation`        | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'` | `'ttb'` | Graph orientation: `ttb` (top-to-bottom), `ltr` (left-to-right), `rtl` (right-to-left), `btt` (bottom-to-top) |
 
 ### Graph Orientation
 
@@ -251,14 +253,16 @@ The `orientation` attribute controls how the graph flows and how blocks are arra
 - **`btt` (bottom-to-top)**: Inverted hierarchical layout with root blocks at the bottom. Levels progress upward along the y-axis.
 
 **HTML Example:**
+
 ```html
 <blocks-graph orientation="ltr" language="en"></blocks-graph>
 ```
 
 **JavaScript Example:**
+
 ```javascript
-const graph = document.querySelector('blocks-graph');
-graph.orientation = 'rtl'; // Dynamically change orientation
+const graph = document.querySelector('blocks-graph')
+graph.orientation = 'rtl' // Dynamically change orientation
 ```
 
 #### Spacing Behavior with Orientation
@@ -266,26 +270,21 @@ graph.orientation = 'rtl'; // Dynamically change orientation
 The `horizontal-spacing` and `vertical-spacing` attributes adapt based on orientation:
 
 | Orientation | Level Spacing (between hierarchy levels) | Sibling Spacing (between blocks at same level) |
-|-------------|------------------------------------------|------------------------------------------------|
-| `ttb` | `vertical-spacing` | `horizontal-spacing` |
-| `btt` | `vertical-spacing` | `horizontal-spacing` |
-| `ltr` | `horizontal-spacing` | `vertical-spacing` |
-| `rtl` | `horizontal-spacing` | `vertical-spacing` |
+| ----------- | ---------------------------------------- | ---------------------------------------------- |
+| `ttb`       | `vertical-spacing`                       | `horizontal-spacing`                           |
+| `btt`       | `vertical-spacing`                       | `horizontal-spacing`                           |
+| `ltr`       | `horizontal-spacing`                     | `vertical-spacing`                             |
+| `rtl`       | `horizontal-spacing`                     | `vertical-spacing`                             |
 
 **Example with custom spacing:**
+
 ```html
 <!-- For TTB: 80px between siblings horizontally, 120px between levels vertically -->
-<blocks-graph
-  orientation="ttb"
-  horizontal-spacing="80"
-  vertical-spacing="120">
+<blocks-graph orientation="ttb" horizontal-spacing="80" vertical-spacing="120">
 </blocks-graph>
 
 <!-- For LTR: 80px between levels horizontally, 120px between siblings vertically -->
-<blocks-graph
-  orientation="ltr"
-  horizontal-spacing="80"
-  vertical-spacing="120">
+<blocks-graph orientation="ltr" horizontal-spacing="80" vertical-spacing="120">
 </blocks-graph>
 ```
 
@@ -310,9 +309,9 @@ Load blocks from a URL with the specified schema version.
 Fired when the graph has been successfully rendered.
 
 ```javascript
-graph.addEventListener('blocks-rendered', (event) => {
-  console.log(`Rendered ${event.detail.blockCount} blocks`);
-});
+graph.addEventListener('blocks-rendered', event => {
+  console.log(`Rendered ${event.detail.blockCount} blocks`)
+})
 ```
 
 ## Schema Versions
@@ -344,10 +343,14 @@ The v0.1 schema expects blocks in the following format (validated using JSON Sch
 For more control, you can use the underlying engine and renderer directly:
 
 ```typescript
-import { GraphEngine, GraphRenderer, schemaV01Adaptor } from '@luminastudy/blocks-graph';
+import {
+  GraphEngine,
+  GraphRenderer,
+  schemaV01Adaptor,
+} from '@luminastudy/blocks-graph'
 
 // Adapt schema data
-const blocks = schemaV01Adaptor.adaptFromJson(jsonString);
+const blocks = schemaV01Adaptor.adaptFromJson(jsonString)
 
 // Create engine with custom layout config
 const engine = new GraphEngine({
@@ -356,10 +359,10 @@ const engine = new GraphEngine({
   horizontalSpacing: 100,
   verticalSpacing: 120,
   orientation: 'ltr', // Optional: 'ttb' (default), 'ltr', 'rtl', or 'btt'
-});
+})
 
 // Process blocks
-const { graph, positioned } = engine.process(blocks);
+const { graph, positioned } = engine.process(blocks)
 
 // Create renderer with custom config
 const renderer = new GraphRenderer({
@@ -370,11 +373,11 @@ const renderer = new GraphRenderer({
     strokeWidth: 2,
     cornerRadius: 10,
   },
-});
+})
 
 // Render to SVG
-const svg = renderer.render(graph, positioned);
-document.body.appendChild(svg);
+const svg = renderer.render(graph, positioned)
+document.body.appendChild(svg)
 ```
 
 ## Development

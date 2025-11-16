@@ -19,9 +19,9 @@
  * ```
  */
 
-export { BlocksGraphReact, type BlocksGraphProps } from './BlocksGraphReact.js';
+export { BlocksGraphReact, type BlocksGraphProps } from './BlocksGraphReact.js'
 
 // Re-export core types that React users might need
-export type { Block } from '../../types/block.js';
-export type { BlockSchemaV01 } from '../../adaptors/v0.1/types.js';
-export type { BlockTitle } from '../../adaptors/v0.1/block-title.js';
+export type { Block } from '../../types/block.js'
+export type { BlockSchemaV01 } from '../../adaptors/v0.1/types.js'
+export type { BlockTitle } from '../../adaptors/v0.1/block-title.js'
