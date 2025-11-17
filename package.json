@@ -1,5 +1,5 @@
 {
-  "name": "@luminastudy/blocks-graph",
+  "name": "@lumina-study/blocks-graph",
   "version": "0.1.0",
   "description": "Framework-agnostic Web Component for visualizing Lumina Study block schemas",
   "type": "module",
