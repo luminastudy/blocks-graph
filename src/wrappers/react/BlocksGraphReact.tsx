@@ -168,7 +168,7 @@ export function BlocksGraphReact({
   return (
     <blocks-graph
       ref={ref}
-      className={className}
+      class={className}
       // @ts-expect-error - React CSSProperties type conflicts with DOM CSSStyleDeclaration
       style={style}
     />
