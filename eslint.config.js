@@ -15,6 +15,7 @@ export default [
       '.storybook/**',
       'storybook-static/**',
       'build.mjs',
+      '**/package.json',
     ],
   },
   {

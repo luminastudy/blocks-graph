@@ -75,6 +75,9 @@ importers:
       eslint-config-agent:
         specifier: ^1.7.1
         version: 1.7.1(@eslint/eslintrc@3.3.1)(@eslint/js@9.39.1)(@typescript-eslint/eslint-plugin@8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-plugin-class-export@1.0.1(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-n@17.23.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-plugin-react-hooks@5.2.0(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-react@7.37.5(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-security@3.0.1)(eslint-plugin-storybook@9.1.16(eslint@9.39.1(jiti@2.6.1))(storybook@8.6.14(prettier@3.6.2))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript-eslint@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))
+      eslint-config-publishable-package-json:
+        specifier: ^1.0.0
+        version: 1.0.0
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -2176,6 +2179,10 @@ packages:
     peerDependenciesMeta:
       eslint-plugin-preact:
         optional: true
+
+  eslint-config-publishable-package-json@1.0.0:
+    resolution: {integrity: sha512-b1p/Mh8aNwWRJqjzWziL62BMjDRHiBrYMW0/TE2SvxdpdgdpCQm/IOqBLRpwoYtMZQM6FClw4ZU6T737ydNzZQ==}
+    engines: {node: '>=18.0.0'}
 
   eslint-import-resolver-node@0.3.9:
     resolution: {integrity: sha512-WFj2isz22JahUv+B788TlO3N6zL3nNJGU8CcZbPZvVEkBPaJdCV4vy5wyghty5ROFbCRnm132v8BScu5/1BQ8g==}
@@ -6486,6 +6493,8 @@ snapshots:
       eslint-plugin-storybook: 9.1.16(eslint@9.39.1(jiti@2.6.1))(storybook@8.6.14(prettier@3.6.2))(typescript@5.9.3)
       globals: 16.5.0
       typescript-eslint: 8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+  eslint-config-publishable-package-json@1.0.0: {}
 
   eslint-import-resolver-node@0.3.9:
     dependencies:
