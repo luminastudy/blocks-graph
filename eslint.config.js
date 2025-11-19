@@ -1,7 +1,7 @@
 import agentConfig from 'eslint-config-agent'
+import publishablePackageJson from 'eslint-config-publishable-package-json'
 
 export default [
-  ...agentConfig,
   {
     ignores: [
       'dist/**',
@@ -18,6 +18,8 @@ export default [
       '**/package.json',
     ],
   },
+  ...agentConfig,
+  publishablePackageJson,
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {

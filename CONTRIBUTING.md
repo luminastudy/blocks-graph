@@ -12,7 +12,7 @@ Thank you for your interest in contributing! This document provides guidelines a
 
 ### Prerequisites
 
-- Node.js >= 18.0.0
+- Node.js >= 20.0.0
 - pnpm >= 10.21.0
 
 ### Setup
