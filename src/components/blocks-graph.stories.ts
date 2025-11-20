@@ -119,6 +119,24 @@ const meta: Meta = {
         defaultValue: { summary: 'ttb' },
       },
     },
+    prerequisiteLineStyle: {
+      control: 'select',
+      options: ['straight', 'dashed', 'dotted'],
+      description:
+        'Line style for prerequisite edges: straight (solid), dashed (8px/4px), dotted (2px/3px)',
+      table: {
+        defaultValue: { summary: 'dashed' },
+      },
+    },
+    parentLineStyle: {
+      control: 'select',
+      options: ['straight', 'dashed', 'dotted'],
+      description:
+        'Line style for parent edges: straight (solid), dashed (8px/4px), dotted (2px/3px)',
+      table: {
+        defaultValue: { summary: 'straight' },
+      },
+    },
   },
   parameters: {
     docs: {
@@ -145,7 +163,7 @@ export const Default: Story = {
     // Create a unique ID for this story instance to avoid conflicts
     const storyId = `graph-${Date.now()}-${Math.random()
       .toString(36)
-      .substr(2, 9)}`
+      .substring(2, 11)}`
 
     return html`
       <div
@@ -161,6 +179,8 @@ export const Default: Story = {
           horizontal-spacing="${args.horizontalSpacing || ''}"
           vertical-spacing="${args.verticalSpacing || ''}"
           orientation="${args.orientation || 'ttb'}"
+          prerequisite-line-style="${args.prerequisiteLineStyle || 'dashed'}"
+          parent-line-style="${args.parentLineStyle || 'straight'}"
           @block-selected="${(e: CustomEvent) => {
             console.log('Block selected:', e.detail)
           }}"
@@ -231,7 +251,7 @@ export const CombinatoricsRootAutoHide: Story = {
   render: args => {
     const storyId = `combinatorics-graph-${Date.now()}-${Math.random()
       .toString(36)
-      .substr(2, 9)}`
+      .substring(2, 11)}`
 
     // Fetch the Combinatorics JSON from GitHub
     const fetchAndLoadData = async () => {
@@ -394,6 +414,171 @@ export const AllOrientations: Story = {
 &lt;blocks-graph orientation="rtl"&gt;&lt;/blocks-graph&gt;
 &lt;blocks-graph orientation="ttb"&gt;&lt;/blocks-graph&gt;
 &lt;blocks-graph orientation="btt"&gt;&lt;/blocks-graph&gt;</code></pre>
+        </div>
+      </div>
+    `
+  },
+  parameters: {
+    layout: 'fullscreen',
+  },
+}
+
+/**
+ * Story demonstrating all edge line style combinations.
+ * Shows how different line styles can be used to visually distinguish
+ * prerequisite and parent relationships in the graph.
+ */
+export const EdgeLineStyles: Story = {
+  render: () => {
+    const styleConfigs = [
+      {
+        prerequisite: 'straight',
+        parent: 'straight',
+        description: 'Both solid (default clean look)',
+      },
+      {
+        prerequisite: 'dashed',
+        parent: 'straight',
+        description: 'Default: Dashed prerequisites, solid parents',
+      },
+      {
+        prerequisite: 'dotted',
+        parent: 'straight',
+        description: 'Dotted prerequisites, solid parents',
+      },
+      {
+        prerequisite: 'straight',
+        parent: 'dashed',
+        description: 'Solid prerequisites, dashed parents',
+      },
+      {
+        prerequisite: 'dashed',
+        parent: 'dashed',
+        description: 'Both dashed',
+      },
+      {
+        prerequisite: 'dotted',
+        parent: 'dotted',
+        description: 'Both dotted',
+      },
+      {
+        prerequisite: 'straight',
+        parent: 'dotted',
+        description: 'Solid prerequisites, dotted parents',
+      },
+      {
+        prerequisite: 'dotted',
+        parent: 'dashed',
+        description: 'Dotted prerequisites, dashed parents',
+      },
+    ]
+
+    return html`
+      <div style="padding: 16px;">
+        <h2 style="margin: 0 0 16px 0;">Edge Line Style Combinations</h2>
+        <p style="margin: 0 0 8px 0; color: #666;">
+          Customize the appearance of prerequisite (blue) and parent (gray)
+          relationship edges.
+        </p>
+        <p style="margin: 0 0 24px 0; color: #666;">
+          <strong>Styles:</strong> Straight (solid), Dashed (8px/4px), Dotted
+          (2px/3px)
+        </p>
+
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;"
+        >
+          ${styleConfigs.map((config, index) => {
+            const storyId = `edge-style-${index}-${Date.now()}-${Math.random()
+              .toString(36)
+              .substring(2, 11)}`
+
+            setTimeout(() => {
+              const graph = document.getElementById(storyId)
+              if (
+                graph &&
+                'loadFromJson' in graph &&
+                typeof graph.loadFromJson === 'function'
+              ) {
+                graph.loadFromJson(JSON.stringify(EXAMPLE_BLOCKS), 'v0.1')
+              }
+            }, 100)
+
+            return html`
+              <div
+                style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;"
+              >
+                <div style="margin-bottom: 12px;">
+                  <h3 style="margin: 0 0 4px 0; color: #333; font-size: 16px;">
+                    Prerequisites: ${config.prerequisite} / Parents:
+                    ${config.parent}
+                  </h3>
+                  <p style="margin: 0; font-size: 13px; color: #666;">
+                    ${config.description}
+                  </p>
+                </div>
+                <div
+                  style="width: 100%; height: 350px; border: 1px solid #e0e0e0; border-radius: 4px;"
+                >
+                  <blocks-graph
+                    id="${storyId}"
+                    language="en"
+                    show-prerequisites="true"
+                    show-parents="true"
+                    prerequisite-line-style="${config.prerequisite}"
+                    parent-line-style="${config.parent}"
+                    orientation="ttb"
+                    node-width="160"
+                    node-height="60"
+                    horizontal-spacing="50"
+                    vertical-spacing="70"
+                  ></blocks-graph>
+                </div>
+              </div>
+            `
+          })}
+        </div>
+
+        <div
+          style="margin-top: 24px; padding: 16px; background: #f5f5f5; border-radius: 4px;"
+        >
+          <h4 style="margin: 0 0 8px 0;">Usage Examples</h4>
+          <pre
+            style="margin: 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto; font-size: 13px;"
+          ><code><!-- HTML -->
+&lt;blocks-graph
+  prerequisite-line-style="dotted"
+  parent-line-style="dashed"
+&gt;&lt;/blocks-graph&gt;
+
+/* JavaScript */
+const graph = document.querySelector('blocks-graph');
+graph.prerequisiteLineStyle = 'straight';
+graph.parentLineStyle = 'dotted';
+
+/* React */
+&lt;BlocksGraphReact
+  prerequisiteLineStyle="dashed"
+  parentLineStyle="straight"
+/&gt;</code></pre>
+        </div>
+
+        <div
+          style="margin-top: 16px; padding: 16px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;"
+        >
+          <h4 style="margin: 0 0 8px 0; color: #1565c0;">
+            Edge Color Reference
+          </h4>
+          <ul style="margin: 0; padding-left: 20px; color: #333;">
+            <li>
+              <strong style="color: #4a90e2;">Blue edges</strong>: Prerequisite
+              relationships
+            </li>
+            <li>
+              <strong style="color: #666;">Gray edges</strong>: Parent
+              relationships
+            </li>
+          </ul>
         </div>
       </div>
     `
