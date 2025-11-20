@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   BlocksGraphReact,
   type BlockSchemaV01,
-} from '@luminastudy/blocks-graph/react'
+} from '@lumina-study/blocks-graph/react'
 import './App.css'
 
 /**
@@ -61,7 +61,7 @@ function AppWithWrapper() {
     return (
       <div className="app">
         <header className="header">
-          <h1>@luminastudy/blocks-graph</h1>
+          <h1>@lumina-study/blocks-graph</h1>
           <p>React Wrapper Example</p>
         </header>
         <div className="info-panel">
@@ -74,7 +74,7 @@ function AppWithWrapper() {
   return (
     <div className="app">
       <header className="header">
-        <h1>@luminastudy/blocks-graph</h1>
+        <h1>@lumina-study/blocks-graph</h1>
         <p>The Open University - Combinatorics Course</p>
         <small>Using React Wrapper (No refs needed!)</small>
       </header>
