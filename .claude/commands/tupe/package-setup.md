@@ -1,10 +1,10 @@
 ---
-description: Initialize or validate package setup with correct package.json, release-it, commitlint, CI/CD, and build/test configuration. Handles both publishable packages and internal packages.
+description: Initialize or validate package setup with correct package.json, release-it, commitlint, CI/CD, build/test configuration, and code coverage testing. Handles both publishable packages and internal packages.
 ---
 
 # Package Setup and Validation
 
-You are an expert package configuration manager. Your mission is to ensure packages are correctly set up with proper configuration for publishing (if applicable), CI/CD, testing, and building.
+You are an expert package configuration manager. Your mission is to ensure packages are correctly set up with proper configuration for publishing (if applicable), CI/CD, testing with coverage thresholds, and building.
 
 ## Overview
 
@@ -16,9 +16,10 @@ This command handles two scenarios:
 Both scenarios ensure:
 
 - ✅ Correct package.json configuration
-- ✅ Proper testing setup (vitest if needed)
+- ✅ Proper testing setup with coverage thresholds (vitest if needed)
+- ✅ Code coverage reporting with 80% minimum thresholds
 - ✅ Proper build setup (vite if needed for libraries)
-- ✅ Working CI/CD pipeline (GitHub Actions)
+- ✅ Working CI/CD pipeline with coverage uploads (GitHub Actions)
 - ✅ pnpm as package manager
 
 ## Phase 1: Project Analysis
@@ -227,18 +228,38 @@ export default defineConfig({
     environment: 'node',
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       exclude: [
         'node_modules/',
         'dist/',
         '**/*.spec.ts',
+        '**/*.test.ts',
         '**/*.config.ts',
         'coverage/',
       ],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
+      },
     },
   },
 })
 ```
+
+**Coverage Configuration**:
+
+- **provider: 'v8'**: Uses V8 coverage (fast and accurate)
+- **reporter**: Outputs multiple formats:
+  - `text`: Console output
+  - `json`: Machine-readable format
+  - `html`: Interactive HTML report (view in browser)
+  - `lcov`: Standard format for coverage tools and CI services
+- **thresholds**: Enforces minimum coverage requirements (80% for all metrics)
+  - Tests will fail if coverage drops below these thresholds
+  - Prevents merging code that reduces coverage
+- **exclude**: Ignores test files, config files, and build output from coverage
 
 ### Step 2: Create Example Test Structure
 
@@ -397,7 +418,6 @@ pnpm exec husky init
 Create `.husky/pre-push` file to run checks before pushing:
 
 ```bash
-#!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
 echo "🔍 Running pre-push checks..."
@@ -456,7 +476,6 @@ Create `.lintstagedrc.json` for staged file linting:
 Create `.husky/pre-commit` for staged files:
 
 ```bash
-#!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
 # Run lint-staged
@@ -474,7 +493,6 @@ chmod +x .husky/pre-commit
 Create `.husky/commit-msg` for commit message linting:
 
 ```bash
-#!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
 # Run commitlint on commit message
@@ -623,8 +641,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: latest
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -641,8 +657,22 @@ jobs:
       - name: Format check
         run: pnpm format:check
 
-      - name: Run tests
-        run: pnpm test --run
+      - name: Spell check
+        run: pnpm spell
+
+      - name: Run tests with coverage
+        run: pnpm test:coverage --run
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        if: matrix.node-version == 20
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Build
         run: pnpm build
@@ -685,8 +715,6 @@ jobs:
       - name: Install pnpm
         if: steps.version_check.outputs.should_publish == 'true'
         uses: pnpm/action-setup@v4
-        with:
-          version: latest
 
       - name: Setup Node.js
         if: steps.version_check.outputs.should_publish == 'true'
@@ -750,8 +778,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: latest
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -768,8 +794,22 @@ jobs:
       - name: Format check
         run: pnpm format:check
 
-      - name: Run tests
-        run: pnpm test --run
+      - name: Spell check
+        run: pnpm spell
+
+      - name: Run tests with coverage
+        run: pnpm test:coverage --run
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        if: matrix.node-version == 20
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Build
         run: pnpm build
@@ -787,12 +827,32 @@ gh auth status
 # Check repository settings
 gh repo view
 
-# Verify secrets (for publishable packages)
+# Verify secrets
+gh secret list
+
+# For publishable packages
 if [ "$PUBLISHABLE" = "true" ]; then
-  echo "⚠️  Make sure NPM_TOKEN secret is set in repository settings"
-  gh secret list
+  echo "⚠️  Required secrets for publishable packages:"
+  echo "   - NPM_TOKEN (for npm publishing)"
+  echo "   - CODECOV_TOKEN (for coverage reports)"
+else
+  echo "⚠️  Optional secret for coverage reporting:"
+  echo "   - CODECOV_TOKEN (sign up at codecov.io)"
 fi
 ```
+
+**Setting up Codecov (optional but recommended)**:
+
+1. Go to [codecov.io](https://codecov.io) and sign up with GitHub
+2. Add your repository to Codecov
+3. Get the upload token from Codecov settings
+4. Add as GitHub secret:
+   ```bash
+   gh secret set CODECOV_TOKEN
+   # Paste your Codecov token when prompted
+   ```
+5. Coverage reports will be automatically uploaded on each CI run
+6. Add coverage badge to README.md (see Codecov dashboard for badge markdown)
 
 ## Phase 9: Project Structure Setup
 
@@ -1152,6 +1212,19 @@ pnpm format:check
 # Run tests (if configured)
 if [ "$NEEDS_TESTS" = "true" ]; then
   pnpm test --run
+
+  # Run tests with coverage
+  pnpm test:coverage --run
+
+  # Verify coverage thresholds are met
+  echo "✅ Coverage thresholds enforced (80% minimum)"
+
+  # Check coverage output
+  ls -la coverage/
+
+  # View coverage report (optional - opens in browser)
+  # open coverage/index.html  # macOS
+  # xdg-open coverage/index.html  # Linux
 fi
 
 # Try building
@@ -1159,6 +1232,47 @@ pnpm build
 
 # Verify dist output exists
 ls -la dist/
+```
+
+**Coverage Reports Available**:
+
+- **Console output**: Displays coverage summary in terminal
+- **HTML report**: Open `coverage/index.html` in browser for interactive report
+- **LCOV report**: `coverage/lcov.info` for CI services and editors
+- **JSON report**: `coverage/coverage-final.json` for programmatic analysis
+
+**IDE Integration**:
+
+Most modern IDEs can display coverage inline:
+
+- **VS Code**: Install "Coverage Gutters" extension to see coverage in editor
+- **WebStorm/IntelliJ**: Built-in coverage visualization using lcov.info
+- **Vim/Neovim**: Use coverage.vim plugin
+
+**Coverage Thresholds**:
+
+The vitest configuration enforces 80% minimum coverage for:
+
+- Lines
+- Functions
+- Branches
+- Statements
+
+Tests will **fail** if coverage drops below these thresholds, preventing quality regressions.
+
+**Adjusting Coverage Thresholds**:
+
+To modify coverage requirements, edit `vitest.config.ts`:
+
+```typescript
+coverage: {
+  thresholds: {
+    lines: 90,      // Increase to 90%
+    functions: 85,  // Different threshold per metric
+    branches: 80,
+    statements: 80,
+  },
+}
 ```
 
 ### Step 2: Test Local Installation
@@ -1209,9 +1323,12 @@ Review and confirm:
 
 **Testing Setup** (if needed):
 
-- ✅ vitest.config.ts exists
+- ✅ vitest.config.ts exists with coverage configuration
+- ✅ Coverage thresholds configured (80% minimum)
 - ✅ Tests run successfully (`pnpm test`)
-- ✅ Coverage configuration works
+- ✅ Coverage tests pass (`pnpm test:coverage`)
+- ✅ Coverage reports generated (text, html, lcov, json)
+- ✅ Coverage thresholds enforced (tests fail if below 80%)
 
 **Linting and Formatting**:
 
@@ -1228,7 +1345,8 @@ Review and confirm:
 - ✅ .github/workflows/ci.yml exists
 - ✅ Workflow is valid YAML
 - ✅ Tests node versions 20, 22
-- ✅ Runs lint, format, test, build
+- ✅ Runs lint, format, spell, test with coverage, build
+- ✅ Uploads coverage reports to Codecov (if CODECOV_TOKEN set)
 - ✅ If publishable: Has publish job with NPM_TOKEN
 - ✅ If publishable: Publish only runs when package.json version changes
 
@@ -1278,7 +1396,7 @@ Version: X.X.X
 ✅ Configuration Files Created:
   - package.json (ES modules, pnpm)
   - tsconfig.json (strict TypeScript)
-  - vitest.config.ts (testing)
+  - vitest.config.ts (testing with coverage thresholds)
   - eslint.config.mjs (eslint-config-agent@latest [+ package.json validation if publishable])
   - .prettierrc (formatting)
   - .prettierignore
@@ -1292,7 +1410,7 @@ Version: X.X.X
   - CONTRIBUTING.md (contribution guidelines)
   - LICENSE (MIT license)
   [- .release-it.json (releases)] - if publishable
-  - .github/workflows/ci.yml (CI/CD)
+  - .github/workflows/ci.yml (CI/CD with coverage reporting)
 
 ✅ Dependencies Installed:
   - TypeScript
@@ -1326,20 +1444,28 @@ Version: X.X.X
 ✅ CI/CD Setup:
   - GitHub Actions workflow configured
   - Tests on Node 20, 22
-  - Runs lint, format, spell, test, build
+  - Runs lint, format, spell, test with coverage, build
+  - Uploads coverage to Codecov (if token configured)
   [- Auto-publishes to npm on main push (only when version changes)] - if publishable
 
 ⚠️  Next Steps:
   1. [If publishable] Add NPM_TOKEN secret to GitHub repository
-  2. Review and customize CONTRIBUTING.md for your project
-  3. Verify LICENSE file has correct copyright year and author
-  4. Test git hooks (make a commit to test pre-commit, try pushing to test pre-push)
-  5. Write your package code in src/
-  6. Add tests in `.spec.ts` files next to your logic files (DDD approach)
-  7. Update package.json metadata (author, keywords, description, repository URL)
-  8. Add project-specific words to cspell.json
-  9. Push to GitHub to trigger CI
-  [10. Run `pnpm release` to publish first version] - if publishable
+  2. [Optional] Set up Codecov:
+     - Sign up at codecov.io
+     - Add repository to Codecov
+     - Add CODECOV_TOKEN secret to GitHub
+     - Add coverage badge to README.md
+  3. Review and customize CONTRIBUTING.md for your project
+  4. Verify LICENSE file has correct copyright year and author
+  5. Test git hooks (make a commit to test pre-commit, try pushing to test pre-push)
+  6. Write your package code in src/
+  7. Add tests in `.spec.ts` files next to your logic files (DDD approach)
+  8. Maintain 80%+ code coverage (enforced by vitest thresholds)
+  9. View coverage reports locally: open coverage/index.html
+  10. Update package.json metadata (author, keywords, description, repository URL)
+  11. Add project-specific words to cspell.json
+  12. Push to GitHub to trigger CI with coverage reporting
+  [13. Run `pnpm release` to publish first version] - if publishable
 
 🚀 Ready to develop!
 ```
@@ -1420,9 +1546,13 @@ After running this command, the package should:
 ✅ Have valid package.json with all required fields
 ✅ Build successfully with `pnpm build`
 ✅ Pass all tests with `pnpm test`
+✅ Pass coverage tests with `pnpm test:coverage`
+✅ Meet 80% coverage threshold (lines, functions, branches, statements)
+✅ Generate coverage reports (HTML, LCOV, JSON)
 ✅ Pass linting with `pnpm lint`
 ✅ Pass formatting checks with `pnpm format:check`
-✅ Have working CI/CD pipeline
+✅ Pass spell checking with `pnpm spell`
+✅ Have working CI/CD pipeline with coverage reporting
 ✅ Be ready to publish (if publishable) or use (if internal)
 
-The package is now production-ready! 🎉
+The package is now production-ready with comprehensive test coverage! 🎉
