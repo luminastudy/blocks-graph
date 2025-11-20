@@ -20,8 +20,7 @@ import type { EdgeLineStyle } from '../types/edge-style.js'
  * ```html
  * <blocks-graph
  *   language="en"
- *   show-prerequisites="true"
- *   show-parents="true">
+ *   show-prerequisites="true">
  * </blocks-graph>
  * ```
  */
@@ -30,7 +29,7 @@ export class BlocksGraph extends HTMLElement {
   private renderer: GraphRenderer
   private blocks: Block[] = []
   private selectedBlockId: string | null = null
-  private selectionLevel: number = 0 // 0=default, 1=graph shown, 2=graph+sub-blocks shown
+  private selectionLevel: number = 0 // 0=root view, 1=children view
 
   constructor() {
     super()
@@ -46,7 +45,6 @@ export class BlocksGraph extends HTMLElement {
     return [
       'language',
       'show-prerequisites',
-      'show-parents',
       'node-width',
       'node-height',
       'horizontal-spacing',
@@ -84,9 +82,6 @@ export class BlocksGraph extends HTMLElement {
         break
       case 'show-prerequisites':
         this.renderer.updateConfig({ showPrerequisites: newValue === 'true' })
-        break
-      case 'show-parents':
-        this.renderer.updateConfig({ showParents: newValue === 'true' })
         break
       case 'prerequisite-line-style':
         if (newValue && isValidEdgeLineStyle(newValue)) {
@@ -182,19 +177,18 @@ export class BlocksGraph extends HTMLElement {
 
   /**
    * Handle block click events
-   * Implements 3-state toggle: default -> graph -> graph+sub-blocks -> default
+   * Implements 2-state toggle: root view -> children view -> root view
+   * - First click: Show selected block and its children
+   * - Second click on same block: Return to root view
+   * - Click different block: Show that block and its children
    */
   private handleBlockClick(blockId: string): void {
     if (this.selectedBlockId === blockId) {
-      // Same block clicked - advance selection level
-      this.selectionLevel++
-      if (this.selectionLevel > 2) {
-        // Reset to default
-        this.selectedBlockId = null
-        this.selectionLevel = 0
-      }
+      // Same block clicked - toggle back to root view
+      this.selectedBlockId = null
+      this.selectionLevel = 0
     } else {
-      // Different block clicked - select it at level 1
+      // Different block clicked - show its children
       this.selectedBlockId = blockId
       this.selectionLevel = 1
     }
@@ -280,20 +274,6 @@ export class BlocksGraph extends HTMLElement {
    */
   set showPrerequisites(value: boolean) {
     this.setAttribute('show-prerequisites', String(value))
-  }
-
-  /**
-   * Get show-parents setting
-   */
-  get showParents(): boolean {
-    return this.getAttribute('show-parents') !== 'false'
-  }
-
-  /**
-   * Set show-parents
-   */
-  set showParents(value: boolean) {
-    this.setAttribute('show-parents', String(value))
   }
 
   /**

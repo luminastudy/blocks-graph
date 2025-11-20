@@ -391,7 +391,44 @@ describe('GraphEngine', () => {
   })
 
   describe('categorizeBlocks', () => {
-    it('should hide parent when showing sub-blocks (selectionLevel 2)', () => {
+    it('should show only root blocks at level 0 (no selection)', () => {
+      const blocks: Block[] = [
+        {
+          id: 'root1',
+          title: { he: 'שורש 1', en: 'Root 1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'root2',
+          title: { he: 'שורש 2', en: 'Root 2' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'child1',
+          title: { he: 'ילד 1', en: 'Child 1' },
+          prerequisites: [],
+          parents: ['root1'],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const { visible, dimmed } = engine.categorizeBlocks(
+        blocks,
+        graph,
+        null,
+        0
+      )
+
+      // Should show only root blocks (blocks with no parents)
+      expect(visible.has('root1')).toBe(true)
+      expect(visible.has('root2')).toBe(true)
+      expect(visible.has('child1')).toBe(false)
+      expect(dimmed.has('child1')).toBe(false)
+    })
+
+    it('should show selected parent and its children at level 1', () => {
       const blocks: Block[] = [
         {
           id: 'parent',
@@ -418,56 +455,26 @@ describe('GraphEngine', () => {
         blocks,
         graph,
         'parent',
-        2
+        1
       )
 
-      // Parent should be hidden when showing sub-blocks
-      expect(visible.has('parent')).toBe(false)
+      // Should show parent and its children
+      expect(visible.has('parent')).toBe(true)
       expect(visible.has('child1')).toBe(true)
       expect(visible.has('child2')).toBe(true)
     })
 
-    it('should hide parent with prerequisites when showing sub-blocks', () => {
+    it('should dim other root blocks when a block is selected', () => {
       const blocks: Block[] = [
         {
-          id: 'prereq',
-          title: { he: 'דרישה', en: 'Prerequisite' },
+          id: 'root1',
+          title: { he: 'שורש 1', en: 'Root 1' },
           prerequisites: [],
           parents: [],
         },
         {
-          id: 'parent',
-          title: { he: 'הורה', en: 'Parent' },
-          prerequisites: ['prereq'],
-          parents: [],
-        },
-        {
-          id: 'child1',
-          title: { he: 'ילד 1', en: 'Child 1' },
-          prerequisites: [],
-          parents: ['parent'],
-        },
-      ]
-
-      const graph = engine.buildGraph(blocks)
-      const { visible, dimmed } = engine.categorizeBlocks(
-        blocks,
-        graph,
-        'parent',
-        2
-      )
-
-      // Parent should be hidden even if it has prerequisites
-      expect(visible.has('parent')).toBe(false)
-      expect(visible.has('child1')).toBe(true)
-      expect(visible.has('prereq')).toBe(true)
-    })
-
-    it('should hide parent with post-requisites when showing sub-blocks', () => {
-      const blocks: Block[] = [
-        {
-          id: 'parent',
-          title: { he: 'הורה', en: 'Parent' },
+          id: 'root2',
+          title: { he: 'שורש 2', en: 'Root 2' },
           prerequisites: [],
           parents: [],
         },
@@ -475,13 +482,7 @@ describe('GraphEngine', () => {
           id: 'child1',
           title: { he: 'ילד 1', en: 'Child 1' },
           prerequisites: [],
-          parents: ['parent'],
-        },
-        {
-          id: 'postreq',
-          title: { he: 'תלות', en: 'Post-requisite' },
-          prerequisites: ['parent'],
-          parents: [],
+          parents: ['root1'],
         },
       ]
 
@@ -489,51 +490,51 @@ describe('GraphEngine', () => {
       const { visible, dimmed } = engine.categorizeBlocks(
         blocks,
         graph,
-        'parent',
-        2
-      )
-
-      // Parent should be hidden even if it has post-requisites
-      expect(visible.has('parent')).toBe(false)
-      expect(visible.has('child1')).toBe(true)
-      expect(visible.has('postreq')).toBe(true)
-    })
-
-    it('should hide parent at selectionLevel 1 for root single nodes', () => {
-      const blocks: Block[] = [
-        {
-          id: 'parent',
-          title: { he: 'הורה', en: 'Parent' },
-          prerequisites: [],
-          parents: [],
-        },
-        {
-          id: 'child1',
-          title: { he: 'ילד 1', en: 'Child 1' },
-          prerequisites: [],
-          parents: ['parent'],
-        },
-      ]
-
-      const graph = engine.buildGraph(blocks)
-      const { visible, dimmed } = engine.categorizeBlocks(
-        blocks,
-        graph,
-        'parent',
+        'root1',
         1
       )
 
-      // At level 1, for root single nodes, sub-blocks are shown automatically
-      // and the parent is hidden
-      expect(visible.has('parent')).toBe(false)
+      // Should show selected root and its children
+      expect(visible.has('root1')).toBe(true)
       expect(visible.has('child1')).toBe(true)
+      // Other root blocks should be dimmed
+      expect(dimmed.has('root2')).toBe(true)
     })
 
-    it('should auto-hide root single node parent and show children at selectionLevel 0', () => {
+    it('should show selected block even if it has no children', () => {
       const blocks: Block[] = [
         {
-          id: 'parent',
-          title: { he: 'הורה', en: 'Parent' },
+          id: 'root1',
+          title: { he: 'שורש 1', en: 'Root 1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'root2',
+          title: { he: 'שורש 2', en: 'Root 2' },
+          prerequisites: [],
+          parents: [],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const { visible, dimmed } = engine.categorizeBlocks(
+        blocks,
+        graph,
+        'root1',
+        1
+      )
+
+      // Should show selected root even if it has no children
+      expect(visible.has('root1')).toBe(true)
+      expect(dimmed.has('root2')).toBe(true)
+    })
+
+    it('should handle nested hierarchies correctly', () => {
+      const blocks: Block[] = [
+        {
+          id: 'root',
+          title: { he: 'שורש', en: 'Root' },
           prerequisites: [],
           parents: [],
         },
@@ -541,11 +542,73 @@ describe('GraphEngine', () => {
           id: 'child1',
           title: { he: 'ילד 1', en: 'Child 1' },
           prerequisites: [],
-          parents: ['parent'],
+          parents: ['root'],
         },
         {
-          id: 'standalone',
-          title: { he: 'עצמאי', en: 'Standalone' },
+          id: 'grandchild1',
+          title: { he: 'נכד 1', en: 'Grandchild 1' },
+          prerequisites: [],
+          parents: ['child1'],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+
+      // Select child1 - should show child1 and grandchild1
+      const { visible, dimmed } = engine.categorizeBlocks(
+        blocks,
+        graph,
+        'child1',
+        1
+      )
+
+      expect(visible.has('child1')).toBe(true)
+      expect(visible.has('grandchild1')).toBe(true)
+      // Root should be dimmed
+      expect(dimmed.has('root')).toBe(true)
+    })
+
+    it('should auto-skip single root and show its children', () => {
+      const blocks: Block[] = [
+        {
+          id: 'single-root',
+          title: { he: 'שורש יחיד', en: 'Single Root' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'child1',
+          title: { he: 'ילד 1', en: 'Child 1' },
+          prerequisites: [],
+          parents: ['single-root'],
+        },
+        {
+          id: 'child2',
+          title: { he: 'ילד 2', en: 'Child 2' },
+          prerequisites: [],
+          parents: ['single-root'],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const { visible, dimmed } = engine.categorizeBlocks(
+        blocks,
+        graph,
+        null,
+        0
+      )
+
+      // Single root should be skipped, children should be shown
+      expect(visible.has('single-root')).toBe(false)
+      expect(visible.has('child1')).toBe(true)
+      expect(visible.has('child2')).toBe(true)
+    })
+
+    it('should show single root if it has no children', () => {
+      const blocks: Block[] = [
+        {
+          id: 'single-root',
+          title: { he: 'שורש יחיד', en: 'Single Root' },
           prerequisites: [],
           parents: [],
         },
@@ -559,10 +622,87 @@ describe('GraphEngine', () => {
         0
       )
 
-      // At level 0, root single nodes with sub-blocks are auto-hidden
-      expect(visible.has('parent')).toBe(false)
-      expect(visible.has('child1')).toBe(true)
-      expect(visible.has('standalone')).toBe(true)
+      // Single root with no children should be shown
+      expect(visible.has('single-root')).toBe(true)
+    })
+
+    it('should only auto-skip the root node, not recursively', () => {
+      const blocks: Block[] = [
+        {
+          id: 'root',
+          title: { he: 'שורש', en: 'Root' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'middle',
+          title: { he: 'אמצע', en: 'Middle' },
+          prerequisites: [],
+          parents: ['root'],
+        },
+        {
+          id: 'grandchild1',
+          title: { he: 'נכד 1', en: 'Grandchild 1' },
+          prerequisites: [],
+          parents: ['middle'],
+        },
+        {
+          id: 'grandchild2',
+          title: { he: 'נכד 2', en: 'Grandchild 2' },
+          prerequisites: [],
+          parents: ['middle'],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const { visible, dimmed } = engine.categorizeBlocks(
+        blocks,
+        graph,
+        null,
+        0
+      )
+
+      // Should skip root, show middle (even though it's also single)
+      expect(visible.has('root')).toBe(false)
+      expect(visible.has('middle')).toBe(true)
+      expect(visible.has('grandchild1')).toBe(false)
+      expect(visible.has('grandchild2')).toBe(false)
+    })
+
+    it('should not auto-skip when multiple root blocks exist', () => {
+      const blocks: Block[] = [
+        {
+          id: 'root1',
+          title: { he: 'שורש 1', en: 'Root 1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'root2',
+          title: { he: 'שורש 2', en: 'Root 2' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'child1',
+          title: { he: 'ילד 1', en: 'Child 1' },
+          prerequisites: [],
+          parents: ['root1'],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const { visible, dimmed } = engine.categorizeBlocks(
+        blocks,
+        graph,
+        null,
+        0
+      )
+
+      // Multiple roots - should show all roots, no auto-skip
+      expect(visible.has('root1')).toBe(true)
+      expect(visible.has('root2')).toBe(true)
+      expect(visible.has('child1')).toBe(false)
     })
   })
 })

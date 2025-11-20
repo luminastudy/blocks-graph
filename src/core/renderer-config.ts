@@ -7,7 +7,6 @@ import type { EdgeLineStyle } from '../types/edge-style.js'
 export interface RendererConfig {
   language: 'en' | 'he'
   showPrerequisites: boolean
-  showParents: boolean
   orientation?: Orientation
   selectedBlockId?: string | null
   visibleBlocks?: Set<string>

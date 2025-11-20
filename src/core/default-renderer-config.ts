@@ -7,7 +7,6 @@ import type { RendererConfig } from './renderer-config.js'
 export const DEFAULT_RENDERER_CONFIG: RendererConfig = {
   language: 'en',
   showPrerequisites: true,
-  showParents: true,
   blockStyle: {
     fill: '#ffffff',
     stroke: '#333333',

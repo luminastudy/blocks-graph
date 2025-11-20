@@ -155,8 +155,10 @@ type Story = StoryObj
 
 /**
  * Default story showing the BlocksGraph component with sample mathematics curriculum data.
- * Click on any block to show its prerequisites and post-requisites.
- * Click again to toggle sub-blocks, or a third time to reset to default view.
+ * The graph uses drill-down navigation:
+ * - Initial view shows only root blocks (blocks with no parents)
+ * - Click a block to navigate into it and view its children
+ * - Click the same block again to return to the root view
  */
 export const Default: Story = {
   render: args => {

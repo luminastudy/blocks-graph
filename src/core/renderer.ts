@@ -98,9 +98,9 @@ export class GraphRenderer {
         continue
       }
 
+      // Only render prerequisite edges (parent edges are never shown)
       const shouldRender =
-        (edge.type === 'prerequisite' && this.config.showPrerequisites) ||
-        (edge.type === 'parent' && this.config.showParents)
+        edge.type === 'prerequisite' && this.config.showPrerequisites
 
       if (!shouldRender) {
         continue

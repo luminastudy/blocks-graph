@@ -17,7 +17,6 @@ export interface BlocksGraphProps {
   language?: 'en' | 'he'
   orientation?: 'ttb' | 'ltr' | 'rtl' | 'btt'
   showPrerequisites?: boolean
-  showParents?: boolean
   nodeWidth?: number
   nodeHeight?: number
   horizontalSpacing?: number
@@ -67,7 +66,6 @@ export function BlocksGraphReact({
   language = 'en',
   orientation = 'ttb',
   showPrerequisites = true,
-  showParents = true,
   nodeWidth,
   nodeHeight,
   horizontalSpacing,
@@ -112,11 +110,6 @@ export function BlocksGraphReact({
     if (!ref.current) return
     ref.current.showPrerequisites = showPrerequisites
   }, [showPrerequisites])
-
-  useEffect(() => {
-    if (!ref.current) return
-    ref.current.showParents = showParents
-  }, [showParents])
 
   // Sync layout props
   useEffect(() => {

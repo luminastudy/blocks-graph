@@ -43,6 +43,8 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "**/*.stories.ts",
-    "**/*.stories.tsx"
+    "**/*.stories.tsx",
+    "src/wrappers/vue/**",
+    "src/wrappers/angular/**"
   ]
 }

@@ -46,12 +46,7 @@ pnpm add @luminastudy/blocks-graph
     </script>
   </head>
   <body>
-    <blocks-graph
-      id="graph"
-      language="en"
-      show-prerequisites="true"
-      show-parents="true"
-    >
+    <blocks-graph id="graph" language="en" show-prerequisites="true">
     </blocks-graph>
 
     <script type="module">
@@ -130,7 +125,6 @@ function App() {
       language="en"
       orientation="ttb"
       showPrerequisites={true}
-      showParents={true}
       onBlockSelected={e => console.log('Selected:', e.detail)}
       style={{ width: '100%', height: '600px' }}
     />
@@ -169,7 +163,6 @@ function App() {
       ref={graphRef}
       language="en"
       show-prerequisites="true"
-      show-parents="true"
       style={{ width: '100%', height: '600px' }}
     />
   )
@@ -178,16 +171,58 @@ function App() {
 
 </details>
 
-### Vue
+### Vue (Recommended: Using Wrapper Component)
 
 ```vue
 <template>
-  <blocks-graph
-    ref="graph"
+  <BlocksGraphVue
+    :blocks="blocks"
     language="en"
-    show-prerequisites="true"
-    show-parents="true"
+    orientation="ttb"
+    :show-prerequisites="true"
+    @block-selected="handleBlockSelected"
+    style="width: 100%; height: 600px"
   />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { BlocksGraphVue } from '@luminastudy/blocks-graph/vue'
+import type { Block, BlockSelectedEvent } from '@luminastudy/blocks-graph/vue'
+
+const blocks = ref<Block[]>([
+  {
+    id: '550e8400-e29b-41d4-a716-446655440000',
+    title: {
+      he: 'מבוא למתמטיקה',
+      en: 'Introduction to Mathematics',
+    },
+    prerequisites: [],
+    parents: [],
+  },
+])
+
+function handleBlockSelected(event: BlockSelectedEvent) {
+  console.log('Selected:', event.blockId)
+}
+</script>
+```
+
+**Benefits of the Vue wrapper:**
+
+- ✅ No refs needed - just use props
+- ✅ Full TypeScript support with autocomplete
+- ✅ Vue-style events with typed payloads
+- ✅ Automatic prop synchronization
+
+<details>
+<summary>Alternative: Direct Web Component Usage</summary>
+
+You can also use the Web Component directly with refs:
+
+```vue
+<template>
+  <blocks-graph ref="graph" language="en" show-prerequisites="true" />
 </template>
 
 <script setup>
@@ -201,6 +236,97 @@ onMounted(async () => {
 })
 </script>
 ```
+
+</details>
+
+### Angular (Recommended: Using Wrapper Component)
+
+```typescript
+import { Component } from '@angular/core'
+import { BlocksGraphComponent } from '@luminastudy/blocks-graph/angular'
+import type {
+  Block,
+  BlockSelectedEvent,
+} from '@luminastudy/blocks-graph/angular'
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [BlocksGraphComponent],
+  template: `
+    <blocks-graph-angular
+      [blocks]="blocks"
+      language="en"
+      orientation="ttb"
+      [showPrerequisites]="true"
+      [showParents]="true"
+      (blockSelected)="handleBlockSelected($event)"
+      style="width: 100%; height: 600px"
+    ></blocks-graph-angular>
+  `,
+})
+export class AppComponent {
+  blocks: Block[] = [
+    {
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      title: {
+        he: 'מבוא למתמטיקה',
+        en: 'Introduction to Mathematics',
+      },
+      prerequisites: [],
+      parents: [],
+    },
+  ]
+
+  handleBlockSelected(event: BlockSelectedEvent) {
+    console.log('Selected:', event.blockId)
+  }
+}
+```
+
+**Benefits of the Angular wrapper:**
+
+- ✅ No ViewChild needed - just use @Input/@Output
+- ✅ Full TypeScript support with autocomplete
+- ✅ Angular-style events with EventEmitter
+- ✅ Automatic change detection
+
+<details>
+<summary>Alternative: Direct Web Component Usage</summary>
+
+You can also use the Web Component directly with CUSTOM_ELEMENTS_SCHEMA:
+
+```typescript
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ViewChild,
+  ElementRef,
+} from '@angular/core'
+import '@luminastudy/blocks-graph'
+import type { BlocksGraph } from '@luminastudy/blocks-graph'
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  template: `
+    <blocks-graph #graph language="en" show-prerequisites="true"></blocks-graph>
+  `,
+})
+export class AppComponent {
+  @ViewChild('graph') graph?: ElementRef<BlocksGraph>
+
+  ngAfterViewInit() {
+    this.graph?.nativeElement.loadFromUrl(
+      'https://example.com/blocks.json',
+      'v0.1'
+    )
+  }
+}
+```
+
+</details>
 
 ## React Component Props
 
@@ -221,7 +347,6 @@ The `BlocksGraphReact` wrapper component accepts the following props:
 | `language`              | `'en' \| 'he'`                       | `'en'`       | Language to display block titles    |
 | `orientation`           | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'`   | `'ttb'`      | Graph orientation direction         |
 | `showPrerequisites`     | `boolean`                            | `true`       | Show prerequisite relationships     |
-| `showParents`           | `boolean`                            | `true`       | Show parent relationships           |
 | `nodeWidth`             | `number`                             | `200`        | Width of each block node in pixels  |
 | `nodeHeight`            | `number`                             | `80`         | Height of each block node in pixels |
 | `horizontalSpacing`     | `number`                             | `80`         | Horizontal spacing between nodes    |
@@ -249,7 +374,6 @@ The `BlocksGraphReact` wrapper component accepts the following props:
 | ------------------------- | ------------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------- |
 | `language`                | `'en' \| 'he'`                       | `'en'`       | Language to display block titles                                                                              |
 | `show-prerequisites`      | `boolean`                            | `true`       | Show prerequisite relationships                                                                               |
-| `show-parents`            | `boolean`                            | `true`       | Show parent relationships                                                                                     |
 | `node-width`              | `number`                             | `200`        | Width of each block node in pixels                                                                            |
 | `node-height`             | `number`                             | `80`         | Height of each block node in pixels                                                                           |
 | `horizontal-spacing`      | `number`                             | `80`         | Horizontal spacing between nodes                                                                              |
@@ -358,6 +482,48 @@ Load blocks from a JSON string with the specified schema version.
 ### `loadFromUrl(url: string, schemaVersion?: 'v0.1'): Promise<void>`
 
 Load blocks from a URL with the specified schema version.
+
+## Block Interaction
+
+The graph implements a **drill-down navigation model** for exploring hierarchical block structures:
+
+### Navigation Behavior
+
+**Root View** (Default):
+
+- Displays only root blocks (blocks with no parents)
+- Provides a high-level overview of the top-level structure
+
+**Children View** (Click a block):
+
+- Shows the selected block and its direct children (one level deep)
+- Other root blocks are dimmed for context
+- Allows users to explore nested hierarchies progressively
+
+### Click Interaction
+
+1. **Click a root block** → Navigate into that block, showing it and its children
+2. **Click the same block again** → Return to root view
+3. **Click a different block** → Navigate to that block and its children
+
+This progressive disclosure model helps users explore large hierarchies without overwhelming them with all relationships at once.
+
+### Example
+
+```javascript
+const graph = document.querySelector('blocks-graph')
+
+// Listen for block selection
+graph.addEventListener('block-selected', event => {
+  const { blockId, selectionLevel } = event.detail
+
+  if (selectionLevel === 0) {
+    console.log('Root view - showing all root blocks')
+  } else {
+    console.log(`Viewing children of block: ${blockId}`)
+  }
+})
+```
 
 ## Events
 

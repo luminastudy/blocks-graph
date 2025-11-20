@@ -7,8 +7,6 @@ import type { GraphLayoutConfig } from './graph-layout-config.js'
 import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js'
 import { HorizontalRelationships } from './horizontal-relationships.js'
 import { addBlockWithSubBlocks } from './add-block-with-sub-blocks.js'
-import { isRootSingleNode } from './is-root-single-node.js'
-import { addBlockToVisibility } from './add-block-to-visibility.js'
 
 /**
  * Graph engine responsible for building and laying out the block graph
@@ -240,6 +238,11 @@ export class GraphEngine {
   /**
    * Categorize blocks based on selection state
    * Returns which blocks should be visible vs dimmed
+   *
+   * Drill-down navigation with auto-skip:
+   * - No selection: Show only root blocks (blocks with no parents)
+   *   - If only 1 root block exists and it has children, skip it and show its children (one level only)
+   * - Block selected: Show only the selected block and its direct children
    */
   categorizeBlocks(
     blocks: Block[],
@@ -250,62 +253,47 @@ export class GraphEngine {
     const visible = new Set<string>()
     const dimmed = new Set<string>()
 
-    // If nothing is selected, show all non-sub-blocks (with root single node logic)
+    // If nothing is selected, show root blocks with auto-drill-down
     if (!selectedBlockId || selectionLevel === 0) {
-      for (const block of blocks) {
-        if (this.isSubBlock(block)) {
-          continue
+      // Find all root blocks
+      const rootBlocks = blocks.filter(block => block.parents.length === 0)
+
+      // Auto-drill-down: if there's only 1 root block, skip it and show its children
+      if (rootBlocks.length === 1) {
+        const singleRoot = rootBlocks[0]
+        if (singleRoot) {
+          const children = this.getSubBlocks(singleRoot.id, graph)
+
+          // If the single root has children, skip it and show the children
+          if (children.length > 0) {
+            for (const child of children) {
+              visible.add(child.id)
+            }
+            return { visible, dimmed }
+          }
         }
-        addBlockToVisibility(
-          block.id,
-          graph,
-          visible,
-          this.getSubBlocks.bind(this),
-          (id, g) =>
-            isRootSingleNode(
-              id,
-              g,
-              this.getDirectPrerequisites.bind(this),
-              this.getDirectPostRequisites.bind(this)
-            )
-        )
       }
+
+      // Show all root blocks (multiple roots or single root with no children)
+      for (const block of rootBlocks) {
+        visible.add(block.id)
+      }
+
       return { visible, dimmed }
     }
 
-    // Determine which blocks to show based on selection level
-    let includeSubBlocks = selectionLevel >= 2
-    const isRootSingle = isRootSingleNode(
-      selectedBlockId,
-      graph,
-      this.getDirectPrerequisites.bind(this),
-      this.getDirectPostRequisites.bind(this)
-    )
+    // Block is selected: show the selected block and its children
+    visible.add(selectedBlockId)
 
-    // If it's a root single node, automatically show sub-blocks
-    if (isRootSingle && selectionLevel === 1) {
-      includeSubBlocks = true
+    // Get children (sub-blocks) of the selected block
+    const children = this.getSubBlocks(selectedBlockId, graph)
+    for (const child of children) {
+      visible.add(child.id)
     }
 
-    const relatedIds = this.getRelatedBlocks(
-      selectedBlockId,
-      graph,
-      includeSubBlocks
-    )
-
-    // When showing sub-blocks, hide the parent block if it has any sub-blocks
-    if (includeSubBlocks) {
-      const subBlocks = this.getSubBlocks(selectedBlockId, graph)
-      if (subBlocks.length > 0) {
-        relatedIds.delete(selectedBlockId)
-      }
-    }
-
-    // Categorize all blocks
+    // All other root blocks should be dimmed (for context)
     for (const block of blocks) {
-      if (relatedIds.has(block.id)) {
-        visible.add(block.id)
-      } else if (!this.isSubBlock(block)) {
+      if (!visible.has(block.id) && block.parents.length === 0) {
         dimmed.add(block.id)
       }
     }

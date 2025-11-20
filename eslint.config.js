@@ -16,6 +16,8 @@ export default [
       'storybook-static/**',
       'build.mjs',
       '**/package.json',
+      'src/wrappers/vue/**',
+      'src/wrappers/angular/**',
     ],
   },
   ...agentConfig,
