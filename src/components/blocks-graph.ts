@@ -10,6 +10,8 @@ import { renderGraph } from './render-graph.js'
 import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-version-error.js'
 import { BlocksFetchError } from '../errors/blocks-fetch-error.js'
 import { parseLayoutConfigFromAttributes } from './parse-layout-config-from-attributes.js'
+import { isValidEdgeLineStyle } from '../types/is-valid-edge-line-style.js'
+import type { EdgeLineStyle } from '../types/edge-style.js'
 
 /**
  * Custom element for rendering block graphs
@@ -50,6 +52,8 @@ export class BlocksGraph extends HTMLElement {
       'horizontal-spacing',
       'vertical-spacing',
       'orientation',
+      'prerequisite-line-style',
+      'parent-line-style',
     ]
   }
 
@@ -83,6 +87,32 @@ export class BlocksGraph extends HTMLElement {
         break
       case 'show-parents':
         this.renderer.updateConfig({ showParents: newValue === 'true' })
+        break
+      case 'prerequisite-line-style':
+        if (newValue && isValidEdgeLineStyle(newValue)) {
+          this.renderer.updateConfig({
+            edgeStyle: {
+              ...this.renderer['config'].edgeStyle,
+              prerequisite: {
+                ...this.renderer['config'].edgeStyle.prerequisite,
+                lineStyle: newValue,
+              },
+            },
+          })
+        }
+        break
+      case 'parent-line-style':
+        if (newValue && isValidEdgeLineStyle(newValue)) {
+          this.renderer.updateConfig({
+            edgeStyle: {
+              ...this.renderer['config'].edgeStyle,
+              parent: {
+                ...this.renderer['config'].edgeStyle.parent,
+                lineStyle: newValue,
+              },
+            },
+          })
+        }
         break
       case 'node-width':
       case 'node-height':
@@ -278,6 +308,36 @@ export class BlocksGraph extends HTMLElement {
    */
   set orientation(value: string) {
     this.setAttribute('orientation', value)
+  }
+
+  /**
+   * Get prerequisite line style
+   */
+  get prerequisiteLineStyle(): EdgeLineStyle {
+    const value = this.getAttribute('prerequisite-line-style')
+    return value && isValidEdgeLineStyle(value) ? value : 'dashed'
+  }
+
+  /**
+   * Set prerequisite line style
+   */
+  set prerequisiteLineStyle(value: EdgeLineStyle) {
+    this.setAttribute('prerequisite-line-style', value)
+  }
+
+  /**
+   * Get parent line style
+   */
+  get parentLineStyle(): EdgeLineStyle {
+    const value = this.getAttribute('parent-line-style')
+    return value && isValidEdgeLineStyle(value) ? value : 'straight'
+  }
+
+  /**
+   * Set parent line style
+   */
+  set parentLineStyle(value: EdgeLineStyle) {
+    this.setAttribute('parent-line-style', value)
   }
 }
 

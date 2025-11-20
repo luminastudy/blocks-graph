@@ -2,6 +2,7 @@ import { useEffect, useRef, type CSSProperties } from 'react'
 import type { Block } from '../../types/block.js'
 import type { BlockSchemaV01 } from '../../adaptors/v0.1/types.js'
 import type { BlocksGraph } from '../../components/blocks-graph.js'
+import type { EdgeLineStyle } from '../../types/edge-style.js'
 
 // Import the web component to ensure it's registered
 import '../../index.js'
@@ -21,6 +22,10 @@ export interface BlocksGraphProps {
   nodeHeight?: number
   horizontalSpacing?: number
   verticalSpacing?: number
+
+  // Edge style props
+  prerequisiteLineStyle?: EdgeLineStyle
+  parentLineStyle?: EdgeLineStyle
 
   // Event callbacks
   onBlocksRendered?: (event: CustomEvent<{ blockCount: number }>) => void
@@ -67,6 +72,8 @@ export function BlocksGraphReact({
   nodeHeight,
   horizontalSpacing,
   verticalSpacing,
+  prerequisiteLineStyle = 'dashed',
+  parentLineStyle = 'straight',
   onBlocksRendered,
   onBlockSelected,
   className,
@@ -139,6 +146,17 @@ export function BlocksGraphReact({
       ref.current.setAttribute('vertical-spacing', String(verticalSpacing))
     }
   }, [verticalSpacing])
+
+  // Sync edge style props
+  useEffect(() => {
+    if (!ref.current) return
+    ref.current.prerequisiteLineStyle = prerequisiteLineStyle
+  }, [prerequisiteLineStyle])
+
+  useEffect(() => {
+    if (!ref.current) return
+    ref.current.parentLineStyle = parentLineStyle
+  }, [parentLineStyle])
 
   // Event listeners
   useEffect(() => {

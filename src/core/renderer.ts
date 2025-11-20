@@ -4,6 +4,7 @@ import type { BlockPosition } from '../types/block-position.js'
 import type { RendererConfig } from './renderer-config.js'
 import { DEFAULT_RENDERER_CONFIG } from './default-renderer-config.js'
 import { wrapTextToLines } from './text-wrapper.js'
+import { edgeLineStyleToDashArray } from '../types/edge-line-style-to-dash-array.js'
 
 /**
  * SVG renderer for block graphs
@@ -126,8 +127,14 @@ export class GraphRenderer {
       line.setAttribute('stroke', style.stroke)
       line.setAttribute('stroke-width', String(style.strokeWidth))
 
-      if (style.dashArray) {
-        line.setAttribute('stroke-dasharray', style.dashArray)
+      // Use lineStyle if available, otherwise fall back to dashArray for backward compatibility
+      const dashArray =
+        style.lineStyle !== undefined
+          ? edgeLineStyleToDashArray(style.lineStyle)
+          : style.dashArray
+
+      if (dashArray) {
+        line.setAttribute('stroke-dasharray', dashArray)
       }
 
       // Dim edge if either endpoint is dimmed

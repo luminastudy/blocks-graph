@@ -15,6 +15,9 @@ export type { GraphEdge } from './types/graph-edge.js'
 export type { PositionedBlock } from './types/positioned-block.js'
 export type { Orientation } from './types/orientation.js'
 export { isValidOrientation } from './types/is-valid-orientation.js'
+export type { EdgeLineStyle } from './types/edge-style.js'
+export { isValidEdgeLineStyle } from './types/is-valid-edge-line-style.js'
+export { edgeLineStyleToDashArray } from './types/edge-line-style-to-dash-array.js'
 
 // Export core classes
 export { GraphEngine } from './core/graph-engine.js'

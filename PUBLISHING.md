@@ -347,7 +347,7 @@ After publishing, verify:
    ```
 
 4. **Documentation**
-   - Check npm package page: https://www.npmjs.com/package/@luminastudy/blocks-graph
+   - Check npm package page: https://www.npmjs.com/package/@lumina-study/blocks-graph
    - Verify README renders correctly
    - Check version badge is updated
 

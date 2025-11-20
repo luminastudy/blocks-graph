@@ -1,4 +1,5 @@
 import type { Orientation } from '../types/orientation.js'
+import type { EdgeLineStyle } from '../types/edge-style.js'
 
 /**
  * Renderer configuration
@@ -29,12 +30,14 @@ export interface RendererConfig {
     prerequisite: {
       stroke: string
       strokeWidth: number
-      dashArray?: string
+      lineStyle: EdgeLineStyle
+      dashArray?: string // Deprecated: Use lineStyle instead
     }
     parent: {
       stroke: string
       strokeWidth: number
-      dashArray?: string
+      lineStyle: EdgeLineStyle
+      dashArray?: string // Deprecated: Use lineStyle instead
     }
   }
 }

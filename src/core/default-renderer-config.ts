@@ -26,11 +26,12 @@ export const DEFAULT_RENDERER_CONFIG: RendererConfig = {
     prerequisite: {
       stroke: '#4a90e2',
       strokeWidth: 2,
-      dashArray: '5,5',
+      lineStyle: 'dashed',
     },
     parent: {
       stroke: '#666666',
       strokeWidth: 2,
+      lineStyle: 'straight',
     },
   },
 }

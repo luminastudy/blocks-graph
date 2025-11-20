@@ -1,6 +1,6 @@
 # @luminastudy/blocks-graph
 
-[![npm version](https://img.shields.io/npm/v/@luminastudy/blocks-graph.svg)](https://www.npmjs.com/package/@luminastudy/blocks-graph)
+[![npm version](https://img.shields.io/npm/v/@luminastudy/blocks-graph.svg)](https://www.npmjs.com/package/@lumina-study/blocks-graph)
 [![CI](https://github.com/luminastudy/blocks-graph/workflows/CI/badge.svg)](https://github.com/luminastudy/blocks-graph/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/luminastudy/blocks-graph/branch/main/graph/badge.svg)](https://codecov.io/gh/luminastudy/blocks-graph)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -216,16 +216,18 @@ The `BlocksGraphReact` wrapper component accepts the following props:
 
 ### Configuration Props
 
-| Prop                | Type                               | Default | Description                         |
-| ------------------- | ---------------------------------- | ------- | ----------------------------------- |
-| `language`          | `'en' \| 'he'`                     | `'en'`  | Language to display block titles    |
-| `orientation`       | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'` | `'ttb'` | Graph orientation direction         |
-| `showPrerequisites` | `boolean`                          | `true`  | Show prerequisite relationships     |
-| `showParents`       | `boolean`                          | `true`  | Show parent relationships           |
-| `nodeWidth`         | `number`                           | `200`   | Width of each block node in pixels  |
-| `nodeHeight`        | `number`                           | `80`    | Height of each block node in pixels |
-| `horizontalSpacing` | `number`                           | `80`    | Horizontal spacing between nodes    |
-| `verticalSpacing`   | `number`                           | `100`   | Vertical spacing between levels     |
+| Prop                    | Type                                 | Default      | Description                         |
+| ----------------------- | ------------------------------------ | ------------ | ----------------------------------- |
+| `language`              | `'en' \| 'he'`                       | `'en'`       | Language to display block titles    |
+| `orientation`           | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'`   | `'ttb'`      | Graph orientation direction         |
+| `showPrerequisites`     | `boolean`                            | `true`       | Show prerequisite relationships     |
+| `showParents`           | `boolean`                            | `true`       | Show parent relationships           |
+| `nodeWidth`             | `number`                             | `200`        | Width of each block node in pixels  |
+| `nodeHeight`            | `number`                             | `80`         | Height of each block node in pixels |
+| `horizontalSpacing`     | `number`                             | `80`         | Horizontal spacing between nodes    |
+| `verticalSpacing`       | `number`                             | `100`        | Vertical spacing between levels     |
+| `prerequisiteLineStyle` | `'straight' \| 'dashed' \| 'dotted'` | `'dashed'`   | Line style for prerequisite edges   |
+| `parentLineStyle`       | `'straight' \| 'dashed' \| 'dotted'` | `'straight'` | Line style for parent edges         |
 
 ### Event Props
 
@@ -243,16 +245,18 @@ The `BlocksGraphReact` wrapper component accepts the following props:
 
 ## Web Component Attributes
 
-| Attribute            | Type                               | Default | Description                                                                                                   |
-| -------------------- | ---------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------- |
-| `language`           | `'en' \| 'he'`                     | `'en'`  | Language to display block titles                                                                              |
-| `show-prerequisites` | `boolean`                          | `true`  | Show prerequisite relationships                                                                               |
-| `show-parents`       | `boolean`                          | `true`  | Show parent relationships                                                                                     |
-| `node-width`         | `number`                           | `200`   | Width of each block node in pixels                                                                            |
-| `node-height`        | `number`                           | `80`    | Height of each block node in pixels                                                                           |
-| `horizontal-spacing` | `number`                           | `80`    | Horizontal spacing between nodes                                                                              |
-| `vertical-spacing`   | `number`                           | `100`   | Vertical spacing between levels                                                                               |
-| `orientation`        | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'` | `'ttb'` | Graph orientation: `ttb` (top-to-bottom), `ltr` (left-to-right), `rtl` (right-to-left), `btt` (bottom-to-top) |
+| Attribute                 | Type                                 | Default      | Description                                                                                                   |
+| ------------------------- | ------------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------------- |
+| `language`                | `'en' \| 'he'`                       | `'en'`       | Language to display block titles                                                                              |
+| `show-prerequisites`      | `boolean`                            | `true`       | Show prerequisite relationships                                                                               |
+| `show-parents`            | `boolean`                            | `true`       | Show parent relationships                                                                                     |
+| `node-width`              | `number`                             | `200`        | Width of each block node in pixels                                                                            |
+| `node-height`             | `number`                             | `80`         | Height of each block node in pixels                                                                           |
+| `horizontal-spacing`      | `number`                             | `80`         | Horizontal spacing between nodes                                                                              |
+| `vertical-spacing`        | `number`                             | `100`        | Vertical spacing between levels                                                                               |
+| `orientation`             | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'`   | `'ttb'`      | Graph orientation: `ttb` (top-to-bottom), `ltr` (left-to-right), `rtl` (right-to-left), `btt` (bottom-to-top) |
+| `prerequisite-line-style` | `'straight' \| 'dashed' \| 'dotted'` | `'dashed'`   | Line style for prerequisite edges                                                                             |
+| `parent-line-style`       | `'straight' \| 'dashed' \| 'dotted'` | `'straight'` | Line style for parent edges                                                                                   |
 
 ### Graph Orientation
 
@@ -297,6 +301,48 @@ The `horizontal-spacing` and `vertical-spacing` attributes adapt based on orient
 <!-- For LTR: 80px between levels horizontally, 120px between siblings vertically -->
 <blocks-graph orientation="ltr" horizontal-spacing="80" vertical-spacing="120">
 </blocks-graph>
+```
+
+### Edge Line Styles
+
+The `prerequisite-line-style` and `parent-line-style` attributes control the visual appearance of relationship edges. Three styles are available:
+
+- **`straight`**: Solid line with no pattern
+- **`dashed`**: Line with 8px dashes and 4px gaps
+- **`dotted`**: Line with 2px dots and 3px gaps
+
+**Default Values:**
+
+- Prerequisites: `dashed` (helps distinguish them visually)
+- Parents: `straight` (solid lines for parent relationships)
+
+**HTML Example:**
+
+```html
+<blocks-graph
+  prerequisite-line-style="dotted"
+  parent-line-style="dashed"
+  language="en"
+>
+</blocks-graph>
+```
+
+**JavaScript Example:**
+
+```javascript
+const graph = document.querySelector('blocks-graph')
+graph.prerequisiteLineStyle = 'straight'
+graph.parentLineStyle = 'dotted'
+```
+
+**React Example:**
+
+```tsx
+<BlocksGraphReact
+  blocks={blocks}
+  prerequisiteLineStyle="straight"
+  parentLineStyle="dashed"
+/>
 ```
 
 ## API Methods
