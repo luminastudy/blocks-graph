@@ -2,7 +2,7 @@
 
 ## Overview
 
-This feature extends the @luminastudy/blocks-graph library's connector rendering capabilities from basic SVG lines with limited styling to a comprehensive system supporting advanced visual features including arrows, curves, animations, and multiple configuration methods. The implementation upgrades the rendering engine from SVG `<line>` elements to `<path>` elements while maintaining full backward compatibility with existing configurations.
+This feature extends the @lumina-study/blocks-graph library's connector rendering capabilities from basic SVG lines with limited styling to a comprehensive system supporting advanced visual features including arrows, curves, animations, and multiple configuration methods. The implementation upgrades the rendering engine from SVG `<line>` elements to `<path>` elements while maintaining full backward compatibility with existing configurations.
 
 **Purpose**: This feature delivers rich connector customization capabilities to library users, enabling them to create visually expressive graphs that match their application's design requirements and effectively communicate relationship semantics through visual styling.
 

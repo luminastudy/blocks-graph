@@ -2,7 +2,7 @@
 
 ## Task Overview
 
-This implementation creates runnable example applications demonstrating the @luminastudy/blocks-graph Web Component integration in both pure HTML and React contexts. The examples will serve as executable documentation and validation of cross-framework compatibility.
+This implementation creates runnable example applications demonstrating the @lumina-study/blocks-graph Web Component integration in both pure HTML and React contexts. The examples will serve as executable documentation and validation of cross-framework compatibility.
 
 ## Implementation Tasks
 

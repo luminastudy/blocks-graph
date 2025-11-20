@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The @luminastudy/blocks-graph library currently provides basic connector styling through the `edgeStyle` configuration, supporting simple properties like stroke color, width, and dash arrays for straight-line connectors. This feature will significantly expand connector customization capabilities to enable developers to create visually rich and expressive graph visualizations.
+The @lumina-study/blocks-graph library currently provides basic connector styling through the `edgeStyle` configuration, supporting simple properties like stroke color, width, and dash arrays for straight-line connectors. This feature will significantly expand connector customization capabilities to enable developers to create visually rich and expressive graph visualizations.
 
 **Business Value:**
 

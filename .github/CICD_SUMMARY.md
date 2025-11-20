@@ -287,7 +287,7 @@ https://github.com/luminastudy/blocks-graph/actions
 ### Check npm Package
 
 ```bash
-npm view @luminastudy/blocks-graph
+npm view @lumina-study/blocks-graph
 ```
 
 ### Check Coverage

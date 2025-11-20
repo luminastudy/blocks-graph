@@ -1,6 +1,6 @@
 # GitHub Pages Setup Guide
 
-This guide explains how to enable and use the GitHub Pages deployment for the @luminastudy/blocks-graph examples.
+This guide explains how to enable and use the GitHub Pages deployment for the @lumina-study/blocks-graph examples.
 
 ## Overview
 

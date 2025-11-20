@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
  * Importing the blocks-graph library automatically registers
  * the 'blocks-graph' custom element globally.
  */
-import '@luminastudy/blocks-graph'
+import '@lumina-study/blocks-graph'
 import './App.css'
 
 /**
@@ -153,7 +153,7 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>@luminastudy/blocks-graph</h1>
+        <h1>@lumina-study/blocks-graph</h1>
         <p>The Open University - Combinatorics Course</p>
       </header>
 

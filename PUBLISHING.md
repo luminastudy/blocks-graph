@@ -1,6 +1,6 @@
 # Publishing Guide
 
-This document explains how to publish new versions of `@luminastudy/blocks-graph` to npm.
+This document explains how to publish new versions of `@lumina-study/blocks-graph` to npm.
 
 ## Overview
 
@@ -12,7 +12,7 @@ The package uses an automated CI/CD pipeline powered by GitHub Actions. Publishi
 
 Ensure you have:
 
-- An npm account with publish permissions for `@luminastudy` scope
+- An npm account with publish permissions for `@lumina-study` scope
 - Two-factor authentication (2FA) enabled on your npm account
 
 ### 2. GitHub Repository Setup
@@ -132,7 +132,7 @@ When you push a tag matching `v*.*.*`, the publish workflow runs:
 
 2. **Publish to npm**
    - Publish with provenance (supply chain security)
-   - Public access for @luminastudy scope
+   - Public access for @lumina-study scope
    - Uses `NPM_TOKEN` secret
 
 3. **Create GitHub Release**
@@ -241,7 +241,7 @@ git push origin v0.1.0
 
 1. Create new automation token on npmjs.com
 2. Update `NPM_TOKEN` in GitHub secrets
-3. Ensure token has publish permission for `@luminastudy` scope
+3. Ensure token has publish permission for `@lumina-study` scope
 4. Retry the workflow
 
 ### CI failing with "frozen lockfile" error
@@ -323,10 +323,10 @@ After publishing, verify:
 
    ```bash
    # Check package is live
-   npm view @luminastudy/blocks-graph
+   npm view @lumina-study/blocks-graph
 
    # Check specific version
-   npm view @luminastudy/blocks-graph@0.1.0
+   npm view @lumina-study/blocks-graph@0.1.0
    ```
 
 2. **GitHub Release**
@@ -340,10 +340,10 @@ After publishing, verify:
    # In a test directory
    mkdir test-install && cd test-install
    npm init -y
-   npm install @luminastudy/blocks-graph
+   npm install @lumina-study/blocks-graph
 
    # Verify it works
-   node -e "import('@luminastudy/blocks-graph').then(m => console.log(m))"
+   node -e "import('@lumina-study/blocks-graph').then(m => console.log(m))"
    ```
 
 4. **Documentation**
@@ -356,7 +356,7 @@ After publishing, verify:
 ### Unpublish a version (within 72 hours)
 
 ```bash
-npm unpublish @luminastudy/blocks-graph@0.1.0
+npm unpublish @lumina-study/blocks-graph@0.1.0
 ```
 
 **Warning**: Only works within 72 hours of publishing. Use sparingly.
@@ -364,7 +364,7 @@ npm unpublish @luminastudy/blocks-graph@0.1.0
 ### Deprecate a version
 
 ```bash
-npm deprecate @luminastudy/blocks-graph@0.1.0 "This version has critical bugs. Upgrade to 0.1.1"
+npm deprecate @lumina-study/blocks-graph@0.1.0 "This version has critical bugs. Upgrade to 0.1.1"
 ```
 
 ## Security

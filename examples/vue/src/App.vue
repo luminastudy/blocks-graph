@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <header class="header">
-      <h1>@luminastudy/blocks-graph</h1>
+      <h1>@lumina-study/blocks-graph</h1>
       <p v-if="!blocks">Loading data...</p>
       <template v-else>
         <p>The Open University - Combinatorics Course</p>
@@ -77,11 +77,10 @@
           <li>✅ Automatic prop synchronization</li>
           <li>✅ Clean, declarative API</li>
         </ul>
-        <div class="status">
-          <strong>Status:</strong> {{ status }}
-        </div>
+        <div class="status"><strong>Status:</strong> {{ status }}</div>
         <div v-if="selectedBlock" class="selected-block">
-          <strong>Selected Block ID:</strong> {{ selectedBlock.substring(0, 8) }}...
+          <strong>Selected Block ID:</strong>
+          {{ selectedBlock.substring(0, 8) }}...
         </div>
       </div>
     </template>
@@ -95,7 +94,7 @@ import {
   type BlockSchemaV01,
   type BlocksRenderedEvent,
   type BlockSelectedEvent,
-} from '@luminastudy/blocks-graph/vue'
+} from '@lumina-study/blocks-graph/vue'
 
 /**
  * Vue Example Using the BlocksGraphVue Wrapper
@@ -170,9 +169,9 @@ function handleBlockSelected(event: BlockSelectedEvent) {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 .header {

@@ -16,7 +16,7 @@ After deep analysis of the React example implementation, I identified and fixed 
 
 ```tsx
 // ❌ BEFORE (BROKEN)
-import { BlocksGraphReact, type Block } from '@luminastudy/blocks-graph/react'
+import { BlocksGraphReact, type Block } from '@lumina-study/blocks-graph/react'
 
 // State typed as internal Block[] format
 const [blocks, setBlocks] = useState<Block[] | null>(null)
@@ -69,7 +69,7 @@ Because the wrapper would try to access `title.he` but the data has `title.he_te
 import {
   BlocksGraphReact,
   type BlockSchemaV01,
-} from '@luminastudy/blocks-graph/react'
+} from '@lumina-study/blocks-graph/react'
 
 // State typed as v0.1 schema format (matches API response)
 const [blocks, setBlocks] = useState<BlockSchemaV01[] | null>(null)
@@ -115,7 +115,7 @@ const [blocks, setBlocks] = useState<BlockSchemaV01[] | null>(null)
 #### Option B: Manual Conversion
 
 ```tsx
-import { schemaV01Adaptor } from '@luminastudy/blocks-graph'
+import { schemaV01Adaptor } from '@lumina-study/blocks-graph'
 
 const data = await response.json()
 const converted = schemaV01Adaptor.adaptMany(data)
@@ -290,7 +290,7 @@ While the example is now correct, here are potential enhancements:
 ### 3. Add Data Validation
 
 ```tsx
-import { isBlockSchemaV01 } from '@luminastudy/blocks-graph'
+import { isBlockSchemaV01 } from '@lumina-study/blocks-graph'
 
 if (!data.every(isBlockSchemaV01)) {
   throw new Error('Invalid data format')

@@ -5,7 +5,7 @@ This guide explains how to configure the CI/CD pipeline for automated testing an
 ## Prerequisites
 
 - Admin access to the GitHub repository
-- npm account with publish permissions for `@luminastudy` scope
+- npm account with publish permissions for `@lumina-study` scope
 - npm organization membership (for scoped packages)
 
 ## Step-by-Step Setup
@@ -151,7 +151,7 @@ After the publish workflow completes:
 2. **Check npm Registry**
 
    ```bash
-   npm view @luminastudy/blocks-graph
+   npm view @lumina-study/blocks-graph
    ```
 
 3. **Test Installation**
@@ -159,8 +159,8 @@ After the publish workflow completes:
    ```bash
    mkdir test-install && cd test-install
    npm init -y
-   npm install @luminastudy/blocks-graph
-   ls node_modules/@luminastudy/blocks-graph
+   npm install @lumina-study/blocks-graph
+   ls node_modules/@lumina-study/blocks-graph
    ```
 
 4. **Check GitHub Release**

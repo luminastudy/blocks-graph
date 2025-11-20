@@ -28,7 +28,7 @@ import '../../index.js'
  * @example
  * ```typescript
  * // In your module
- * import { BlocksGraphComponent } from '@luminastudy/blocks-graph/angular';
+ * import { BlocksGraphComponent } from '@lumina-study/blocks-graph/angular';
  *
  * @NgModule({
  *   declarations: [AppComponent],

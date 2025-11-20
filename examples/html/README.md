@@ -1,6 +1,6 @@
 # Pure HTML Example
 
-This example demonstrates how to integrate the `@luminastudy/blocks-graph` Web Component into a pure HTML page using vanilla JavaScript, without any framework dependencies.
+This example demonstrates how to integrate the `@lumina-study/blocks-graph` Web Component into a pure HTML page using vanilla JavaScript, without any framework dependencies.
 
 ## Overview
 

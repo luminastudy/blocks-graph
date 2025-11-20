@@ -1,12 +1,12 @@
 # Framework Wrappers
 
-This directory contains framework-specific wrapper components for the `@luminastudy/blocks-graph` Web Component. These wrappers provide idiomatic APIs for different frameworks while maintaining the core functionality of the underlying Web Component.
+This directory contains framework-specific wrapper components for the `@lumina-study/blocks-graph` Web Component. These wrappers provide idiomatic APIs for different frameworks while maintaining the core functionality of the underlying Web Component.
 
 ## Available Wrappers
 
 ### React
 
-**Import**: `@luminastudy/blocks-graph/react`
+**Import**: `@lumina-study/blocks-graph/react`
 
 A React wrapper component that eliminates the need for refs and provides a clean, props-based API.
 
@@ -21,8 +21,8 @@ A React wrapper component that eliminates the need for refs and provides a clean
 **Usage**:
 
 ```tsx
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react';
-import type { Block } from '@luminastudy/blocks-graph';
+import { BlocksGraphReact } from '@lumina-study/blocks-graph/react';
+import type { Block } from '@lumina-study/blocks-graph';
 
 function App() {
   const blocks: Block[] = [...];
@@ -56,19 +56,19 @@ function App() {
 
 A Vue 3 composition API wrapper with v-model support and reactive props.
 
-**Planned Import**: `@luminastudy/blocks-graph/vue`
+**Planned Import**: `@lumina-study/blocks-graph/vue`
 
 ### Angular (Planned)
 
 An Angular component wrapper with Input/Output decorators.
 
-**Planned Import**: `@luminastudy/blocks-graph/angular`
+**Planned Import**: `@lumina-study/blocks-graph/angular`
 
 ### Svelte (Planned)
 
 A Svelte component wrapper with reactive stores integration.
 
-**Planned Import**: `@luminastudy/blocks-graph/svelte`
+**Planned Import**: `@lumina-study/blocks-graph/svelte`
 
 ## Why Framework Wrappers?
 
@@ -85,7 +85,7 @@ While the Web Component works natively in all frameworks, framework-specific wra
 You can always use the Web Component directly without wrappers:
 
 ```javascript
-import '@luminastudy/blocks-graph'
+import '@lumina-study/blocks-graph'
 
 // In your HTML or framework template
 ;<blocks-graph

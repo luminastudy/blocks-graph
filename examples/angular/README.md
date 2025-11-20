@@ -1,6 +1,6 @@
 # Angular Example
 
-This example demonstrates how to integrate the `@luminastudy/blocks-graph` Web Component into an Angular application using TypeScript and standalone components.
+This example demonstrates how to integrate the `@lumina-study/blocks-graph` Web Component into an Angular application using TypeScript and standalone components.
 
 ## Overview
 
@@ -133,7 +133,7 @@ Component properties are bound to the wrapper using Angular's property binding s
 ### Event Handlers with EventEmitter
 
 ```typescript
-import type { BlockSelectedEvent } from '@luminastudy/blocks-graph/angular'
+import type { BlockSelectedEvent } from '@lumina-study/blocks-graph/angular'
 
 handleBlockSelected(event: BlockSelectedEvent) {
   console.log('Block:', event.blockId, 'Level:', event.selectionLevel)
@@ -191,7 +191,7 @@ examples/angular/
 
 ## Troubleshooting
 
-### Error: "Cannot find module '@luminastudy/blocks-graph'"
+### Error: "Cannot find module '@lumina-study/blocks-graph'"
 
 **Cause**: The parent library hasn't been built or workspace dependency isn't resolved.
 
@@ -199,7 +199,7 @@ examples/angular/
 
 1. Run `pnpm build` from the project root to build the library
 2. Run `pnpm install` in `examples/angular/` to resolve the workspace dependency
-3. Verify `node_modules/@luminastudy/blocks-graph` is a symlink to the parent directory
+3. Verify `node_modules/@lumina-study/blocks-graph` is a symlink to the parent directory
 
 ### Error: "Failed to fetch" Sample Data
 
@@ -218,7 +218,7 @@ examples/angular/
 
 **Solution**:
 
-1. Ensure you're importing types from `@luminastudy/blocks-graph/angular`
+1. Ensure you're importing types from `@lumina-study/blocks-graph/angular`
 2. Check that the parent library is built with type definitions
 3. Restart the Angular language service or IDE
 
@@ -265,7 +265,7 @@ This example uses pnpm workspace protocol:
 
 ```json
 "dependencies": {
-  "@luminastudy/blocks-graph": "workspace:*"
+  "@lumina-study/blocks-graph": "workspace:*"
 }
 ```
 

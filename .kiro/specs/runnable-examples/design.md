@@ -2,7 +2,7 @@
 
 ## Overview
 
-This feature creates runnable example applications demonstrating the integration of the @luminastudy/blocks-graph Web Component in both pure HTML and React contexts. The examples serve as executable documentation and validation that the library works correctly across different integration patterns.
+This feature creates runnable example applications demonstrating the integration of the @lumina-study/blocks-graph Web Component in both pure HTML and React contexts. The examples serve as executable documentation and validation that the library works correctly across different integration patterns.
 
 **Purpose**: This feature delivers working reference implementations to developers integrating the blocks-graph library, reducing onboarding time and providing validation of cross-framework compatibility.
 
@@ -30,7 +30,7 @@ This feature creates runnable example applications demonstrating the integration
 
 ### Existing Architecture Analysis
 
-The @luminastudy/blocks-graph library is structured as a framework-agnostic Web Component with the following architecture:
+The @lumina-study/blocks-graph library is structured as a framework-agnostic Web Component with the following architecture:
 
 **Current Architecture Patterns:**
 
@@ -167,15 +167,15 @@ The shared data file is fetched or imported by each example:
 
 #### Decision 2: Workspace Dependency vs. npm Registry Reference
 
-**Decision**: Use pnpm workspace protocol (`"@luminastudy/blocks-graph": "workspace:*"`) in React example package.json
+**Decision**: Use pnpm workspace protocol (`"@lumina-study/blocks-graph": "workspace:*"`) in React example package.json
 
 **Context**: React example needs to depend on the parent library package. Must ensure examples always use the current local development version, not a published registry version.
 
 **Alternatives:**
 
-1. **File path reference** - `"@luminastudy/blocks-graph": "file:../../"`
-2. **npm registry reference** - `"@luminastudy/blocks-graph": "^0.1.0"`
-3. **Workspace protocol** - `"@luminastudy/blocks-graph": "workspace:*"`
+1. **File path reference** - `"@lumina-study/blocks-graph": "file:../../"`
+2. **npm registry reference** - `"@lumina-study/blocks-graph": "^0.1.0"`
+3. **Workspace protocol** - `"@lumina-study/blocks-graph": "workspace:*"`
 
 **Selected Approach**: Workspace protocol with pnpm
 
@@ -184,7 +184,7 @@ Package.json includes:
 ```json
 {
   "dependencies": {
-    "@luminastudy/blocks-graph": "workspace:*"
+    "@lumina-study/blocks-graph": "workspace:*"
   }
 }
 ```
@@ -192,7 +192,7 @@ Package.json includes:
 React example imports the library:
 
 ```typescript
-import '@luminastudy/blocks-graph'
+import '@lumina-study/blocks-graph'
 ```
 
 **Rationale**:
@@ -343,7 +343,7 @@ flowchart TD
 Content structure:
 
 ```markdown
-# @luminastudy/blocks-graph Examples
+# @lumina-study/blocks-graph Examples
 
 Overview of available examples
 
@@ -568,7 +568,7 @@ Package configuration:
     "preview": "vite preview"
   },
   "dependencies": {
-    "@luminastudy/blocks-graph": "workspace:*",
+    "@lumina-study/blocks-graph": "workspace:*",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },
@@ -584,7 +584,7 @@ Package configuration:
 
 **Dependency Rationale**:
 
-- `@luminastudy/blocks-graph`: Workspace protocol ensures local development version
+- `@lumina-study/blocks-graph`: Workspace protocol ensures local development version
 - `react`, `react-dom`: React 18 with concurrent features
 - `@vitejs/plugin-react`: JSX transformation and Fast Refresh
 - TypeScript: Type safety and IDE support
@@ -605,7 +605,7 @@ Package configuration:
 
 - **Inbound**: None (root application component)
 - **Outbound**:
-  - `@luminastudy/blocks-graph` (Web Component library)
+  - `@lumina-study/blocks-graph` (Web Component library)
   - `../../data/blocks-sample.json` (sample data)
 - **External**: React hooks (useRef, useEffect, useState)
 
@@ -615,7 +615,7 @@ React component interface:
 
 ```typescript
 import { useEffect, useRef, useState } from 'react';
-import '@luminastudy/blocks-graph';
+import '@lumina-study/blocks-graph';
 
 function App() {
   // Type-safe ref for Web Component element
@@ -841,7 +841,7 @@ Demonstrates React integration with TypeScript
 ## Troubleshooting
 
 - Web Component not found: Run `pnpm build` in parent directory
-- Type errors: Ensure @luminastudy/blocks-graph is installed via pnpm workspace
+- Type errors: Ensure @lumina-study/blocks-graph is installed via pnpm workspace
 ```
 
 ## Data Models

@@ -1,5 +1,5 @@
 /**
- * @luminastudy/blocks-graph
+ * @lumina-study/blocks-graph
  *
  * Framework-agnostic Web Component for visualizing Lumina Study block schemas
  */

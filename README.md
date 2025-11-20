@@ -1,6 +1,6 @@
-# @luminastudy/blocks-graph
+# @lumina-study/blocks-graph
 
-[![npm version](https://img.shields.io/npm/v/@luminastudy/blocks-graph.svg)](https://www.npmjs.com/package/@lumina-study/blocks-graph)
+[![npm version](https://img.shields.io/npm/v/@lumina-study/blocks-graph.svg)](https://www.npmjs.com/package/@lumina-study/blocks-graph)
 [![CI](https://github.com/luminastudy/blocks-graph/workflows/CI/badge.svg)](https://github.com/luminastudy/blocks-graph/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/luminastudy/blocks-graph/branch/main/graph/badge.svg)](https://codecov.io/gh/luminastudy/blocks-graph)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -30,7 +30,7 @@ See [`GITHUB-PAGES-SETUP.md`](./GITHUB-PAGES-SETUP.md) for deployment details.
 ## Installation
 
 ```bash
-pnpm add @luminastudy/blocks-graph
+pnpm add @lumina-study/blocks-graph
 ```
 
 ## Usage
@@ -42,7 +42,7 @@ pnpm add @luminastudy/blocks-graph
 <html>
   <head>
     <script type="module">
-      import '@luminastudy/blocks-graph'
+      import '@lumina-study/blocks-graph'
     </script>
   </head>
   <body>
@@ -83,7 +83,7 @@ pnpm add @luminastudy/blocks-graph
 ### JavaScript/TypeScript
 
 ```typescript
-import { BlocksGraph } from '@luminastudy/blocks-graph'
+import { BlocksGraph } from '@lumina-study/blocks-graph'
 
 // The element is automatically registered
 const graph = document.querySelector('blocks-graph')
@@ -95,7 +95,7 @@ await graph.loadFromUrl('https://example.com/blocks.json', 'v0.1')
 graph.loadFromJson(jsonString, 'v0.1')
 
 // Or set blocks directly (using internal format)
-import { schemaV01Adaptor } from '@luminastudy/blocks-graph'
+import { schemaV01Adaptor } from '@lumina-study/blocks-graph'
 const blocks = schemaV01Adaptor.adaptFromJson(jsonString)
 graph.setBlocks(blocks)
 ```
@@ -103,8 +103,8 @@ graph.setBlocks(blocks)
 ### React (Recommended: Using Wrapper Component)
 
 ```tsx
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react'
-import type { Block } from '@luminastudy/blocks-graph'
+import { BlocksGraphReact } from '@lumina-study/blocks-graph/react'
+import type { Block } from '@lumina-study/blocks-graph'
 
 function App() {
   const blocks: Block[] = [
@@ -146,7 +146,7 @@ You can also use the Web Component directly with refs:
 
 ```tsx
 import { useEffect, useRef } from 'react'
-import '@luminastudy/blocks-graph'
+import '@lumina-study/blocks-graph'
 
 function App() {
   const graphRef = useRef<HTMLElement>(null)
@@ -187,8 +187,8 @@ function App() {
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { BlocksGraphVue } from '@luminastudy/blocks-graph/vue'
-import type { Block, BlockSelectedEvent } from '@luminastudy/blocks-graph/vue'
+import { BlocksGraphVue } from '@lumina-study/blocks-graph/vue'
+import type { Block, BlockSelectedEvent } from '@lumina-study/blocks-graph/vue'
 
 const blocks = ref<Block[]>([
   {
@@ -227,7 +227,7 @@ You can also use the Web Component directly with refs:
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import '@luminastudy/blocks-graph'
+import '@lumina-study/blocks-graph'
 
 const graph = ref(null)
 
@@ -243,11 +243,11 @@ onMounted(async () => {
 
 ```typescript
 import { Component } from '@angular/core'
-import { BlocksGraphComponent } from '@luminastudy/blocks-graph/angular'
+import { BlocksGraphComponent } from '@lumina-study/blocks-graph/angular'
 import type {
   Block,
   BlockSelectedEvent,
-} from '@luminastudy/blocks-graph/angular'
+} from '@lumina-study/blocks-graph/angular'
 
 @Component({
   selector: 'app-root',
@@ -303,8 +303,8 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core'
-import '@luminastudy/blocks-graph'
-import type { BlocksGraph } from '@luminastudy/blocks-graph'
+import '@lumina-study/blocks-graph'
+import type { BlocksGraph } from '@lumina-study/blocks-graph'
 
 @Component({
   selector: 'app-root',
@@ -570,7 +570,7 @@ import {
   GraphEngine,
   GraphRenderer,
   schemaV01Adaptor,
-} from '@luminastudy/blocks-graph'
+} from '@lumina-study/blocks-graph'
 
 // Adapt schema data
 const blocks = schemaV01Adaptor.adaptFromJson(jsonString)

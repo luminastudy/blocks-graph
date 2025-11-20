@@ -7,7 +7,7 @@ import {
   type BlockSchemaV01,
   type BlockSelectedEvent,
   type BlocksRenderedEvent,
-} from '@luminastudy/blocks-graph/angular'
+} from '@lumina-study/blocks-graph/angular'
 
 /**
  * Angular Example Using the BlocksGraphComponent Wrapper

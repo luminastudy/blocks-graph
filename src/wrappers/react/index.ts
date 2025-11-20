@@ -1,9 +1,9 @@
 /**
- * React wrapper for @luminastudy/blocks-graph
+ * React wrapper for @lumina-study/blocks-graph
  *
  * @example
  * ```tsx
- * import { BlocksGraphReact } from '@luminastudy/blocks-graph/react';
+ * import { BlocksGraphReact } from '@lumina-study/blocks-graph/react';
  *
  * function App() {
  *   const blocks = [...];

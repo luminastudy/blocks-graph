@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The @luminastudy/blocks-graph library is a framework-agnostic Web Component for visualizing Lumina Study block schemas. While the README provides code snippets demonstrating usage in various frameworks, there is a need for runnable, executable examples that developers can immediately run and interact with to understand how to integrate the library into their projects.
+The @lumina-study/blocks-graph library is a framework-agnostic Web Component for visualizing Lumina Study block schemas. While the README provides code snippets demonstrating usage in various frameworks, there is a need for runnable, executable examples that developers can immediately run and interact with to understand how to integrate the library into their projects.
 
 This feature will create an `examples/` directory containing fully functional, standalone applications demonstrating the library's usage in both React and pure HTML contexts. These examples will serve as both learning resources for new users and validation that the library works correctly in different environments.
 
@@ -33,7 +33,7 @@ This feature will create an `examples/` directory containing fully functional, s
 #### Acceptance Criteria
 
 1. WHEN creating the HTML example THEN the Examples System SHALL create a standalone HTML file (`examples/html/index.html`) that can be opened directly in a browser
-2. WHEN the HTML example loads THEN the Example Application SHALL import the @luminastudy/blocks-graph library as an ES module
+2. WHEN the HTML example loads THEN the Example Application SHALL import the @lumina-study/blocks-graph library as an ES module
 3. WHEN demonstrating basic functionality THEN the Example Application SHALL include a `<blocks-graph>` element with configured attributes (language, show-prerequisites, show-parents)
 4. WHEN providing sample data THEN the Example Application SHALL load blocks data using the `loadFromJson()` method with valid v0.1 schema-compliant JSON
 5. WHEN demonstrating the component THEN the Example Application SHALL display at least 3-5 interconnected blocks showing prerequisite and parent relationships
@@ -48,7 +48,7 @@ This feature will create an `examples/` directory containing fully functional, s
 
 1. WHEN creating the React example THEN the Examples System SHALL create a complete React application in `examples/react/` with all necessary configuration files (package.json, tsconfig.json, vite.config.ts)
 2. WHEN configuring the React example THEN the Examples System SHALL use Vite as the build tool for fast development experience
-3. WHEN the React example initializes THEN the Example Application SHALL import the @luminastudy/blocks-graph library and register the Web Component
+3. WHEN the React example initializes THEN the Example Application SHALL import the @lumina-study/blocks-graph library and register the Web Component
 4. WHEN demonstrating React integration THEN the Example Application SHALL use a ref to access the Web Component instance for imperative API calls
 5. WHEN loading data in React THEN the Example Application SHALL call the `loadFromJson()` or `loadFromUrl()` method within a useEffect hook
 6. WHEN providing sample data THEN the Example Application SHALL display at least 3-5 interconnected blocks showing prerequisite and parent relationships
@@ -81,7 +81,7 @@ This feature will create an `examples/` directory containing fully functional, s
 3. WHEN setting up the HTML example THEN the Examples System SHALL provide instructions for serving the static files via HTTP server
 4. IF the HTML example uses ES modules THEN the Examples System SHALL ensure proper MIME type handling by requiring a local server
 5. WHEN documenting execution THEN the Examples System SHALL include clear step-by-step instructions in each example's README for installing dependencies and running the example
-6. WHEN installing dependencies THEN the React Example SHALL install the @luminastudy/blocks-graph package from the parent directory or npm registry
+6. WHEN installing dependencies THEN the React Example SHALL install the @lumina-study/blocks-graph package from the parent directory or npm registry
 
 ### Requirement 6: Documentation and Developer Experience
 
@@ -102,7 +102,7 @@ This feature will create an `examples/` directory containing fully functional, s
 
 #### Acceptance Criteria
 
-1. WHEN managing dependencies THEN the Examples System SHALL reference the @luminastudy/blocks-graph library using a workspace reference or local path to ensure examples use the current version
+1. WHEN managing dependencies THEN the Examples System SHALL reference the @lumina-study/blocks-graph library using a workspace reference or local path to ensure examples use the current version
 2. WHEN the library API changes THEN the Examples SHALL be updated to reflect the new API patterns
 3. WHEN building the library THEN the Examples System SHALL ensure examples can access the built library artifacts from `dist/`
 4. IF the library introduces new features THEN the Examples System SHALL consider adding demonstrations of new capabilities to existing or new examples

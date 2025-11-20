@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This feature adds configurable graph orientation to the `@luminastudy/blocks-graph` Web Component, allowing developers to control the directional flow of node layouts. Currently, the graph uses a fixed top-to-bottom (TTB) layout where parent nodes appear above their children. This enhancement will support multiple orientation modes: top-to-bottom (TTB), left-to-right (LTR), right-to-left (RTL), and bottom-to-top (BTT).
+This feature adds configurable graph orientation to the `@lumina-study/blocks-graph` Web Component, allowing developers to control the directional flow of node layouts. Currently, the graph uses a fixed top-to-bottom (TTB) layout where parent nodes appear above their children. This enhancement will support multiple orientation modes: top-to-bottom (TTB), left-to-right (LTR), right-to-left (RTL), and bottom-to-top (BTT).
 
 **Business Value:**
 

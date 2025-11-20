@@ -43,7 +43,7 @@ export interface BlocksGraphProps {
  *
  * @example
  * ```tsx
- * import { BlocksGraphReact } from '@luminastudy/blocks-graph/react';
+ * import { BlocksGraphReact } from '@lumina-study/blocks-graph/react';
  *
  * function App() {
  *   const blocks = [...];

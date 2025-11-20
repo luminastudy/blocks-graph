@@ -33,8 +33,8 @@ import '../../index.js'
  * </template>
  *
  * <script setup lang="ts">
- * import { BlocksGraphVue } from '@luminastudy/blocks-graph/vue';
- * import type { Block } from '@luminastudy/blocks-graph';
+ * import { BlocksGraphVue } from '@lumina-study/blocks-graph/vue';
+ * import type { Block } from '@lumina-study/blocks-graph';
  *
  * const blocks: Block[] = [...];
  *

@@ -1,6 +1,6 @@
 # Vue Example
 
-This example demonstrates how to integrate the `@luminastudy/blocks-graph` Web Component into a Vue 3 application using TypeScript and the Composition API.
+This example demonstrates how to integrate the `@lumina-study/blocks-graph` Web Component into a Vue 3 application using TypeScript and the Composition API.
 
 ## Overview
 
@@ -109,7 +109,7 @@ import { ref, onMounted } from 'vue'
 import {
   BlocksGraphVue,
   type BlockSchemaV01,
-} from '@luminastudy/blocks-graph/vue'
+} from '@lumina-study/blocks-graph/vue'
 
 const blocks = ref<BlockSchemaV01[]>([])
 const language = ref<'en' | 'he'>('en')
@@ -140,7 +140,7 @@ Vue's reactivity system automatically updates the graph when state changes.
 ### Type-Safe Event Handlers
 
 ```typescript
-import type { BlockSelectedEvent } from '@luminastudy/blocks-graph/vue'
+import type { BlockSelectedEvent } from '@lumina-study/blocks-graph/vue'
 
 function handleBlockSelected(event: BlockSelectedEvent) {
   console.log('Block:', event.blockId, 'Level:', event.selectionLevel)
@@ -171,7 +171,7 @@ examples/vue/
 
 ## Troubleshooting
 
-### Error: "Cannot find module '@luminastudy/blocks-graph'"
+### Error: "Cannot find module '@lumina-study/blocks-graph'"
 
 **Cause**: The parent library hasn't been built or workspace dependency isn't resolved.
 
@@ -179,7 +179,7 @@ examples/vue/
 
 1. Run `pnpm build` from the project root to build the library
 2. Run `pnpm install` in `examples/vue/` to resolve the workspace dependency
-3. Verify `node_modules/@luminastudy/blocks-graph` is a symlink to the parent directory
+3. Verify `node_modules/@lumina-study/blocks-graph` is a symlink to the parent directory
 
 ### Error: "Failed to fetch" Sample Data
 
@@ -198,7 +198,7 @@ examples/vue/
 
 **Solution**:
 
-1. Ensure you're importing types from `@luminastudy/blocks-graph/vue`
+1. Ensure you're importing types from `@lumina-study/blocks-graph/vue`
 2. Check that the parent library is built with type definitions
 3. Restart the TypeScript server in your IDE
 
@@ -248,7 +248,7 @@ This example uses pnpm workspace protocol:
 
 ```json
 "dependencies": {
-  "@luminastudy/blocks-graph": "workspace:*"
+  "@lumina-study/blocks-graph": "workspace:*"
 }
 ```
 

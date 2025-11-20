@@ -1,6 +1,6 @@
 # React Example
 
-This example demonstrates how to integrate the `@luminastudy/blocks-graph` Web Component into a React application using TypeScript, following React best practices.
+This example demonstrates how to integrate the `@lumina-study/blocks-graph` Web Component into a React application using TypeScript, following React best practices.
 
 ## Two Integration Approaches
 
@@ -106,7 +106,7 @@ pnpm preview
 ### Web Component Import in React
 
 ```typescript
-import '@luminastudy/blocks-graph'
+import '@lumina-study/blocks-graph'
 ```
 
 Importing the library registers the `blocks-graph` custom element globally, making it available for use in JSX.
@@ -227,7 +227,7 @@ examples/react/
 
 ## Troubleshooting
 
-### Error: "Cannot find module '@luminastudy/blocks-graph'"
+### Error: "Cannot find module '@lumina-study/blocks-graph'"
 
 **Cause**: The parent library hasn't been built or workspace dependency isn't resolved.
 
@@ -235,7 +235,7 @@ examples/react/
 
 1. Run `pnpm build` from the project root to build the library
 2. Run `pnpm install` in `examples/react/` to resolve the workspace dependency
-3. Verify `node_modules/@luminastudy/blocks-graph` is a symlink to the parent directory
+3. Verify `node_modules/@lumina-study/blocks-graph` is a symlink to the parent directory
 
 ### Error: "Failed to fetch /data/blocks-sample.json"
 
@@ -297,7 +297,7 @@ This example uses pnpm workspace protocol:
 
 ```json
 "dependencies": {
-  "@luminastudy/blocks-graph": "workspace:*"
+  "@lumina-study/blocks-graph": "workspace:*"
 }
 ```
 

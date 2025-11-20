@@ -2,7 +2,7 @@
 
 ## Overview
 
-This feature adds interactive pan and zoom capabilities to the @luminastudy/blocks-graph Web Component, enabling users to navigate large graph visualizations using mouse and touch gestures. The implementation extends the existing SVG-based rendering system with viewport transformation controls while maintaining full compatibility with block selection, relationship visualization, and orientation modes.
+This feature adds interactive pan and zoom capabilities to the @lumina-study/blocks-graph Web Component, enabling users to navigate large graph visualizations using mouse and touch gestures. The implementation extends the existing SVG-based rendering system with viewport transformation controls while maintaining full compatibility with block selection, relationship visualization, and orientation modes.
 
 **Purpose**: This feature delivers intuitive navigation controls to users viewing complex block dependency graphs that exceed viewport dimensions. Users can zoom to examine block details or view high-level structure, and pan to explore different graph regions without page scrolling.
 

@@ -1,11 +1,11 @@
 /**
- * Angular wrapper for @luminastudy/blocks-graph
+ * Angular wrapper for @lumina-study/blocks-graph
  *
  * @example
  * ```typescript
  * // In your component or module
- * import { BlocksGraphComponent } from '@luminastudy/blocks-graph/angular';
- * import type { Block } from '@luminastudy/blocks-graph';
+ * import { BlocksGraphComponent } from '@lumina-study/blocks-graph/angular';
+ * import type { Block } from '@lumina-study/blocks-graph';
  *
  * @Component({
  *   selector: 'app-root',

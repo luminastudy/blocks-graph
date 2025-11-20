@@ -1,6 +1,6 @@
-# @luminastudy/blocks-graph Examples
+# @lumina-study/blocks-graph Examples
 
-This directory contains runnable example applications demonstrating how to integrate the `@luminastudy/blocks-graph` Web Component into different environments.
+This directory contains runnable example applications demonstrating how to integrate the `@lumina-study/blocks-graph` Web Component into different environments.
 
 ## Overview
 
@@ -214,7 +214,7 @@ python -m http.server 8080
 pnpm install  # Reinstall all workspace dependencies
 
 # Verify symlink exists
-ls -la examples/react/node_modules/@luminastudy/blocks-graph
+ls -la examples/react/node_modules/@lumina-study/blocks-graph
 # Should show symlink to parent directory
 ```
 

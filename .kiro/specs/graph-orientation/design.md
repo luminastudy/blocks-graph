@@ -2,7 +2,7 @@
 
 ## Overview
 
-This feature extends the `@luminastudy/blocks-graph` Web Component to support configurable graph orientation, enabling developers to control the directional flow of node layouts. The implementation adds four orientation modes—top-to-bottom (TTB), left-to-right (LTR), right-to-left (RTL), and bottom-to-top (BTT)—while maintaining full backward compatibility with the existing top-to-bottom default behavior.
+This feature extends the `@lumina-study/blocks-graph` Web Component to support configurable graph orientation, enabling developers to control the directional flow of node layouts. The implementation adds four orientation modes—top-to-bottom (TTB), left-to-right (LTR), right-to-left (RTL), and bottom-to-top (BTT)—while maintaining full backward compatibility with the existing top-to-bottom default behavior.
 
 **Purpose**: This feature delivers flexible graph visualization capabilities to developers building educational platforms, organizational charts, and process flow diagrams. It specifically addresses internationalization needs for right-to-left language users (Hebrew, Arabic) and provides visual flexibility for different use cases.
 

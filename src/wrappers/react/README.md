@@ -1,11 +1,11 @@
 # BlocksGraphReact
 
-React wrapper component for `@luminastudy/blocks-graph` Web Component.
+React wrapper component for `@lumina-study/blocks-graph` Web Component.
 
 ## Installation
 
 ```bash
-pnpm add @luminastudy/blocks-graph
+pnpm add @lumina-study/blocks-graph
 ```
 
 The React wrapper is included in the main package.
@@ -17,8 +17,8 @@ The React wrapper is included in the main package.
 ## Usage
 
 ```tsx
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react'
-import type { Block } from '@luminastudy/blocks-graph'
+import { BlocksGraphReact } from '@lumina-study/blocks-graph/react'
+import type { Block } from '@lumina-study/blocks-graph'
 
 function App() {
   const blocks: Block[] = [
@@ -103,7 +103,7 @@ function App() {
 
 ```tsx
 import { useState } from 'react'
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react'
+import { BlocksGraphReact } from '@lumina-study/blocks-graph/react'
 
 function App() {
   const [blocks, setBlocks] = useState([])
@@ -134,8 +134,8 @@ function App() {
 
 ```tsx
 import { useEffect, useState } from 'react'
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react'
-import type { Block } from '@luminastudy/blocks-graph'
+import { BlocksGraphReact } from '@lumina-study/blocks-graph/react'
+import type { Block } from '@lumina-study/blocks-graph'
 
 function App() {
   const [blocks, setBlocks] = useState<Block[] | null>(null)
@@ -161,7 +161,7 @@ function App() {
 
 ```tsx
 import { useState } from 'react'
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react'
+import { BlocksGraphReact } from '@lumina-study/blocks-graph/react'
 
 function App() {
   const [orientation, setOrientation] = useState<'ttb' | 'ltr' | 'rtl' | 'btt'>(
@@ -201,8 +201,8 @@ function App() {
 ### External v0.1 Schema
 
 ```tsx
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react'
-import type { BlockSchemaV01 } from '@luminastudy/blocks-graph'
+import { BlocksGraphReact } from '@lumina-study/blocks-graph/react'
+import type { BlockSchemaV01 } from '@lumina-study/blocks-graph'
 
 function App() {
   const blocksV01: BlockSchemaV01[] = [
@@ -231,7 +231,7 @@ import type {
   BlockSchemaV01,
   BlockTitle,
   BlocksGraphProps,
-} from '@luminastudy/blocks-graph/react'
+} from '@lumina-study/blocks-graph/react'
 ```
 
 ## Benefits vs Direct Web Component

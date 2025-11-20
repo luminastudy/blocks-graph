@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes the React wrapper implementation for `@luminastudy/blocks-graph`. The wrapper provides a clean, props-based API for React developers, eliminating the need for refs and manual event listener management.
+This document summarizes the React wrapper implementation for `@lumina-study/blocks-graph`. The wrapper provides a clean, props-based API for React developers, eliminating the need for refs and manual event listener management.
 
 ## What Was Implemented
 
@@ -116,14 +116,14 @@ dist/wrappers/react/index.js       308.0kb (React wrapper)
 ### Installation
 
 ```bash
-pnpm add @luminastudy/blocks-graph
+pnpm add @lumina-study/blocks-graph
 ```
 
 ### Basic Usage
 
 ```tsx
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react';
-import type { Block } from '@luminastudy/blocks-graph';
+import { BlocksGraphReact } from '@lumina-study/blocks-graph/react';
+import type { Block } from '@lumina-study/blocks-graph';
 
 function App() {
   const blocks: Block[] = [...];
@@ -270,9 +270,9 @@ Same as React and Web Components:
 
 ### Planned Wrappers
 
-- Vue 3 wrapper (`@luminastudy/blocks-graph/vue`)
-- Angular wrapper (`@luminastudy/blocks-graph/angular`)
-- Svelte wrapper (`@luminastudy/blocks-graph/svelte`)
+- Vue 3 wrapper (`@lumina-study/blocks-graph/vue`)
+- Angular wrapper (`@lumina-study/blocks-graph/angular`)
+- Svelte wrapper (`@lumina-study/blocks-graph/svelte`)
 
 ### Potential Improvements
 
@@ -307,7 +307,7 @@ For existing users who want to switch to the wrapper:
 
 ```tsx
 import { useEffect, useRef } from 'react'
-import '@luminastudy/blocks-graph'
+import '@lumina-study/blocks-graph'
 
 const graphRef = useRef(null)
 useEffect(() => {
@@ -319,7 +319,7 @@ useEffect(() => {
 **After**:
 
 ```tsx
-import { BlocksGraphReact } from '@luminastudy/blocks-graph/react'
+import { BlocksGraphReact } from '@lumina-study/blocks-graph/react'
 ;<BlocksGraphReact blocks={blocks} language="en" />
 ```
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -12,8 +12,9 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Oxygen, Ubuntu, Cantarell, sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
         padding: 20px;
@@ -104,7 +105,7 @@
         transform: translateY(0);
       }
 
-      input[type="checkbox"] {
+      input[type='checkbox'] {
         width: 18px;
         height: 18px;
         cursor: pointer;
@@ -145,7 +146,7 @@
       }
 
       .info-panel li:before {
-        content: "▸ ";
+        content: '▸ ';
         color: #667eea;
         font-weight: bold;
         margin-right: 8px;
@@ -184,7 +185,7 @@
   <body>
     <div class="container">
       <header>
-        <h1>@luminastudy/blocks-graph</h1>
+        <h1>@lumina-study/blocks-graph</h1>
         <p>The Open University - Combinatorics Course</p>
       </header>
 
@@ -256,16 +257,16 @@
        * Importing the library from the built distribution bundle.
        * This registers the 'blocks-graph' custom element globally.
        */
-      import "../dist/index.js";
+      import '../dist/index.js'
 
       // Get references to DOM elements
-      const graph = document.getElementById("graph");
-      const languageSelect = document.getElementById("language");
+      const graph = document.getElementById('graph')
+      const languageSelect = document.getElementById('language')
       const showPrerequisitesCheckbox =
-        document.getElementById("show-prerequisites");
-      const showParentsCheckbox = document.getElementById("show-parents");
-      const reloadButton = document.getElementById("reload-data");
-      const statusDiv = document.getElementById("status");
+        document.getElementById('show-prerequisites')
+      const showParentsCheckbox = document.getElementById('show-parents')
+      const reloadButton = document.getElementById('reload-data')
+      const statusDiv = document.getElementById('status')
 
       /**
        * Load sample data from the shared data directory
@@ -273,19 +274,19 @@
        */
       async function loadData() {
         try {
-          statusDiv.textContent = "Status: Loading data...";
+          statusDiv.textContent = 'Status: Loading data...'
 
           // Fetch data from The Open University Combinatorics course
           const response = await fetch(
-            "https://raw.githubusercontent.com/luminastudy/the-open-university-combinatorics/refs/heads/main/lumina.json"
-          );
+            'https://raw.githubusercontent.com/luminastudy/the-open-university-combinatorics/refs/heads/main/lumina.json'
+          )
 
           if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`)
           }
 
           // Parse JSON response
-          const blocks = await response.json();
+          const blocks = await response.json()
 
           /*
            * Imperative API Usage:
@@ -293,13 +294,13 @@
            * - First parameter: JSON string of blocks data
            * - Second parameter: Schema version ('v0.1')
            */
-          graph.loadFromJson(JSON.stringify(blocks), "v0.1");
+          graph.loadFromJson(JSON.stringify(blocks), 'v0.1')
 
-          statusDiv.textContent = `Status: Loaded ${blocks.length} blocks successfully`;
+          statusDiv.textContent = `Status: Loaded ${blocks.length} blocks successfully`
         } catch (error) {
           // Handle errors gracefully with user-friendly messages
-          console.error("Error loading data:", error);
-          statusDiv.textContent = `Status: Error loading data - ${error.message}`;
+          console.error('Error loading data:', error)
+          statusDiv.textContent = `Status: Error loading data - ${error.message}`
         }
       }
 
@@ -307,80 +308,80 @@
        * Event Listener: Language Selection
        * Demonstrates dynamic attribute updates via JavaScript property
        */
-      languageSelect.addEventListener("change", (e) => {
-        graph.language = e.target.value;
+      languageSelect.addEventListener('change', e => {
+        graph.language = e.target.value
         statusDiv.textContent = `Status: Language changed to ${
-          e.target.value === "en" ? "English" : "Hebrew"
-        }`;
-      });
+          e.target.value === 'en' ? 'English' : 'Hebrew'
+        }`
+      })
 
       /**
        * Event Listener: Show Prerequisites Toggle
        * Updates component attribute to control prerequisite relationship display
        */
-      showPrerequisitesCheckbox.addEventListener("change", (e) => {
-        graph.showPrerequisites = e.target.checked;
+      showPrerequisitesCheckbox.addEventListener('change', e => {
+        graph.showPrerequisites = e.target.checked
         statusDiv.textContent = `Status: Prerequisites ${
-          e.target.checked ? "shown" : "hidden"
-        }`;
-      });
+          e.target.checked ? 'shown' : 'hidden'
+        }`
+      })
 
       /**
        * Event Listener: Show Parents Toggle
        * Updates component attribute to control parent relationship display
        */
-      showParentsCheckbox.addEventListener("change", (e) => {
-        graph.showParents = e.target.checked;
+      showParentsCheckbox.addEventListener('change', e => {
+        graph.showParents = e.target.checked
         statusDiv.textContent = `Status: Parents ${
-          e.target.checked ? "shown" : "hidden"
-        }`;
-      });
+          e.target.checked ? 'shown' : 'hidden'
+        }`
+      })
 
       /**
        * Event Listener: Reload Data Button
        * Demonstrates re-loading data into the component
        */
-      reloadButton.addEventListener("click", () => {
-        loadData();
-      });
+      reloadButton.addEventListener('click', () => {
+        loadData()
+      })
 
       /**
        * Event Listener: blocks-rendered Event
        * Custom event fired by the Web Component after successful rendering
        * Provides details about the rendering (e.g., block count)
        */
-      graph.addEventListener("blocks-rendered", (event) => {
-        console.log("Blocks rendered event:", event.detail);
+      graph.addEventListener('blocks-rendered', event => {
+        console.log('Blocks rendered event:', event.detail)
         if (event.detail && event.detail.blockCount !== undefined) {
-          statusDiv.textContent = `Status: Rendered ${event.detail.blockCount} blocks`;
+          statusDiv.textContent = `Status: Rendered ${event.detail.blockCount} blocks`
         }
-      });
+      })
 
       /**
        * Event Listener: block-selected Event
        * Custom event fired when user clicks on a block
        * Provides details about the selected block
        */
-      graph.addEventListener("block-selected", (event) => {
-        console.log("Block selected event:", event.detail);
+      graph.addEventListener('block-selected', event => {
+        console.log('Block selected event:', event.detail)
         if (event.detail && event.detail.blockId) {
           const levelText =
             event.detail.selectionLevel === 0
-              ? "default view"
+              ? 'default view'
               : event.detail.selectionLevel === 1
-              ? "showing graph"
-              : "showing graph + sub-blocks";
+                ? 'showing graph'
+                : 'showing graph + sub-blocks'
           statusDiv.textContent = `Status: Selected block (${event.detail.blockId.substring(
             0,
             8
-          )}...) - ${levelText}`;
+          )}...) - ${levelText}`
         } else {
-          statusDiv.textContent = "Status: Selection cleared";
+          statusDiv.textContent = 'Status: Selection cleared'
         }
-      });
+      })
 
       // Load data automatically when page loads
-      loadData();
+      loadData()
     </script>
   </body>
 </html>

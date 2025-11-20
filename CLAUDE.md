@@ -13,7 +13,7 @@
 ### runnable-examples
 
 **Status**: Completed
-**Description**: Create an examples folder with runnable demonstrations showing how to use the @luminastudy/blocks-graph library in both React and pure HTML contexts.
+**Description**: Create an examples folder with runnable demonstrations showing how to use the @lumina-study/blocks-graph library in both React and pure HTML contexts.
 
 **Phase**: tasks-generated
 **Spec Location**: `.kiro/specs/runnable-examples/`
