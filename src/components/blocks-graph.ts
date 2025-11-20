@@ -177,23 +177,36 @@ export class BlocksGraph extends HTMLElement {
 
   /**
    * Handle block click events
-   * Implements 2-state toggle: root view -> children view -> root view
-   * - First click: Show selected block and its children
-   * - Second click on same block: Return to root view
-   * - Click different block: Show that block and its children
+   * - Click block with children: Show selected block and its children
+   * - Click same block again: Return to root view
+   * - Click block without children: Only send event, don't change visualization
    */
   private handleBlockClick(blockId: string): void {
+    const clickedBlock = this.blocks.find(b => b.id === blockId)
+    if (!clickedBlock) return
+
+    const graph = this.engine.buildGraph(this.blocks)
+    const children = this.engine.getSubBlocks(blockId, graph)
+
+    // If block has no children, only dispatch event without changing visualization
+    if (children.length === 0) {
+      this.dispatchEvent(
+        new CustomEvent('block-selected', {
+          detail: { blockId, selectionLevel: this.selectionLevel },
+        })
+      )
+      return
+    }
+
+    // Block has children - toggle navigation state
     if (this.selectedBlockId === blockId) {
-      // Same block clicked - toggle back to root view
       this.selectedBlockId = null
       this.selectionLevel = 0
     } else {
-      // Different block clicked - show its children
       this.selectedBlockId = blockId
       this.selectionLevel = 1
     }
 
-    // Dispatch custom event for block selection
     this.dispatchEvent(
       new CustomEvent('block-selected', {
         detail: {
@@ -203,7 +216,6 @@ export class BlocksGraph extends HTMLElement {
       })
     )
 
-    // Re-render with new selection
     this.render()
   }
 
