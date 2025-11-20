@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@luminastudy/blocks-graph - Examples</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1000px;
+        width: 100%;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+
+      header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 40px;
+        text-align: center;
+      }
+
+      header h1 {
+        font-size: 3em;
+        margin-bottom: 15px;
+        font-weight: 700;
+      }
+
+      header p {
+        font-size: 1.3em;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      .badges {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 25px;
+        flex-wrap: wrap;
+      }
+
+      .badges img {
+        height: 20px;
+      }
+
+      .content {
+        padding: 50px 40px;
+      }
+
+      .intro {
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      .intro h2 {
+        color: #333;
+        font-size: 2em;
+        margin-bottom: 15px;
+      }
+
+      .intro p {
+        color: #666;
+        font-size: 1.1em;
+        line-height: 1.8;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      .examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 50px;
+      }
+
+      .example-card {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 35px;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        text-decoration: none;
+        display: block;
+      }
+
+      .example-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        border-color: #667eea;
+      }
+
+      .example-card h3 {
+        color: #667eea;
+        font-size: 1.6em;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .example-card .icon {
+        font-size: 1.3em;
+      }
+
+      .example-card p {
+        color: #666;
+        line-height: 1.7;
+        margin-bottom: 20px;
+      }
+
+      .example-card ul {
+        list-style: none;
+        margin-bottom: 25px;
+      }
+
+      .example-card li {
+        color: #555;
+        padding: 8px 0;
+        padding-left: 25px;
+        position: relative;
+      }
+
+      .example-card li:before {
+        content: "✓";
+        color: #667eea;
+        font-weight: bold;
+        position: absolute;
+        left: 0;
+      }
+
+      .example-card .btn {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+
+      .example-card .btn:hover {
+        background: #5568d3;
+        transform: translateX(5px);
+      }
+
+      .features {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 40px;
+        border-radius: 12px;
+        margin-bottom: 40px;
+      }
+
+      .features h2 {
+        color: #333;
+        font-size: 1.8em;
+        margin-bottom: 25px;
+        text-align: center;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+      }
+
+      .feature {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .feature h3 {
+        color: #667eea;
+        font-size: 1.2em;
+        margin-bottom: 10px;
+      }
+
+      .feature p {
+        color: #666;
+        line-height: 1.6;
+        font-size: 0.95em;
+      }
+
+      .links {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .links a {
+        padding: 12px 25px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+        border: 2px solid #667eea;
+      }
+
+      .links a.primary {
+        background: #667eea;
+        color: white;
+      }
+
+      .links a.primary:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .links a.secondary {
+        background: white;
+        color: #667eea;
+      }
+
+      .links a.secondary:hover {
+        background: #f8f9fa;
+      }
+
+      footer {
+        text-align: center;
+        padding: 30px;
+        color: #999;
+        border-top: 1px solid #e9ecef;
+      }
+
+      @media (max-width: 768px) {
+        header h1 {
+          font-size: 2em;
+        }
+
+        header p {
+          font-size: 1.1em;
+        }
+
+        .content {
+          padding: 30px 20px;
+        }
+
+        .examples {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>@luminastudy/blocks-graph</h1>
+        <p>
+          Framework-agnostic Web Component for visualizing block schemas with
+          interactive hierarchical graphs
+        </p>
+        <div class="badges">
+          <img
+            src="https://img.shields.io/npm/v/@luminastudy/blocks-graph.svg"
+            alt="npm version"
+          />
+          <img
+            src="https://github.com/luminastudy/blocks-graph/workflows/CI/badge.svg"
+            alt="CI"
+          />
+          <img
+            src="https://codecov.io/gh/luminastudy/blocks-graph/branch/main/graph/badge.svg"
+            alt="codecov"
+          />
+          <img
+            src="https://img.shields.io/badge/License-MIT-yellow.svg"
+            alt="License: MIT"
+          />
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="intro">
+          <h2>Interactive Examples</h2>
+          <p>
+            Explore live demonstrations of the blocks-graph library in action.
+            Each example showcases different integration approaches and features
+            of the library.
+          </p>
+        </div>
+
+        <div class="examples">
+          <a href="./html/index.html" class="example-card">
+            <h3>
+              <span class="icon">🌐</span>
+              Pure HTML Example
+            </h3>
+            <p>
+              Native Web Component integration with vanilla JavaScript. Perfect
+              for understanding the core API.
+            </p>
+            <ul>
+              <li>Zero framework overhead</li>
+              <li>Direct DOM manipulation</li>
+              <li>ES module imports</li>
+              <li>Custom event handling</li>
+            </ul>
+            <span class="btn">View HTML Example →</span>
+          </a>
+
+          <a href="./react/index.html" class="example-card">
+            <h3>
+              <span class="icon">⚛️</span>
+              React Example
+            </h3>
+            <p>
+              React integration using the Web Component with refs and hooks.
+              Shows modern React patterns.
+            </p>
+            <ul>
+              <li>React hooks (useRef, useEffect)</li>
+              <li>TypeScript integration</li>
+              <li>State management</li>
+              <li>Event listeners</li>
+            </ul>
+            <span class="btn">View React Example →</span>
+          </a>
+        </div>
+
+        <div class="features">
+          <h2>Key Features</h2>
+          <div class="features-grid">
+            <div class="feature">
+              <h3>🎨 Framework-Agnostic</h3>
+              <p>
+                Native Web Component works with any framework or vanilla
+                JavaScript
+              </p>
+            </div>
+            <div class="feature">
+              <h3>🌍 Bilingual Support</h3>
+              <p>Display content in Hebrew and English with easy switching</p>
+            </div>
+            <div class="feature">
+              <h3>🔗 Relationship Visualization</h3>
+              <p>Shows prerequisite and parent relationships between blocks</p>
+            </div>
+            <div class="feature">
+              <h3>📐 Multiple Orientations</h3>
+              <p>
+                Support for top-to-bottom, left-to-right, right-to-left, and
+                bottom-to-top layouts
+              </p>
+            </div>
+            <div class="feature">
+              <h3>⚡ High Performance</h3>
+              <p>Efficient SVG rendering with optimized layout algorithms</p>
+            </div>
+            <div class="feature">
+              <h3>📦 TypeScript Ready</h3>
+              <p>Full TypeScript support with comprehensive type definitions</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="links">
+          <a
+            href="https://github.com/luminastudy/blocks-graph"
+            class="primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            📚 View on GitHub
+          </a>
+          <a
+            href="https://www.npmjs.com/package/@luminastudy/blocks-graph"
+            class="secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            📦 npm Package
+          </a>
+          <a
+            href="https://github.com/luminastudy/blocks-graph#readme"
+            class="secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            📖 Documentation
+          </a>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          Built with ❤️ by
+          <a
+            href="https://github.com/luminastudy"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="color: #667eea; text-decoration: none"
+            >Lumina Study</a
+          >
+          • MIT License
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

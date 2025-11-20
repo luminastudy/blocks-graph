@@ -1,0 +1,116 @@
+name: Deploy Examples to GitHub Pages
+
+on:
+  # Trigger on push to main branch
+  push:
+    branches:
+      - main
+    # Only deploy when examples or library code changes
+    paths:
+      - 'examples/**'
+      - 'src/**'
+      - '.github/workflows/deploy-examples.yml'
+  # Allow manual deployment trigger
+  workflow_dispatch:
+
+# Required permissions for GitHub Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build Examples
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.21.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build library
+        run: pnpm build
+
+      - name: Install React example dependencies
+        working-directory: examples/react
+        run: pnpm install --frozen-lockfile
+
+      - name: Build React example
+        working-directory: examples/react
+        run: pnpm build
+        env:
+          # Set base path for GitHub Pages
+          VITE_BASE_PATH: /blocks-graph/react/
+
+      - name: Prepare deployment directory
+        run: |
+          # Create deployment directory structure
+          mkdir -p _deploy/dist
+          mkdir -p _deploy/html
+          mkdir -p _deploy/react
+
+          # Copy landing page
+          cp examples/index.html _deploy/index.html
+
+          # Copy library build (needed by HTML example)
+          cp -r dist/* _deploy/dist/
+
+          # Copy HTML example
+          cp -r examples/html/* _deploy/html/
+
+          # Copy built React example
+          cp -r examples/react/dist/* _deploy/react/
+
+          echo "Deployment directory structure:"
+          ls -la _deploy/
+          echo "React build contents:"
+          ls -la _deploy/react/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_deploy'
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Output deployment URL
+        run: |
+          echo "🚀 Examples deployed successfully!"
+          echo "📍 URL: ${{ steps.deployment.outputs.page_url }}"
+          echo ""
+          echo "Available examples:"
+          echo "  - Landing page: ${{ steps.deployment.outputs.page_url }}"
+          echo "  - HTML example: ${{ steps.deployment.outputs.page_url }}html/"
+          echo "  - React example: ${{ steps.deployment.outputs.page_url }}react/"

@@ -16,6 +16,17 @@ Framework-agnostic Web Component for visualizing Lumina Study block schemas.
 - **Customizable**: Configure layout, styling, and behavior through attributes and API
 - **TypeScript**: Full TypeScript support with type definitions
 
+## Live Examples
+
+🚀 **[View Interactive Examples](https://luminastudy.github.io/blocks-graph/)**
+
+Explore live demonstrations showcasing both HTML and React integration patterns:
+
+- **[HTML Example](https://luminastudy.github.io/blocks-graph/html/)** - Pure Web Component with vanilla JavaScript
+- **[React Example](https://luminastudy.github.io/blocks-graph/react/)** - React integration with hooks and TypeScript
+
+See [`GITHUB-PAGES-SETUP.md`](./GITHUB-PAGES-SETUP.md) for deployment details.
+
 ## Installation
 
 ```bash
