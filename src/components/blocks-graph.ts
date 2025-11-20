@@ -95,7 +95,7 @@ export class BlocksGraph extends HTMLElement {
               ...this.renderer['config'].edgeStyle,
               prerequisite: {
                 ...this.renderer['config'].edgeStyle.prerequisite,
-                lineStyle: newValue,
+                lineStyle: newValue as EdgeLineStyle,
               },
             },
           })
@@ -108,7 +108,7 @@ export class BlocksGraph extends HTMLElement {
               ...this.renderer['config'].edgeStyle,
               parent: {
                 ...this.renderer['config'].edgeStyle.parent,
-                lineStyle: newValue,
+                lineStyle: newValue as EdgeLineStyle,
               },
             },
           })
@@ -315,7 +315,9 @@ export class BlocksGraph extends HTMLElement {
    */
   get prerequisiteLineStyle(): EdgeLineStyle {
     const value = this.getAttribute('prerequisite-line-style')
-    return value && isValidEdgeLineStyle(value) ? value : 'dashed'
+    return value && isValidEdgeLineStyle(value)
+      ? (value as EdgeLineStyle)
+      : 'dashed'
   }
 
   /**
@@ -324,13 +326,14 @@ export class BlocksGraph extends HTMLElement {
   set prerequisiteLineStyle(value: EdgeLineStyle) {
     this.setAttribute('prerequisite-line-style', value)
   }
-
   /**
    * Get parent line style
    */
   get parentLineStyle(): EdgeLineStyle {
     const value = this.getAttribute('parent-line-style')
-    return value && isValidEdgeLineStyle(value) ? value : 'straight'
+    return value && isValidEdgeLineStyle(value)
+      ? (value as EdgeLineStyle)
+      : 'straight'
   }
 
   /**
