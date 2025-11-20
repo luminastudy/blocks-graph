@@ -61,12 +61,33 @@ jobs:
           # Set base path for GitHub Pages
           VITE_BASE_PATH: /blocks-graph/react/
 
+      - name: Install Vue example dependencies
+        working-directory: examples/vue
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Vue example
+        working-directory: examples/vue
+        run: pnpm build
+        env:
+          # Set base path for GitHub Pages
+          VITE_BASE_PATH: /blocks-graph/vue/
+
+      - name: Install Angular example dependencies
+        working-directory: examples/angular
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Angular example
+        working-directory: examples/angular
+        run: pnpm build -- --base-href /blocks-graph/angular/
+
       - name: Prepare deployment directory
         run: |
           # Create deployment directory structure
           mkdir -p _deploy/dist
           mkdir -p _deploy/html
           mkdir -p _deploy/react
+          mkdir -p _deploy/vue
+          mkdir -p _deploy/angular
 
           # Copy landing page
           cp examples/index.html _deploy/index.html
@@ -80,10 +101,20 @@ jobs:
           # Copy built React example
           cp -r examples/react/dist/* _deploy/react/
 
+          # Copy built Vue example
+          cp -r examples/vue/dist/* _deploy/vue/
+
+          # Copy built Angular example
+          cp -r examples/angular/dist/blocks-graph-angular-example/browser/* _deploy/angular/
+
           echo "Deployment directory structure:"
           ls -la _deploy/
           echo "React build contents:"
           ls -la _deploy/react/
+          echo "Vue build contents:"
+          ls -la _deploy/vue/
+          echo "Angular build contents:"
+          ls -la _deploy/angular/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -114,3 +145,5 @@ jobs:
           echo "  - Landing page: ${{ steps.deployment.outputs.page_url }}"
           echo "  - HTML example: ${{ steps.deployment.outputs.page_url }}html/"
           echo "  - React example: ${{ steps.deployment.outputs.page_url }}react/"
+          echo "  - Vue example: ${{ steps.deployment.outputs.page_url }}vue/"
+          echo "  - Angular example: ${{ steps.deployment.outputs.page_url }}angular/"

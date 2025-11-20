@@ -38,3 +38,41 @@ await build({
 })
 
 console.log('✓ React wrapper bundle created')
+
+// Build Vue wrapper bundle
+await build({
+  entryPoints: ['src/wrappers/vue/index.ts'],
+  bundle: true,
+  format: 'esm',
+  platform: 'browser',
+  target: 'es2022',
+  outfile: 'dist/wrappers/vue/index.js',
+  sourcemap: true,
+  external: ['vue'],
+  jsx: 'automatic',
+  loader: {
+    '.json': 'json',
+  },
+  logLevel: 'info',
+})
+
+console.log('✓ Vue wrapper bundle created')
+
+// Build Angular wrapper bundle
+await build({
+  entryPoints: ['src/wrappers/angular/index.ts'],
+  bundle: true,
+  format: 'esm',
+  platform: 'browser',
+  target: 'es2022',
+  outfile: 'dist/wrappers/angular/index.js',
+  sourcemap: true,
+  external: ['@angular/core', '@angular/common'],
+  jsx: 'automatic',
+  loader: {
+    '.json': 'json',
+  },
+  logLevel: 'info',
+})
+
+console.log('✓ Angular wrapper bundle created')

@@ -1,5 +1,7 @@
 packages:
   - examples/react
+  - examples/vue
+  - examples/angular
 
 onlyBuiltDependencies:
   - esbuild

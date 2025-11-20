@@ -1,0 +1,87 @@
+<div class="app">
+  <header class="header">
+    <h1>@luminastudy/blocks-graph</h1>
+    <p *ngIf="!blocks">Loading data...</p>
+    <ng-container *ngIf="blocks">
+      <p>The Open University - Combinatorics Course</p>
+      <small>Using Angular Wrapper (No ViewChild needed!)</small>
+    </ng-container>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="!blocks" class="info-panel">
+    <p>{{ status }}</p>
+  </div>
+
+  <!-- Main Content -->
+  <ng-container *ngIf="blocks">
+    <!-- Interactive Controls Panel -->
+    <div class="controls">
+      <div class="control-group">
+        <label for="language-select">Language:</label>
+        <select id="language-select" [(ngModel)]="language">
+          <option value="en">English</option>
+          <option value="he">Hebrew (עברית)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="orientation-select">Orientation:</label>
+        <select id="orientation-select" [(ngModel)]="orientation">
+          <option value="ttb">Top to Bottom</option>
+          <option value="ltr">Left to Right</option>
+          <option value="rtl">Right to Left</option>
+          <option value="btt">Bottom to Top</option>
+        </select>
+      </div>
+
+      <div class="control-group checkbox">
+        <label>
+          <input type="checkbox" [(ngModel)]="showPrerequisites" />
+          Show Prerequisites
+        </label>
+      </div>
+
+      <div class="control-group checkbox">
+        <label>
+          <input type="checkbox" [(ngModel)]="showParents" />
+          Show Parents
+        </label>
+      </div>
+    </div>
+
+    <!-- Angular Wrapper Component - Clean @Input/@Output API! -->
+    <div class="graph-container">
+      <blocks-graph-angular
+        [blocksV01]="blocks"
+        [language]="language"
+        [orientation]="orientation"
+        [showPrerequisites]="showPrerequisites"
+        [showParents]="showParents"
+        [nodeWidth]="200"
+        [nodeHeight]="80"
+        (blocksRendered)="handleBlocksRendered($event)"
+        (blockSelected)="handleBlockSelected($event)"
+        [style]="{ width: '100%', height: '600px', display: 'block' }"
+      ></blocks-graph-angular>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="info-panel">
+      <h3>Angular Wrapper Benefits</h3>
+      <ul>
+        <li>✅ No ViewChild needed - just use @Input/@Output</li>
+        <li>✅ Full TypeScript support with autocomplete</li>
+        <li>✅ Angular-style events with EventEmitter</li>
+        <li>✅ Automatic change detection</li>
+        <li>✅ Clean, declarative API</li>
+      </ul>
+      <div class="status">
+        <strong>Status:</strong> {{ status }}
+      </div>
+      <div *ngIf="selectedBlock" class="selected-block">
+        <strong>Selected Block ID:</strong> {{ selectedBlock.substring(0, 8) }}...
+      </div>
+    </div>
+  </ng-container>
+</div>
