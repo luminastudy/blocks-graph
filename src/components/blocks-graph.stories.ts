@@ -589,3 +589,326 @@ graph.parentLineStyle = 'dotted';
     layout: 'fullscreen',
   },
 }
+
+/**
+ * Story demonstrating prerequisites-only relationships (a→b→c chain).
+ * All three blocks are roots (no parents), so they all show together.
+ * The prerequisite chain is visualized with dashed lines connecting them.
+ */
+export const PrerequisitesOnlyChain: Story = {
+  render: args => {
+    const storyId = `prereqs-only-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+
+    const prerequisitesOnlyBlocks = [
+      {
+        id: '550e8400-e29b-41d4-a716-446655440010',
+        title: {
+          he_text: 'בלוק א',
+          en_text: 'Block A',
+        },
+        prerequisites: [],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440011',
+        title: {
+          he_text: 'בלוק ב',
+          en_text: 'Block B',
+        },
+        prerequisites: ['550e8400-e29b-41d4-a716-446655440010'],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440012',
+        title: {
+          he_text: 'בלוק ג',
+          en_text: 'Block C',
+        },
+        prerequisites: ['550e8400-e29b-41d4-a716-446655440011'],
+        parents: [],
+      },
+    ]
+
+    return html`
+      <div style="padding: 16px;">
+        <div
+          style="padding: 16px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; margin-bottom: 16px;"
+        >
+          <h3 style="margin: 0 0 8px 0; color: #2e7d32;">
+            Scenario 1: Prerequisites Only (No Parents)
+          </h3>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
+            <strong>Relationship:</strong> A → B → C (prerequisites chain)
+          </p>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
+            <strong>Expected behavior:</strong>
+          </p>
+          <ul
+            style="margin: 0; padding-left: 20px; font-size: 14px; color: #333;"
+          >
+            <li>All 3 blocks show together as roots (no parents defined)</li>
+            <li>Blue dashed lines show the prerequisite chain: A → B → C</li>
+            <li>
+              Clicking blocks only dispatches events (no navigation changes)
+            </li>
+          </ul>
+        </div>
+        <div
+          style="width: 100%; height: 400px; border: 1px solid #ddd; border-radius: 4px;"
+        >
+          <blocks-graph
+            id="${storyId}"
+            language="${args.language}"
+            show-prerequisites="true"
+            orientation="ttb"
+            node-width="180"
+            node-height="70"
+          ></blocks-graph>
+        </div>
+      </div>
+      <script>
+        setTimeout(() => {
+          const graph = document.getElementById('${storyId}')
+          if (graph && typeof graph.loadFromJson === 'function') {
+            graph.loadFromJson(
+              ${JSON.stringify(JSON.stringify(prerequisitesOnlyBlocks))},
+              'v0.1'
+            )
+          }
+        }, 100)
+      </script>
+    `
+  },
+  args: {
+    language: 'en',
+  },
+}
+
+/**
+ * Story demonstrating parent-only relationships (a→b→c hierarchy).
+ * Only root 'A' shows initially. Navigation reveals children one level at a time.
+ */
+export const ParentsOnlyHierarchy: Story = {
+  render: args => {
+    const storyId = `parents-only-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+
+    const parentsOnlyBlocks = [
+      {
+        id: '550e8400-e29b-41d4-a716-446655440020',
+        title: {
+          he_text: 'בלוק א',
+          en_text: 'Block A',
+        },
+        prerequisites: [],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440021',
+        title: {
+          he_text: 'בלוק ב',
+          en_text: 'Block B',
+        },
+        prerequisites: [],
+        parents: ['550e8400-e29b-41d4-a716-446655440020'],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440022',
+        title: {
+          he_text: 'בלוק ג',
+          en_text: 'Block C',
+        },
+        prerequisites: [],
+        parents: ['550e8400-e29b-41d4-a716-446655440021'],
+      },
+    ]
+
+    return html`
+      <div style="padding: 16px;">
+        <div
+          style="padding: 16px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px; margin-bottom: 16px;"
+        >
+          <h3 style="margin: 0 0 8px 0; color: #1565c0;">
+            Scenario 2: Parents Only (No Prerequisites)
+          </h3>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
+            <strong>Relationship:</strong> C is child of B, B is child of A
+          </p>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
+            <strong>Expected behavior:</strong>
+          </p>
+          <ul
+            style="margin: 0; padding-left: 20px; font-size: 14px; color: #333;"
+          >
+            <li><strong>Initially:</strong> Only Block A shows (the root)</li>
+            <li><strong>Click A:</strong> Shows A and B (B is A's child)</li>
+            <li><strong>Click B:</strong> Shows B and C (C is B's child)</li>
+            <li>
+              <strong>Click same block again:</strong> Return to root view
+            </li>
+          </ul>
+          <p
+            style="margin: 8px 0 0 0; padding: 8px; background: #fff3cd; border-radius: 4px; font-size: 13px;"
+          >
+            💡 <strong>Try it:</strong> Click on blocks to navigate through the
+            hierarchy!
+          </p>
+        </div>
+        <div
+          style="width: 100%; height: 400px; border: 1px solid #ddd; border-radius: 4px;"
+        >
+          <blocks-graph
+            id="${storyId}"
+            language="${args.language}"
+            show-prerequisites="true"
+            orientation="ttb"
+            node-width="180"
+            node-height="70"
+          ></blocks-graph>
+        </div>
+      </div>
+      <script>
+        setTimeout(() => {
+          const graph = document.getElementById('${storyId}')
+          if (graph && typeof graph.loadFromJson === 'function') {
+            graph.loadFromJson(
+              ${JSON.stringify(JSON.stringify(parentsOnlyBlocks))},
+              'v0.1'
+            )
+          }
+        }, 100)
+      </script>
+    `
+  },
+  args: {
+    language: 'en',
+  },
+}
+
+/**
+ * Story demonstrating both prerequisites AND parent relationships together.
+ * Navigation follows parent hierarchy, but prerequisite edges are also drawn.
+ */
+export const PrerequisitesAndParents: Story = {
+  render: args => {
+    const storyId = `both-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+
+    const bothRelationshipsBlocks = [
+      {
+        id: '550e8400-e29b-41d4-a716-446655440030',
+        title: {
+          he_text: 'בלוק א',
+          en_text: 'Block A',
+        },
+        prerequisites: [],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440031',
+        title: {
+          he_text: 'בלוק ב',
+          en_text: 'Block B',
+        },
+        prerequisites: ['550e8400-e29b-41d4-a716-446655440030'],
+        parents: ['550e8400-e29b-41d4-a716-446655440030'],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440032',
+        title: {
+          he_text: 'בלוק ג',
+          en_text: 'Block C',
+        },
+        prerequisites: ['550e8400-e29b-41d4-a716-446655440031'],
+        parents: ['550e8400-e29b-41d4-a716-446655440031'],
+      },
+    ]
+
+    return html`
+      <div style="padding: 16px;">
+        <div
+          style="padding: 16px; background: #f3e5f5; border-left: 4px solid #9c27b0; border-radius: 4px; margin-bottom: 16px;"
+        >
+          <h3 style="margin: 0 0 8px 0; color: #6a1b9a;">
+            Scenario 3: Both Prerequisites AND Parents
+          </h3>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
+            <strong>Relationships:</strong> C is child of B (parent), B is child
+            of A (parent) + prerequisite relationships
+          </p>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
+            <strong>Expected behavior:</strong>
+          </p>
+          <ul
+            style="margin: 0; padding-left: 20px; font-size: 14px; color: #333;"
+          >
+            <li>
+              <strong>Initially:</strong> Only Block A shows (same as Scenario
+              2)
+            </li>
+            <li>
+              <strong>Click A:</strong> Shows A and B with both blue
+              (prerequisite) and gray (parent) edges
+            </li>
+            <li>
+              <strong>Click B:</strong> Shows B and C with both edge types
+            </li>
+            <li>
+              <strong>Navigation follows parents,</strong> prerequisites are
+              visual indicators
+            </li>
+          </ul>
+          <div
+            style="margin-top: 12px; padding: 12px; background: white; border: 1px solid #e0e0e0; border-radius: 4px;"
+          >
+            <strong style="font-size: 13px;">Edge Legend:</strong>
+            <div style="display: flex; gap: 16px; margin-top: 8px;">
+              <span style="font-size: 13px;">
+                <span
+                  style="display: inline-block; width: 30px; height: 2px; background: #4a90e2; vertical-align: middle; border-top: 2px dashed #4a90e2;"
+                ></span>
+                Blue dashed = Prerequisites
+              </span>
+              <span style="font-size: 13px;">
+                <span
+                  style="display: inline-block; width: 30px; height: 2px; background: #666; vertical-align: middle;"
+                ></span>
+                Gray solid = Parents
+              </span>
+            </div>
+          </div>
+        </div>
+        <div
+          style="width: 100%; height: 400px; border: 1px solid #ddd; border-radius: 4px;"
+        >
+          <blocks-graph
+            id="${storyId}"
+            language="${args.language}"
+            show-prerequisites="true"
+            orientation="ttb"
+            node-width="180"
+            node-height="70"
+          ></blocks-graph>
+        </div>
+      </div>
+      <script>
+        setTimeout(() => {
+          const graph = document.getElementById('${storyId}')
+          if (graph && typeof graph.loadFromJson === 'function') {
+            graph.loadFromJson(
+              ${JSON.stringify(JSON.stringify(bothRelationshipsBlocks))},
+              'v0.1'
+            )
+          }
+        }, 100)
+      </script>
+    `
+  },
+  args: {
+    language: 'en',
+  },
+}

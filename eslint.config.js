@@ -39,7 +39,6 @@ export default [
       'default/no-hardcoded-urls': 'off', // SVG namespace URLs are fine
       'error/no-generic-error': 'warn',
       'error/require-custom-error': 'warn',
-      'no-optional-chaining/no-optional-chaining': 'off',
       'custom/jsx-classname-required': 'off', // Not needed for examples
     },
   },
