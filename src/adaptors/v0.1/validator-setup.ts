@@ -4,7 +4,7 @@
 
 import AjvImport from 'ajv'
 import addFormatsImport from 'ajv-formats'
-import blockSchemaV01 from '@tupe12334/block-schema/v0.1' with { type: 'json' }
+import blockSchemaV01 from '@lumina-study/block-schema/v0.1' with { type: 'json' }
 
 // Handle both ESM and CJS imports
 type AjvModule = typeof AjvImport & { default?: typeof AjvImport }
