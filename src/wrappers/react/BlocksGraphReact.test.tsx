@@ -42,7 +42,7 @@ describe('BlocksGraphReact - Rendering', () => {
     )
     const element = container.querySelector('blocks-graph')
 
-    expect(element?.className).toBe('custom-class')
+    expect(element && element.className).toBe('custom-class')
   })
 
   it('applies style prop', () => {
@@ -54,8 +54,8 @@ describe('BlocksGraphReact - Rendering', () => {
     )
     const element = container.querySelector('blocks-graph') as HTMLElement
 
-    expect(element?.style.width).toBe('100%')
-    expect(element?.style.height).toBe('600px')
+    expect(element && element.style.width).toBe('100%')
+    expect(element && element.style.height).toBe('600px')
   })
 })
 
@@ -113,10 +113,10 @@ describe('BlocksGraphReact - Configuration Props', () => {
     )
     const element = container.querySelector('blocks-graph')
 
-    expect(element?.getAttribute('node-width')).toBe('250')
-    expect(element?.getAttribute('node-height')).toBe('100')
-    expect(element?.getAttribute('horizontal-spacing')).toBe('90')
-    expect(element?.getAttribute('vertical-spacing')).toBe('110')
+    expect(element && element.getAttribute('node-width')).toBe('250')
+    expect(element && element.getAttribute('node-height')).toBe('100')
+    expect(element && element.getAttribute('horizontal-spacing')).toBe('90')
+    expect(element && element.getAttribute('vertical-spacing')).toBe('110')
   })
 })
 
@@ -132,7 +132,7 @@ describe('BlocksGraphReact - Event Handlers', () => {
     const event = new CustomEvent('blocks-rendered', {
       detail: { blockCount: 2 },
     })
-    element?.dispatchEvent(event)
+    if (element) element.dispatchEvent(event)
 
     await waitFor(() => {
       expect(handleRendered).toHaveBeenCalledWith(
@@ -154,7 +154,7 @@ describe('BlocksGraphReact - Event Handlers', () => {
     const event = new CustomEvent('block-selected', {
       detail: { blockId: 'block-1', selectionLevel: 1 },
     })
-    element?.dispatchEvent(event)
+    if (element) element.dispatchEvent(event)
 
     await waitFor(() => {
       expect(handleSelected).toHaveBeenCalledWith(
@@ -188,8 +188,8 @@ describe('BlocksGraphReact - Event Handlers', () => {
       detail: { blockId: 'block-1', selectionLevel: 1 },
     })
 
-    element?.dispatchEvent(renderedEvent)
-    element?.dispatchEvent(selectedEvent)
+    if (element) element.dispatchEvent(renderedEvent)
+    if (element) element.dispatchEvent(selectedEvent)
 
     // Handlers should not be called after unmount
     expect(handleRendered).not.toHaveBeenCalled()
