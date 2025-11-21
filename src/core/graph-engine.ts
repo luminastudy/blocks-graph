@@ -6,12 +6,12 @@ import type { PositionedBlock } from '../types/positioned-block.js'
 import type { GraphLayoutConfig } from './graph-layout-config.js'
 import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js'
 import { HorizontalRelationships } from './horizontal-relationships.js'
+import { addBlockWithSubBlocks } from './add-block-with-sub-blocks.js'
 /**
  * Graph engine responsible for building and laying out the block graph
  */
 export class GraphEngine {
   private config: GraphLayoutConfig
-
   constructor(config: Partial<GraphLayoutConfig> = {}) {
     this.config = { ...DEFAULT_LAYOUT_CONFIG, ...config }
   }
