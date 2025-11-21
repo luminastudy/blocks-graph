@@ -205,13 +205,6 @@
           </label>
         </div>
 
-        <div class="control-group">
-          <label for="show-parents">
-            <input type="checkbox" id="show-parents" checked />
-            Show Parents
-          </label>
-        </div>
-
         <button id="reload-data">Reload Data</button>
       </div>
 
@@ -226,7 +219,6 @@
           id="graph"
           language="en"
           show-prerequisites="true"
-          show-parents="true"
         >
         </blocks-graph>
       </div>
@@ -264,7 +256,6 @@
       const languageSelect = document.getElementById('language')
       const showPrerequisitesCheckbox =
         document.getElementById('show-prerequisites')
-      const showParentsCheckbox = document.getElementById('show-parents')
       const reloadButton = document.getElementById('reload-data')
       const statusDiv = document.getElementById('status')
 
@@ -322,17 +313,6 @@
       showPrerequisitesCheckbox.addEventListener('change', e => {
         graph.showPrerequisites = e.target.checked
         statusDiv.textContent = `Status: Prerequisites ${
-          e.target.checked ? 'shown' : 'hidden'
-        }`
-      })
-
-      /**
-       * Event Listener: Show Parents Toggle
-       * Updates component attribute to control parent relationship display
-       */
-      showParentsCheckbox.addEventListener('change', e => {
-        graph.showParents = e.target.checked
-        statusDiv.textContent = `Status: Parents ${
           e.target.checked ? 'shown' : 'hidden'
         }`
       })

@@ -88,10 +88,6 @@ export const BlocksGraphVue = defineComponent({
       type: Boolean,
       default: true,
     },
-    showParents: {
-      type: Boolean,
-      default: true,
-    },
     nodeWidth: {
       type: Number,
       default: undefined,
@@ -204,15 +200,6 @@ export const BlocksGraphVue = defineComponent({
       showPrerequisites => {
         if (elementRef.value) {
           elementRef.value.showPrerequisites = showPrerequisites
-        }
-      }
-    )
-
-    watch(
-      () => props.showParents,
-      showParents => {
-        if (elementRef.value) {
-          elementRef.value.showParents = showParents
         }
       }
     )

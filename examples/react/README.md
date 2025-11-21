@@ -118,7 +118,6 @@ interface BlocksGraphElement extends HTMLElement {
   loadFromJson: (json: string, version: 'v0.1') => void
   language: string
   showPrerequisites: boolean
-  showParents: boolean
 }
 ```
 
@@ -199,7 +198,6 @@ Event listeners are registered in useEffect with cleanup to avoid memory leaks.
   ref={graphRef}
   language={language}
   show-prerequisites={showPrerequisites ? 'true' : 'false'}
-  show-parents={showParents ? 'true' : 'false'}
   style={{ width: '100%', height: '600px' }}
 />
 ```

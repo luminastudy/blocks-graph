@@ -1,6 +1,6 @@
 /**
  * Type guard to check if an object is a valid BlockSchemaV01
- * Uses JSON Schema validation from @tupe12334/block-schema
+ * Uses JSON Schema validation from @lumina-study/block-schema
  */
 
 import type { BlockSchemaV01 } from './types.js'

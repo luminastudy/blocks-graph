@@ -16,7 +16,6 @@ interface BlocksGraphElement extends HTMLElement {
   loadFromJson: (json: string, version: 'v0.1') => void
   language: string
   showPrerequisites: boolean
-  showParents: boolean
 }
 
 function App() {
@@ -30,7 +29,6 @@ function App() {
   // State management for interactive controls
   const [language, setLanguage] = useState<'en' | 'he'>('en')
   const [showPrerequisites, setShowPrerequisites] = useState(true)
-  const [showParents, setShowParents] = useState(true)
   const [status, setStatus] = useState('Ready to load data')
   const [selectedBlock, setSelectedBlock] = useState<string | null>(null)
 
@@ -95,12 +93,6 @@ function App() {
       graphRef.current.showPrerequisites = showPrerequisites
     }
   }, [showPrerequisites])
-
-  useEffect(() => {
-    if (graphRef.current) {
-      graphRef.current.showParents = showParents
-    }
-  }, [showParents])
 
   /**
    * Event Listener Registration:
@@ -186,17 +178,6 @@ function App() {
             Show Prerequisites
           </label>
         </div>
-
-        <div className="control-group checkbox">
-          <label>
-            <input
-              type="checkbox"
-              checked={showParents}
-              onChange={e => setShowParents(e.target.checked)}
-            />
-            Show Parents
-          </label>
-        </div>
       </div>
 
       {/* Web Component Integration */}
@@ -211,7 +192,6 @@ function App() {
           ref={graphRef}
           language={language}
           show-prerequisites={showPrerequisites ? 'true' : 'false'}
-          show-parents={showParents ? 'true' : 'false'}
           style={{
             width: '100%',
             height: '600px',

@@ -90,7 +90,6 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
   @Input() language: 'en' | 'he' = 'en'
   @Input() orientation: 'ttb' | 'ltr' | 'rtl' | 'btt' = 'ttb'
   @Input() showPrerequisites = true
-  @Input() showParents = true
   @Input() nodeWidth?: number
   @Input() nodeHeight?: number
   @Input() horizontalSpacing?: number
@@ -147,10 +146,6 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
 
     if (changes['showPrerequisites']) {
       element.showPrerequisites = this.showPrerequisites
-    }
-
-    if (changes['showParents']) {
-      element.showParents = this.showParents
     }
 
     // Handle layout changes
@@ -249,7 +244,6 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
     element.language = this.language
     element.orientation = this.orientation
     element.showPrerequisites = this.showPrerequisites
-    element.showParents = this.showParents
     element.prerequisiteLineStyle = this.prerequisiteLineStyle
     element.parentLineStyle = this.parentLineStyle
 

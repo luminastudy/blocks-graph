@@ -75,13 +75,6 @@ const meta: Meta = {
         defaultValue: { summary: 'true' },
       },
     },
-    showParents: {
-      control: 'boolean',
-      description: 'Show parent relationships',
-      table: {
-        defaultValue: { summary: 'true' },
-      },
-    },
     nodeWidth: {
       control: { type: 'number', min: 100, max: 400, step: 10 },
       description: 'Width of each node in pixels',
@@ -175,7 +168,6 @@ export const Default: Story = {
           id="${storyId}"
           language="${args.language}"
           show-prerequisites="${args.showPrerequisites}"
-          show-parents="${args.showParents}"
           node-width="${args.nodeWidth || ''}"
           node-height="${args.nodeHeight || ''}"
           horizontal-spacing="${args.horizontalSpacing || ''}"
@@ -208,7 +200,6 @@ export const Default: Story = {
   args: {
     language: 'en',
     showPrerequisites: true,
-    showParents: true,
   },
   play: async ({ canvasElement }) => {
     // Wait for the graph to render
@@ -302,7 +293,6 @@ export const CombinatoricsRootAutoHide: Story = {
             id="${storyId}"
             language="${args.language}"
             show-prerequisites="${args.showPrerequisites}"
-            show-parents="${args.showParents}"
             orientation="${args.orientation || 'ttb'}"
           ></blocks-graph>
         </div>
@@ -312,7 +302,6 @@ export const CombinatoricsRootAutoHide: Story = {
   args: {
     language: 'en',
     showPrerequisites: true,
-    showParents: true,
   },
 }
 

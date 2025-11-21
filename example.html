@@ -100,11 +100,6 @@
         </label>
 
         <label>
-          <input type="checkbox" id="show-parents" checked />
-          <span>Show Parents</span>
-        </label>
-
-        <label>
           <span>URL:</span>
           <input
             type="text"
@@ -128,7 +123,6 @@
         id="graph"
         language="en"
         show-prerequisites="true"
-        show-parents="true"
       >
       </blocks-graph>
 
@@ -183,7 +177,6 @@
       const graph = document.getElementById('graph')
       const languageSelect = document.getElementById('language')
       const showPrerequisites = document.getElementById('show-prerequisites')
-      const showParents = document.getElementById('show-parents')
       const jsonUrlInput = document.getElementById('json-url')
       const loadExampleBtn = document.getElementById('load-example')
       const loadFromUrlBtn = document.getElementById('load-from-url')
@@ -247,10 +240,6 @@
 
       showPrerequisites.addEventListener('change', e => {
         graph.showPrerequisites = e.target.checked
-      })
-
-      showParents.addEventListener('change', e => {
-        graph.showParents = e.target.checked
       })
 
       loadExampleBtn.addEventListener('click', () => {

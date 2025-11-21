@@ -48,7 +48,6 @@ function App() {
       language="en"
       orientation="ttb"
       showPrerequisites={true}
-      showParents={true}
       onBlockSelected={e => {
         console.log('Selected block:', e.detail.blockId)
       }}
@@ -77,7 +76,6 @@ function App() {
 | `language`          | `'en' \| 'he'`                     | `'en'`  | Language to display block titles    |
 | `orientation`       | `'ttb' \| 'ltr' \| 'rtl' \| 'btt'` | `'ttb'` | Graph orientation direction         |
 | `showPrerequisites` | `boolean`                          | `true`  | Show prerequisite relationships     |
-| `showParents`       | `boolean`                          | `true`  | Show parent relationships           |
 | `nodeWidth`         | `number`                           | `200`   | Width of each block node in pixels  |
 | `nodeHeight`        | `number`                           | `80`    | Height of each block node in pixels |
 | `horizontalSpacing` | `number`                           | `80`    | Horizontal spacing between nodes    |
