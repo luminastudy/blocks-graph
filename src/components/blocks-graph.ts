@@ -1,7 +1,11 @@
 import type { Block } from '../types/block.js'
+import { isBlock } from '../types/is-block.js'
 import { GraphEngine } from '../core/graph-engine.js'
 import { GraphRenderer } from '../core/renderer.js'
 import { schemaV01Adaptor } from '../adaptors/v0.1/instance.js'
+import type { BlockSchemaV01 } from '../adaptors/v0.1/types.js'
+import { isBlockSchemaV01 } from '../adaptors/v0.1/validators.js'
+import { InvalidBlockSchemaError } from '../errors/invalid-block-schema-error.js'
 import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-version-error.js'
 import { BlocksFetchError } from '../errors/blocks-fetch-error.js'
 import { isValidEdgeLineStyle } from '../types/is-valid-edge-line-style.js'
@@ -134,10 +138,69 @@ export class BlocksGraph extends HTMLElement {
   }
 
   /**
-   * Set blocks data directly
+   * Set blocks data - accepts both internal Block[] format and external schemas
+   * Automatically detects schema version and converts to internal format
+   *
+   * @param blocks - Array of blocks in internal format or v0.1 schema format
+   * @throws {InvalidBlockSchemaError} If blocks array contains invalid or mixed formats
+   *
+   * @example
+   * ```typescript
+   * // Internal format
+   * graph.setBlocks([{
+   *   id: 'uuid',
+   *   title: { he: 'כותרת', en: 'Title' },
+   *   prerequisites: [],
+   *   parents: []
+   * }])
+   *
+   * // v0.1 schema format (auto-detected)
+   * graph.setBlocks([{
+   *   id: 'uuid',
+   *   title: { he_text: 'כותרת', en_text: 'Title' },
+   *   prerequisites: [],
+   *   parents: []
+   * }])
+   * ```
    */
-  setBlocks(blocks: Block[]): void {
-    this.blocks = blocks
+  setBlocks(blocks: Block[] | BlockSchemaV01[]): void {
+    // Handle empty array
+    if (blocks.length === 0) {
+      this.blocks = []
+      this.render()
+      return
+    }
+
+    // Auto-detect format based on first block
+    const firstBlock = blocks[0]
+
+    if (isBlockSchemaV01(firstBlock)) {
+      // v0.1 schema format - convert to internal format
+      // Validate all blocks are v0.1 format
+      const allValid = blocks.every(isBlockSchemaV01)
+      if (!allValid) {
+        throw new InvalidBlockSchemaError(
+          'Mixed block formats detected. All blocks must be in the same format.'
+        )
+      }
+      this.blocks = schemaV01Adaptor.adaptMany(blocks.filter(isBlockSchemaV01))
+    } else if (isBlock(firstBlock)) {
+      // Internal format - use directly
+      // Validate all blocks are internal format
+      const allValid = blocks.every(isBlock)
+      if (!allValid) {
+        throw new InvalidBlockSchemaError(
+          'Mixed block formats detected. All blocks must be in the same format.'
+        )
+      }
+      this.blocks = blocks.filter(isBlock)
+    } else {
+      // Unknown format
+      throw new InvalidBlockSchemaError(
+        'Unable to detect block schema format. Blocks must be in internal format or v0.1 schema format.'
+      )
+    }
+
     this.render()
   }
 

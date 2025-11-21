@@ -25,10 +25,14 @@ import '../../index.js'
  * Angular wrapper component for the blocks-graph Web Component.
  * Provides a clean Angular API with @Input and @Output decorators.
  *
+ * The `blocks` input accepts both internal Block[] format and v0.1 schema format.
+ * Schema version is automatically detected - no need to specify it manually.
+ *
  * @example
  * ```typescript
  * // In your module
  * import { BlocksGraphComponent } from '@lumina-study/blocks-graph/angular';
+ * import type { Block } from '@lumina-study/blocks-graph';
  *
  * @NgModule({
  *   declarations: [AppComponent],
@@ -48,6 +52,19 @@ import '../../index.js'
  *   (blockSelected)="handleBlockSelected($event)"
  * ></blocks-graph-angular>
  * ```
+ *
+ * @example
+ * ```typescript
+ * // Blocks can be in internal format or v0.1 schema format (auto-detected)
+ * const blocks: Block[] = [
+ *   {
+ *     id: 'uuid',
+ *     title: { he: 'כותרת', en: 'Title' },
+ *     prerequisites: [],
+ *     parents: []
+ *   }
+ * ];
+ * ```
  */
 @Component({
   selector: 'blocks-graph-angular',
@@ -61,8 +78,12 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
   private graphElement?: ElementRef<BlocksGraph>
 
   // Data inputs
+  /** Array of blocks in internal format or v0.1 schema format (auto-detected) */
   @Input() blocks?: Block[] | BlockSchemaV01[]
   @Input() jsonUrl?: string
+  /**
+   * @deprecated Schema version is now auto-detected. This input is ignored.
+   */
   @Input() schemaVersion: 'v0.1' | 'internal' = 'v0.1'
 
   // Configuration inputs
@@ -173,31 +194,12 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
     return this.graphElement?.nativeElement ?? null
   }
 
-  private isV01Format(data: unknown[]): data is BlockSchemaV01[] {
-    if (data.length === 0) return false
-    const firstBlock = data[0]
-    if (typeof firstBlock !== 'object' || firstBlock === null) return false
-    if (!('title' in firstBlock)) return false
-    const title = firstBlock.title
-    return (
-      typeof title === 'object' &&
-      title !== null &&
-      'he_text' in title &&
-      'en_text' in title
-    )
-  }
-
   private loadBlocks(
     element: BlocksGraph,
     blocks: Block[] | BlockSchemaV01[]
   ): void {
-    const isV01 = this.schemaVersion === 'v0.1' && this.isV01Format(blocks)
-
-    if (isV01) {
-      element.loadFromJson(JSON.stringify(blocks), 'v0.1')
-    } else {
-      element.setBlocks(blocks)
-    }
+    // Auto-detection handled by BlocksGraph.setBlocks()
+    element.setBlocks(blocks)
   }
 
   private setupEventListeners(): void {

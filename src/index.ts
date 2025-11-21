@@ -9,6 +9,7 @@ export { BlocksGraph } from './components/blocks-graph.js'
 
 // Export types
 export type { Block } from './types/block.js'
+export { isBlock } from './types/is-block.js'
 export type { BlockGraph } from './types/block-graph.js'
 export type { BlockPosition } from './types/block-position.js'
 export type { GraphEdge } from './types/graph-edge.js'

@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/luminastudy/blocks-graph/blob/main/src/types/block.schema.json",
+  "title": "Block (Internal)",
+  "description": "Schema for internal Block format used in blocks-graph library",
+  "version": "internal",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the block"
+    },
+    "title": {
+      "type": "object",
+      "properties": {
+        "he": {
+          "type": "string",
+          "description": "Hebrew text for the title"
+        },
+        "en": {
+          "type": "string",
+          "description": "English text for the title"
+        }
+      },
+      "required": ["he", "en"],
+      "additionalProperties": false
+    },
+    "prerequisites": {
+      "type": "array",
+      "description": "Array of prerequisite block IDs",
+      "items": {
+        "type": "string"
+      }
+    },
+    "parents": {
+      "type": "array",
+      "description": "Array of parent block IDs",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": ["id", "title", "prerequisites", "parents"],
+  "additionalProperties": true
+}
