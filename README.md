@@ -259,7 +259,6 @@ import type {
       language="en"
       orientation="ttb"
       [showPrerequisites]="true"
-      [showParents]="true"
       (blockSelected)="handleBlockSelected($event)"
       style="width: 100%; height: 600px"
     ></blocks-graph-angular>

@@ -28,7 +28,6 @@ export class AppComponent implements OnInit {
   language: 'en' | 'he'
   orientation: 'ttb' | 'ltr' | 'rtl' | 'btt'
   showPrerequisites: boolean
-  showParents: boolean
   status: string
   selectedBlock: string | null
 
@@ -37,7 +36,6 @@ export class AppComponent implements OnInit {
     this.language = 'en'
     this.orientation = 'ttb'
     this.showPrerequisites = true
-    this.showParents = true
     this.status = 'Loading data...'
     this.selectedBlock = null
   }

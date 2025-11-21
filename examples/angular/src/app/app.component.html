@@ -41,13 +41,6 @@
           Show Prerequisites
         </label>
       </div>
-
-      <div class="control-group checkbox">
-        <label>
-          <input type="checkbox" [(ngModel)]="showParents" />
-          Show Parents
-        </label>
-      </div>
     </div>
 
     <!-- Angular Wrapper Component - Clean @Input/@Output API! -->
@@ -57,7 +50,6 @@
         [language]="language"
         [orientation]="orientation"
         [showPrerequisites]="showPrerequisites"
-        [showParents]="showParents"
         [nodeWidth]="200"
         [nodeHeight]="80"
         (blocksRendered)="handleBlocksRendered($event)"

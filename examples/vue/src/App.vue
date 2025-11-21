@@ -42,13 +42,6 @@
             Show Prerequisites
           </label>
         </div>
-
-        <div class="control-group checkbox">
-          <label>
-            <input type="checkbox" v-model="showParents" />
-            Show Parents
-          </label>
-        </div>
       </div>
 
       <!-- Vue Wrapper Component - Clean Props API! -->
@@ -58,7 +51,6 @@
           :language="language"
           :orientation="orientation"
           :show-prerequisites="showPrerequisites"
-          :show-parents="showParents"
           :node-width="200"
           :node-height="80"
           @blocks-rendered="handleBlocksRendered"
@@ -108,7 +100,6 @@ const blocks = ref<BlockSchemaV01[] | null>(null)
 const language = ref<'en' | 'he'>('en')
 const orientation = ref<'ttb' | 'ltr' | 'rtl' | 'btt'>('ttb')
 const showPrerequisites = ref(true)
-const showParents = ref(true)
 const status = ref('Loading data...')
 const selectedBlock = ref<string | null>(null)
 

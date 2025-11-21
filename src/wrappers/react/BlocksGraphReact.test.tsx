@@ -98,17 +98,12 @@ describe('BlocksGraphReact - Configuration Props', () => {
 
   it('applies show props', () => {
     const { container } = render(
-      <BlocksGraphReact
-        blocks={mockBlocks}
-        showPrerequisites={false}
-        showParents={false}
-      />
+      <BlocksGraphReact blocks={mockBlocks} showPrerequisites={false} />
     )
     const element = getBlocksGraphElement(container)
 
     waitFor(() => {
       expect(element && element.showPrerequisites).toBe(false)
-      expect(element && element.showParents).toBe(false)
     })
   })
 

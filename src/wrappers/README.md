@@ -33,7 +33,6 @@ function App() {
       language="en"
       orientation="ttb"
       showPrerequisites={true}
-      showParents={true}
       onBlockSelected={(e) => console.log('Selected:', e.detail)}
       style={{ width: '100%', height: '600px' }}
     />
