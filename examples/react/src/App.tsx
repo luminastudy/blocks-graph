@@ -115,7 +115,7 @@ function App() {
     const handleBlocksRendered = (event: Event) => {
       const customEvent = event as CustomEvent
       console.log('Blocks rendered:', customEvent.detail)
-      if (customEvent.detail?.blockCount !== undefined) {
+      if (customEvent.detail && customEvent.detail.blockCount !== undefined) {
         setStatus(`Rendered ${customEvent.detail.blockCount} blocks`)
       }
     }
@@ -124,7 +124,7 @@ function App() {
     const handleBlockSelected = (event: Event) => {
       const customEvent = event as CustomEvent
       console.log('Block selected:', customEvent.detail)
-      if (customEvent.detail?.blockId) {
+      if (customEvent.detail && customEvent.detail.blockId) {
         setSelectedBlock(customEvent.detail.blockId)
         const levelText =
           customEvent.detail.selectionLevel === 0
