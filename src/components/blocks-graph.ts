@@ -144,29 +144,28 @@ export class BlocksGraph extends HTMLElement {
   /**
    * Load blocks from JSON string
    */
-  loadFromJson(json: string, schemaVersion: 'v0.1' = 'v0.1'): void {
-    if (schemaVersion === 'v0.1') {
+  loadFromJson(json: string, schemaVersion?: 'v0.1'): void {
+    const version = schemaVersion !== undefined ? schemaVersion : 'v0.1'
+    if (version === 'v0.1') {
       this.blocks = schemaV01Adaptor.adaptFromJson(json)
       this.render()
     } else {
-      throw new UnsupportedSchemaVersionError(schemaVersion)
+      throw new UnsupportedSchemaVersionError(version)
     }
   }
 
   /**
    * Load blocks from a URL
    */
-  async loadFromUrl(
-    url: string,
-    schemaVersion: 'v0.1' = 'v0.1'
-  ): Promise<void> {
+  async loadFromUrl(url: string, schemaVersion?: 'v0.1'): Promise<void> {
+    const version = schemaVersion !== undefined ? schemaVersion : 'v0.1'
     try {
       const response = await fetch(url)
       if (!response.ok) {
         throw new BlocksFetchError(url, response.statusText)
       }
       const json = await response.text()
-      this.loadFromJson(json, schemaVersion)
+      this.loadFromJson(json, version)
     } catch (error) {
       console.error('Error loading blocks from URL:', error)
       this.shadowRoot!.innerHTML = ''
