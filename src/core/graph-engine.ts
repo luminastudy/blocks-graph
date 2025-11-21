@@ -51,7 +51,8 @@ export class GraphEngine {
     const calculateLevel = (blockId: string, level = 0): void => {
       if (visited.has(blockId)) return
       visited.add(blockId)
-      const currentLevel = levels.get(blockId) ?? 0
+      const currentLevelValue = levels.get(blockId)
+      const currentLevel = currentLevelValue !== undefined ? currentLevelValue : 0
       levels.set(blockId, Math.max(currentLevel, level))
 
       const children = graph.edges
@@ -80,12 +81,14 @@ export class GraphEngine {
     const blocksByLevel = new Map<number, string[]>()
 
     for (const [blockId, level] of levels.entries()) {
-      const blocksAtLevel = blocksByLevel.get(level) ?? []
+      const blocksAtLevelValue = blocksByLevel.get(level)
+      const blocksAtLevel = blocksAtLevelValue !== undefined ? blocksAtLevelValue : []
       blocksAtLevel.push(blockId)
       blocksByLevel.set(level, blocksAtLevel)
     }
 
-    const orientation = this.config.orientation ?? 'ttb'
+    const orientationValue = this.config.orientation
+    const orientation = orientationValue !== undefined ? orientationValue : 'ttb'
 
     // Determine axis and direction
     const isVertical = orientation === 'ttb' || orientation === 'btt'
@@ -170,8 +173,9 @@ export class GraphEngine {
    */
   getDirectPostRequisites(blockId: string, graph: BlockGraph): Block[] {
     // Use pre-computed relationships if available (O(1)), otherwise build on-demand
-    const relationships =
-      graph.horizontalRelationships ?? HorizontalRelationships.fromGraph(graph)
+    const relationships = graph.horizontalRelationships !== undefined
+      ? graph.horizontalRelationships
+      : HorizontalRelationships.fromGraph(graph)
     const postreqIds = relationships.getPostrequisites(blockId)
     const dependents: Block[] = []
 

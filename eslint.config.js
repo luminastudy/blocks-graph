@@ -29,16 +29,7 @@ export default [
       'max-lines': ['error', { max: 350 }],
       'max-lines-per-function': ['error', { max: 200 }],
       'default/no-default-params': 'off',
-      'no-restricted-syntax': [
-        'error',
-        {
-          selector: 'TSEnumDeclaration',
-          message: 'Enums are not allowed. Use const objects instead.',
-        },
-      ],
       'default/no-hardcoded-urls': 'off', // SVG namespace URLs are fine
-      'error/no-generic-error': 'warn',
-      'error/require-custom-error': 'warn',
       'custom/jsx-classname-required': 'off', // Not needed for examples
     },
   },

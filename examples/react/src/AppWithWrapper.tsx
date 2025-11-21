@@ -20,7 +20,6 @@ function AppWithWrapper() {
     'ttb'
   )
   const [showPrerequisites, setShowPrerequisites] = useState(true)
-  const [showParents, setShowParents] = useState(true)
   const [status, setStatus] = useState('Loading data...')
   const [selectedBlock, setSelectedBlock] = useState<string | null>(null)
 
@@ -119,17 +118,6 @@ function AppWithWrapper() {
             Show Prerequisites
           </label>
         </div>
-
-        <div className="control-group checkbox">
-          <label>
-            <input
-              type="checkbox"
-              checked={showParents}
-              onChange={e => setShowParents(e.target.checked)}
-            />
-            Show Parents
-          </label>
-        </div>
       </div>
 
       {/* React Wrapper Component - Clean Props API! */}
@@ -139,7 +127,6 @@ function AppWithWrapper() {
           language={language}
           orientation={orientation}
           showPrerequisites={showPrerequisites}
-          showParents={showParents}
           nodeWidth={200}
           nodeHeight={80}
           onBlocksRendered={e => {

@@ -115,7 +115,8 @@ function detectCyclesInGraph(
 
           while (current && current !== postreqId) {
             cycle.unshift(current)
-            current = parent.get(current) ?? null
+            const parentValue = parent.get(current)
+            current = parentValue !== undefined ? parentValue : null
           }
 
           cycle.unshift(postreqId) // Complete the cycle

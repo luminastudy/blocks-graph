@@ -49,7 +49,7 @@ export class SchemaV01Adaptor {
       const errors = getValidationErrors()
       throw new InvalidBlockSchemaError(
         'Invalid block schema v0.1 format',
-        errors ?? undefined
+        errors !== null ? errors : undefined
       )
     }
 

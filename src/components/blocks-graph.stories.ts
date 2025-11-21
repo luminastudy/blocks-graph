@@ -912,3 +912,514 @@ export const PrerequisitesAndParents: Story = {
     language: 'en',
   },
 }
+
+/**
+ * Story demonstrating bilingual support by showing the same graph in Hebrew and English.
+ * The component automatically displays the appropriate language based on the language attribute.
+ */
+export const BilingualComparison: Story = {
+  render: () => {
+    const hebrewId = `bilingual-he-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+    const englishId = `bilingual-en-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+
+    setTimeout(() => {
+      const heGraph = document.getElementById(hebrewId)
+      const enGraph = document.getElementById(englishId)
+
+      if (
+        heGraph &&
+        'loadFromJson' in heGraph &&
+        typeof heGraph.loadFromJson === 'function'
+      ) {
+        heGraph.loadFromJson(JSON.stringify(EXAMPLE_BLOCKS), 'v0.1')
+      }
+
+      if (
+        enGraph &&
+        'loadFromJson' in enGraph &&
+        typeof enGraph.loadFromJson === 'function'
+      ) {
+        enGraph.loadFromJson(JSON.stringify(EXAMPLE_BLOCKS), 'v0.1')
+      }
+    }, 100)
+
+    return html`
+      <div style="padding: 16px;">
+        <h2 style="margin: 0 0 8px 0;">Bilingual Support</h2>
+        <p style="margin: 0 0 24px 0; color: #666;">
+          The same curriculum data displayed in Hebrew (right-to-left) and
+          English (left-to-right).
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div
+            style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;"
+          >
+            <h3 style="margin: 0 0 12px 0; color: #333;">Hebrew (עברית)</h3>
+            <div
+              style="width: 100%; height: 500px; border: 1px solid #e0e0e0; border-radius: 4px;"
+            >
+              <blocks-graph
+                id="${hebrewId}"
+                language="he"
+                show-prerequisites="true"
+                orientation="ttb"
+                node-width="200"
+                node-height="80"
+              ></blocks-graph>
+            </div>
+          </div>
+
+          <div
+            style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;"
+          >
+            <h3 style="margin: 0 0 12px 0; color: #333;">English</h3>
+            <div
+              style="width: 100%; height: 500px; border: 1px solid #e0e0e0; border-radius: 4px;"
+            >
+              <blocks-graph
+                id="${englishId}"
+                language="en"
+                show-prerequisites="true"
+                orientation="ttb"
+                node-width="200"
+                node-height="80"
+              ></blocks-graph>
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="margin-top: 24px; padding: 16px; background: #f5f5f5; border-radius: 4px;"
+        >
+          <h4 style="margin: 0 0 8px 0;">Usage Example</h4>
+          <pre
+            style="margin: 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto; font-size: 13px;"
+          ><code>&lt;blocks-graph language="he"&gt;&lt;/blocks-graph&gt;
+&lt;blocks-graph language="en"&gt;&lt;/blocks-graph&gt;</code></pre>
+        </div>
+      </div>
+    `
+  },
+  parameters: {
+    layout: 'fullscreen',
+  },
+}
+
+/**
+ * Story demonstrating the empty state when no blocks are loaded.
+ * Shows the default message displayed to users before data is loaded.
+ */
+export const EmptyState: Story = {
+  render: () => {
+    const storyId = `empty-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+
+    return html`
+      <div style="padding: 16px;">
+        <div
+          style="padding: 16px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; margin-bottom: 16px;"
+        >
+          <h3 style="margin: 0 0 8px 0; color: #f57c00;">Empty State</h3>
+          <p style="margin: 0; font-size: 14px; color: #333;">
+            This is what users see when no blocks have been loaded yet. The
+            component displays a helpful message prompting them to load data.
+          </p>
+        </div>
+        <div
+          style="width: 100%; height: 400px; border: 1px solid #ddd; border-radius: 4px;"
+        >
+          <blocks-graph
+            id="${storyId}"
+            language="en"
+            show-prerequisites="true"
+          ></blocks-graph>
+        </div>
+      </div>
+    `
+  },
+}
+
+/**
+ * Story demonstrating custom node sizing and spacing configurations.
+ * Shows how developers can adjust the layout to fit different use cases.
+ */
+export const CustomSizingAndSpacing: Story = {
+  render: () => {
+    const configs = [
+      {
+        label: 'Compact',
+        nodeWidth: 150,
+        nodeHeight: 50,
+        horizontalSpacing: 40,
+        verticalSpacing: 50,
+      },
+      {
+        label: 'Default',
+        nodeWidth: 200,
+        nodeHeight: 80,
+        horizontalSpacing: 80,
+        verticalSpacing: 100,
+      },
+      {
+        label: 'Spacious',
+        nodeWidth: 250,
+        nodeHeight: 100,
+        horizontalSpacing: 120,
+        verticalSpacing: 140,
+      },
+    ]
+
+    return html`
+      <div style="padding: 16px;">
+        <h2 style="margin: 0 0 8px 0;">Custom Sizing and Spacing</h2>
+        <p style="margin: 0 0 24px 0; color: #666;">
+          Adjust node dimensions and spacing to fit your design requirements.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 32px;">
+          ${configs.map((config, index) => {
+            const storyId = `sizing-${index}-${Date.now()}-${Math.random()
+              .toString(36)
+              .substring(2, 11)}`
+
+            setTimeout(() => {
+              const graph = document.getElementById(storyId)
+              if (
+                graph &&
+                'loadFromJson' in graph &&
+                typeof graph.loadFromJson === 'function'
+              ) {
+                graph.loadFromJson(JSON.stringify(EXAMPLE_BLOCKS), 'v0.1')
+              }
+            }, 100)
+
+            return html`
+              <div
+                style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;"
+              >
+                <div style="margin-bottom: 12px;">
+                  <h3 style="margin: 0 0 4px 0; color: #333;">
+                    ${config.label}
+                  </h3>
+                  <p style="margin: 0; font-size: 13px; color: #666;">
+                    Node: ${config.nodeWidth}×${config.nodeHeight}px, Spacing:
+                    H${config.horizontalSpacing} / V${config.verticalSpacing}
+                  </p>
+                </div>
+                <div
+                  style="width: 100%; height: 400px; border: 1px solid #e0e0e0; border-radius: 4px; overflow: auto;"
+                >
+                  <blocks-graph
+                    id="${storyId}"
+                    language="en"
+                    show-prerequisites="true"
+                    orientation="ttb"
+                    node-width="${config.nodeWidth}"
+                    node-height="${config.nodeHeight}"
+                    horizontal-spacing="${config.horizontalSpacing}"
+                    vertical-spacing="${config.verticalSpacing}"
+                  ></blocks-graph>
+                </div>
+              </div>
+            `
+          })}
+        </div>
+
+        <div
+          style="margin-top: 24px; padding: 16px; background: #f5f5f5; border-radius: 4px;"
+        >
+          <h4 style="margin: 0 0 8px 0;">Usage Example</h4>
+          <pre
+            style="margin: 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto; font-size: 13px;"
+          ><code>&lt;blocks-graph
+  node-width="250"
+  node-height="100"
+  horizontal-spacing="120"
+  vertical-spacing="140"
+&gt;&lt;/blocks-graph&gt;</code></pre>
+        </div>
+      </div>
+    `
+  },
+  parameters: {
+    layout: 'fullscreen',
+  },
+}
+
+/**
+ * Story demonstrating the prerequisites visibility toggle.
+ * Shows how the graph changes when prerequisite edges are hidden.
+ */
+export const PrerequisitesToggle: Story = {
+  render: () => {
+    const withId = `prereqs-with-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+    const withoutId = `prereqs-without-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+
+    setTimeout(() => {
+      const withGraph = document.getElementById(withId)
+      const withoutGraph = document.getElementById(withoutId)
+
+      if (
+        withGraph &&
+        'loadFromJson' in withGraph &&
+        typeof withGraph.loadFromJson === 'function'
+      ) {
+        withGraph.loadFromJson(JSON.stringify(EXAMPLE_BLOCKS), 'v0.1')
+      }
+
+      if (
+        withoutGraph &&
+        'loadFromJson' in withoutGraph &&
+        typeof withoutGraph.loadFromJson === 'function'
+      ) {
+        withoutGraph.loadFromJson(JSON.stringify(EXAMPLE_BLOCKS), 'v0.1')
+      }
+    }, 100)
+
+    return html`
+      <div style="padding: 16px;">
+        <h2 style="margin: 0 0 8px 0;">Prerequisites Visibility Toggle</h2>
+        <p style="margin: 0 0 24px 0; color: #666;">
+          Control whether prerequisite relationships (blue dashed lines) are
+          displayed. Parent hierarchy remains visible regardless.
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div
+            style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;"
+          >
+            <h3 style="margin: 0 0 12px 0; color: #333;">
+              With Prerequisites (Default)
+            </h3>
+            <div
+              style="width: 100%; height: 450px; border: 1px solid #e0e0e0; border-radius: 4px;"
+            >
+              <blocks-graph
+                id="${withId}"
+                language="en"
+                show-prerequisites="true"
+                orientation="ttb"
+              ></blocks-graph>
+            </div>
+          </div>
+
+          <div
+            style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;"
+          >
+            <h3 style="margin: 0 0 12px 0; color: #333;">
+              Without Prerequisites
+            </h3>
+            <div
+              style="width: 100%; height: 450px; border: 1px solid #e0e0e0; border-radius: 4px;"
+            >
+              <blocks-graph
+                id="${withoutId}"
+                language="en"
+                show-prerequisites="false"
+                orientation="ttb"
+              ></blocks-graph>
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="margin-top: 24px; padding: 16px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;"
+        >
+          <h4 style="margin: 0 0 8px 0; color: #1565c0;">Note</h4>
+          <p style="margin: 0; font-size: 14px; color: #333;">
+            Hiding prerequisites only removes the visual edges (blue dashed
+            lines). The parent-child hierarchy and navigation behavior remain
+            unchanged.
+          </p>
+        </div>
+      </div>
+    `
+  },
+  parameters: {
+    layout: 'fullscreen',
+  },
+}
+
+/**
+ * Story demonstrating a block with multiple prerequisites from different branches.
+ * Shows how the graph handles complex prerequisite webs.
+ */
+export const ComplexPrerequisiteWeb: Story = {
+  render: args => {
+    const storyId = `complex-web-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+
+    const complexWebBlocks = [
+      {
+        id: '550e8400-e29b-41d4-a716-446655440040',
+        title: {
+          he_text: 'אלגברה בסיסית',
+          en_text: 'Basic Algebra',
+        },
+        prerequisites: [],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440041',
+        title: {
+          he_text: 'גאומטריה בסיסית',
+          en_text: 'Basic Geometry',
+        },
+        prerequisites: [],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440042',
+        title: {
+          he_text: 'טריגונומטריה',
+          en_text: 'Trigonometry',
+        },
+        prerequisites: [],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440043',
+        title: {
+          he_text: 'חדו״א מתקדם',
+          en_text: 'Advanced Calculus',
+        },
+        prerequisites: [
+          '550e8400-e29b-41d4-a716-446655440040',
+          '550e8400-e29b-41d4-a716-446655440041',
+          '550e8400-e29b-41d4-a716-446655440042',
+        ],
+        parents: [],
+      },
+    ]
+
+    return html`
+      <div style="padding: 16px;">
+        <div
+          style="padding: 16px; background: #fff3e0; border-left: 4px solid #ff9800; border-radius: 4px; margin-bottom: 16px;"
+        >
+          <h3 style="margin: 0 0 8px 0; color: #e65100;">
+            Complex Prerequisite Web
+          </h3>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
+            <strong>Scenario:</strong> Advanced Calculus requires three
+            different prerequisites from separate branches
+          </p>
+          <ul
+            style="margin: 0; padding-left: 20px; font-size: 14px; color: #333;"
+          >
+            <li>Basic Algebra → Advanced Calculus</li>
+            <li>Basic Geometry → Advanced Calculus</li>
+            <li>Trigonometry → Advanced Calculus</li>
+          </ul>
+          <p
+            style="margin: 8px 0 0 0; padding: 8px; background: white; border-radius: 4px; font-size: 13px;"
+          >
+            💡 All four blocks show together (all are roots with no parents).
+            Three prerequisite edges converge on the Advanced Calculus block.
+          </p>
+        </div>
+        <div
+          style="width: 100%; height: 450px; border: 1px solid #ddd; border-radius: 4px;"
+        >
+          <blocks-graph
+            id="${storyId}"
+            language="${args.language}"
+            show-prerequisites="true"
+            orientation="ttb"
+            node-width="180"
+            node-height="70"
+            horizontal-spacing="100"
+            vertical-spacing="120"
+          ></blocks-graph>
+        </div>
+      </div>
+      <script>
+        setTimeout(() => {
+          const graph = document.getElementById('${storyId}')
+          if (graph && typeof graph.loadFromJson === 'function') {
+            graph.loadFromJson(
+              ${JSON.stringify(JSON.stringify(complexWebBlocks))},
+              'v0.1'
+            )
+          }
+        }, 100)
+      </script>
+    `
+  },
+  args: {
+    language: 'en',
+  },
+}
+
+/**
+ * Story demonstrating a single isolated block.
+ * Shows the edge case where only one block exists in the graph.
+ */
+export const SingleBlock: Story = {
+  render: args => {
+    const storyId = `single-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+
+    const singleBlockData = [
+      {
+        id: '550e8400-e29b-41d4-a716-446655440050',
+        title: {
+          he_text: 'מבוא למדעי המחשב',
+          en_text: 'Introduction to Computer Science',
+        },
+        prerequisites: [],
+        parents: [],
+      },
+    ]
+
+    return html`
+      <div style="padding: 16px;">
+        <div
+          style="padding: 16px; background: #e8eaf6; border-left: 4px solid #3f51b5; border-radius: 4px; margin-bottom: 16px;"
+        >
+          <h3 style="margin: 0 0 8px 0; color: #283593;">Single Block</h3>
+          <p style="margin: 0; font-size: 14px; color: #333;">
+            Edge case: Only one block exists with no relationships. The graph
+            displays a single centered node.
+          </p>
+        </div>
+        <div
+          style="width: 100%; height: 300px; border: 1px solid #ddd; border-radius: 4px;"
+        >
+          <blocks-graph
+            id="${storyId}"
+            language="${args.language}"
+            show-prerequisites="true"
+            orientation="ttb"
+          ></blocks-graph>
+        </div>
+      </div>
+      <script>
+        setTimeout(() => {
+          const graph = document.getElementById('${storyId}')
+          if (graph && typeof graph.loadFromJson === 'function') {
+            graph.loadFromJson(
+              ${JSON.stringify(JSON.stringify(singleBlockData))},
+              'v0.1'
+            )
+          }
+        }, 100)
+      </script>
+    `
+  },
+  args: {
+    language: 'en',
+  },
+}

@@ -235,13 +235,14 @@ export class BlocksGraph extends HTMLElement {
     }
 
     try {
+      const orientationAttr = this.getAttribute('orientation')
       const { svg, blockCount } = renderGraph(
         this.blocks,
         this.engine,
         this.renderer,
         this.selectedBlockId,
         this.selectionLevel,
-        this.getAttribute('orientation') ?? undefined
+        orientationAttr !== null ? orientationAttr : undefined
       )
       this.shadowRoot!.appendChild(svg)
       attachBlockClickListeners(
@@ -264,7 +265,8 @@ export class BlocksGraph extends HTMLElement {
    * Get current language
    */
   get language(): string {
-    return this.getAttribute('language') ?? 'en'
+    const langAttr = this.getAttribute('language')
+    return langAttr !== null ? langAttr : 'en'
   }
 
   /**
@@ -292,7 +294,8 @@ export class BlocksGraph extends HTMLElement {
    * Get current orientation
    */
   get orientation(): string {
-    return this.getAttribute('orientation') ?? 'ttb'
+    const orientAttr = this.getAttribute('orientation')
+    return orientAttr !== null ? orientAttr : 'ttb'
   }
 
   /**
