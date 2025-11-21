@@ -184,8 +184,16 @@ jobs:
           npx http-server storybook-static --port 6006 &
           STORYBOOK_PID=$!
           echo "STORYBOOK_PID=$STORYBOOK_PID" >> $GITHUB_ENV
-          sleep 5
-          curl -s http://localhost:6006 > /dev/null || (echo "Storybook not ready" && exit 1)
+          echo "Waiting for Storybook server to start..."
+          for i in {1..30}; do
+            if curl -s http://localhost:6006 > /dev/null; then
+              echo "Storybook server is ready!"
+              break
+            fi
+            echo "Attempt $i: Server not ready yet, waiting..."
+            sleep 2
+          done
+          curl -s http://localhost:6006 > /dev/null || (echo "Storybook failed to start" && exit 1)
 
       - name: Run Loki visual tests
         run: pnpm loki test
