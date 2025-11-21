@@ -12,7 +12,7 @@ export function renderGraph(
   renderer: GraphRenderer,
   selectedBlockId: string | null,
   selectionLevel: number,
-  orientation?: string
+  orientation?: 'ttb' | 'ltr' | 'rtl' | 'btt'
 ): { svg: SVGElement; blockCount: number } {
   // Build the full graph first
   const fullGraph = engine.buildGraph(blocks)
@@ -38,7 +38,7 @@ export function renderGraph(
     selectedBlockId,
     visibleBlocks: visible,
     dimmedBlocks: dimmed,
-    orientation: orientation as 'ttb' | 'ltr' | 'rtl' | 'btt' | undefined,
+    orientation,
   })
 
   // Render the graph

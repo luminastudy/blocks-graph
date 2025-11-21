@@ -1,73 +1,30 @@
 
-/Users/ofek/dev/git/github/luminastudy/blocks-graph/examples/angular/src/app/app.component.ts
-  27:3  error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-  28:3  error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-  29:3  error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-  30:3  error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-  31:3  error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-  32:3  error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-  33:3  error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-
 /Users/ofek/dev/git/github/luminastudy/blocks-graph/examples/react/src/App.tsx
   116:27  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
   125:27  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
   167:40  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
 
 /Users/ofek/dev/git/github/luminastudy/blocks-graph/examples/react/src/AppWithWrapper.tsx
-   88:40  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-  101:30  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-
-/Users/ofek/dev/git/github/luminastudy/blocks-graph/src/adaptors/v0.1/adaptor.ts
-  52:9  error  Nullish coalescing operator (??) is not allowed. Use explicit null/undefined checks instead  no-restricted-syntax
-
-/Users/ofek/dev/git/github/luminastudy/blocks-graph/src/adaptors/v0.1/get-validation-errors.ts
-  11:14  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-
-/Users/ofek/dev/git/github/luminastudy/blocks-graph/src/adaptors/v0.1/validator-setup.ts
-  15:14  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-  17:4   error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-
-/Users/ofek/dev/git/github/luminastudy/blocks-graph/src/components/blocks-graph.ts
-   30:3   error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-   31:3   error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-   32:3   error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-   93:28  error  Type assertions with "as" are not allowed except for "as const"                                                   no-restricted-syntax
-  106:28  error  Type assertions with "as" are not allowed except for "as const"                                                   no-restricted-syntax
-  244:9   error  Nullish coalescing operator (??) is not allowed. Use explicit null/undefined checks instead                       no-restricted-syntax
-  267:12  error  Nullish coalescing operator (??) is not allowed. Use explicit null/undefined checks instead                       no-restricted-syntax
-  295:12  error  Nullish coalescing operator (??) is not allowed. Use explicit null/undefined checks instead                       no-restricted-syntax
-  311:10  error  Type assertions with "as" are not allowed except for "as const"                                                   no-restricted-syntax
-  327:10  error  Type assertions with "as" are not allowed except for "as const"                                                   no-restricted-syntax
-
-/Users/ofek/dev/git/github/luminastudy/blocks-graph/src/components/render-graph.ts
-  41:18  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-
-/Users/ofek/dev/git/github/luminastudy/blocks-graph/src/core/graph-engine.ts
-   54:28  error  Nullish coalescing operator (??) is not allowed. Use explicit null/undefined checks instead  no-restricted-syntax
-   83:29  error  Nullish coalescing operator (??) is not allowed. Use explicit null/undefined checks instead  no-restricted-syntax
-   88:25  error  Nullish coalescing operator (??) is not allowed. Use explicit null/undefined checks instead  no-restricted-syntax
-  174:7   error  Nullish coalescing operator (??) is not allowed. Use explicit null/undefined checks instead  no-restricted-syntax
-
-/Users/ofek/dev/git/github/luminastudy/blocks-graph/src/core/horizontal-relationships-algorithms.ts
-  118:23  error  Nullish coalescing operator (??) is not allowed. Use explicit null/undefined checks instead  no-restricted-syntax
-
-/Users/ofek/dev/git/github/luminastudy/blocks-graph/src/viewport/interaction-gesture-handler.ts
-  24:3  error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
-  25:3  error  Class properties cannot have default values. Initialize properties in the constructor or through methods instead  no-restricted-syntax
+   87:40  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+  100:30  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
 
 /Users/ofek/dev/git/github/luminastudy/blocks-graph/src/wrappers/react/BlocksGraphReact.test.tsx
-   31:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-   55:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-   67:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-   79:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-   95:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-  205:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-  229:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-  243:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+   15:10  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+   15:10  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+   42:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+   66:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+   78:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+   90:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+  106:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+  216:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+  240:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+  254:21  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
 
 /Users/ofek/dev/git/github/luminastudy/blocks-graph/src/wrappers/react/BlocksGraphReact.tsx
-  160:24  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
-  172:23  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+   87:24  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+  104:31  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+  177:24  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
+  189:23  error  Type assertions with "as" are not allowed except for "as const"  no-restricted-syntax
 
-✖ 44 problems (44 errors, 0 warnings)
+✖ 19 problems (19 errors, 0 warnings)
 

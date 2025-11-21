@@ -4,6 +4,21 @@ import { BlocksGraphReact } from './BlocksGraphReact.js'
 import type { Block } from '../../types/block.js'
 import type { BlocksGraph } from '../../components/blocks-graph.js'
 
+/**
+ * Helper to get blocks-graph element from container with proper typing
+ */
+function getBlocksGraphElement(
+  container: HTMLElement
+): (HTMLElement & BlocksGraph) | null {
+  const element = container.querySelector('blocks-graph')
+  if (!element) return null
+  // Type guard: verify it has BlocksGraph methods before returning
+  if ('setBlocks' in element) {
+    return element
+  }
+  return null
+}
+
 const mockBlocks: Block[] = [
   {
     id: 'block-1',
@@ -28,11 +43,10 @@ describe('BlocksGraphReact - Rendering', () => {
 
   it('passes blocks to web component', async () => {
     const { container } = render(<BlocksGraphReact blocks={mockBlocks} />)
-    const element = container.querySelector('blocks-graph') as HTMLElement &
-      BlocksGraph
+    const element = getBlocksGraphElement(container)
 
     await waitFor(() => {
-      expect(element.setBlocks).toBeDefined()
+      expect(element && element.setBlocks).toBeDefined()
     })
   })
 
@@ -52,7 +66,7 @@ describe('BlocksGraphReact - Rendering', () => {
         style={{ width: '100%', height: '600px' }}
       />
     )
-    const element = container.querySelector('blocks-graph') as HTMLElement
+    const element = getBlocksGraphElement(container)
 
     expect(element && element.style.width).toBe('100%')
     expect(element && element.style.height).toBe('600px')
@@ -64,11 +78,10 @@ describe('BlocksGraphReact - Configuration Props', () => {
     const { container } = render(
       <BlocksGraphReact blocks={mockBlocks} language="he" />
     )
-    const element = container.querySelector('blocks-graph') as HTMLElement &
-      BlocksGraph
+    const element = getBlocksGraphElement(container)
 
     waitFor(() => {
-      expect(element.language).toBe('he')
+      expect(element && element.language).toBe('he')
     })
   })
 
@@ -76,11 +89,10 @@ describe('BlocksGraphReact - Configuration Props', () => {
     const { container } = render(
       <BlocksGraphReact blocks={mockBlocks} orientation="ltr" />
     )
-    const element = container.querySelector('blocks-graph') as HTMLElement &
-      BlocksGraph
+    const element = getBlocksGraphElement(container)
 
     waitFor(() => {
-      expect(element.orientation).toBe('ltr')
+      expect(element && element.orientation).toBe('ltr')
     })
   })
 
@@ -92,12 +104,11 @@ describe('BlocksGraphReact - Configuration Props', () => {
         showParents={false}
       />
     )
-    const element = container.querySelector('blocks-graph') as HTMLElement &
-      BlocksGraph
+    const element = getBlocksGraphElement(container)
 
     waitFor(() => {
-      expect(element.showPrerequisites).toBe(false)
-      expect(element.showParents).toBe(false)
+      expect(element && element.showPrerequisites).toBe(false)
+      expect(element && element.showParents).toBe(false)
     })
   })
 
@@ -202,8 +213,7 @@ describe('BlocksGraphReact - Updates', () => {
     const { container, rerender } = render(
       <BlocksGraphReact blocks={mockBlocks} />
     )
-    const element = container.querySelector('blocks-graph') as HTMLElement &
-      BlocksGraph
+    const element = getBlocksGraphElement(container)
 
     const newBlocks: Block[] = [
       {
@@ -226,13 +236,12 @@ describe('BlocksGraphReact - Updates', () => {
     const { container, rerender } = render(
       <BlocksGraphReact blocks={mockBlocks} language="en" />
     )
-    const element = container.querySelector('blocks-graph') as HTMLElement &
-      BlocksGraph
+    const element = getBlocksGraphElement(container)
 
     rerender(<BlocksGraphReact blocks={mockBlocks} language="he" />)
 
     await waitFor(() => {
-      expect(element.language).toBe('he')
+      expect(element && element.language).toBe('he')
     })
   })
 
@@ -240,13 +249,12 @@ describe('BlocksGraphReact - Updates', () => {
     const { container, rerender } = render(
       <BlocksGraphReact blocks={mockBlocks} orientation="ttb" />
     )
-    const element = container.querySelector('blocks-graph') as HTMLElement &
-      BlocksGraph
+    const element = getBlocksGraphElement(container)
 
     rerender(<BlocksGraphReact blocks={mockBlocks} orientation="ltr" />)
 
     await waitFor(() => {
-      expect(element.orientation).toBe('ltr')
+      expect(element && element.orientation).toBe('ltr')
     })
   })
 })

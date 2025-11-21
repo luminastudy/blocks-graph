@@ -12,9 +12,11 @@ type AddFormatsModule = typeof addFormatsImport & {
   default?: typeof addFormatsImport
 }
 
-const Ajv = (AjvImport as AjvModule).default || AjvImport
-const addFormats =
-  (addFormatsImport as AddFormatsModule).default || addFormatsImport
+const AjvModule: AjvModule = AjvImport
+const Ajv = AjvModule.default !== undefined ? AjvModule.default : AjvImport
+
+const AddFormatsModule: AddFormatsModule = addFormatsImport
+const addFormats = AddFormatsModule.default !== undefined ? AddFormatsModule.default : addFormatsImport
 
 // Create AJV validator (draft-07 compatible)
 const ajv = new Ajv({ strict: false })

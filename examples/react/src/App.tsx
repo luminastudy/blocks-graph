@@ -113,23 +113,23 @@ function App() {
 
     // Handle blocks-rendered event
     const handleBlocksRendered = (event: Event) => {
-      const customEvent = event as CustomEvent
-      console.log('Blocks rendered:', customEvent.detail)
-      if (customEvent.detail && customEvent.detail.blockCount !== undefined) {
-        setStatus(`Rendered ${customEvent.detail.blockCount} blocks`)
+      if (!(event instanceof CustomEvent)) return
+      console.log('Blocks rendered:', event.detail)
+      if (event.detail && event.detail.blockCount !== undefined) {
+        setStatus(`Rendered ${event.detail.blockCount} blocks`)
       }
     }
 
     // Handle block-selected event
     const handleBlockSelected = (event: Event) => {
-      const customEvent = event as CustomEvent
-      console.log('Block selected:', customEvent.detail)
-      if (customEvent.detail && customEvent.detail.blockId) {
-        setSelectedBlock(customEvent.detail.blockId)
+      if (!(event instanceof CustomEvent)) return
+      console.log('Block selected:', event.detail)
+      if (event.detail && event.detail.blockId) {
+        setSelectedBlock(event.detail.blockId)
         const levelText =
-          customEvent.detail.selectionLevel === 0
+          event.detail.selectionLevel === 0
             ? 'default view'
-            : customEvent.detail.selectionLevel === 1
+            : event.detail.selectionLevel === 1
               ? 'showing graph'
               : 'showing graph + sub-blocks'
         setStatus(`Selected block - ${levelText}`)
@@ -164,7 +164,12 @@ function App() {
           <select
             id="language-select"
             value={language}
-            onChange={e => setLanguage(e.target.value as 'en' | 'he')}
+            onChange={e => {
+              const value = e.target.value
+              if (value === 'en' || value === 'he') {
+                setLanguage(value)
+              }
+            }}
           >
             <option value="en">English</option>
             <option value="he">Hebrew (עברית)</option>

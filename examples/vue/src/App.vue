@@ -54,7 +54,7 @@
       <!-- Vue Wrapper Component - Clean Props API! -->
       <div class="graph-container">
         <BlocksGraphVue
-          :blocksV01="blocks"
+          :blocks="blocks"
           :language="language"
           :orientation="orientation"
           :show-prerequisites="showPrerequisites"
@@ -129,7 +129,7 @@ onMounted(async () => {
     const data = await response.json()
 
     // Data from API is in v0.1 schema format (he_text/en_text)
-    // We'll pass it to blocksV01 prop which handles conversion automatically
+    // We'll pass it to blocks prop which auto-detects and converts automatically
     blocks.value = data
     status.value = `Loaded ${data.length} blocks successfully`
   } catch (error) {

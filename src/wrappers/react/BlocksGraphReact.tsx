@@ -9,9 +9,9 @@ import '../../index.js'
 
 export interface BlocksGraphProps {
   // Data props
-  blocks?: Block[]
-  blocksV01?: BlockSchemaV01[]
+  blocks?: Block[] | BlockSchemaV01[]
   jsonUrl?: string
+  schemaVersion?: 'v0.1' | 'internal'
 
   // Configuration props
   language?: 'en' | 'he'
@@ -46,6 +46,8 @@ export interface BlocksGraphProps {
  * import { BlocksGraphReact } from '@lumina-study/blocks-graph/react';
  *
  * function App() {
+ *   // Blocks can be in internal format or v0.1 schema format
+ *   // The component auto-detects the format
  *   const blocks = [...];
  *
  *   return (
@@ -61,8 +63,8 @@ export interface BlocksGraphProps {
  */
 export function BlocksGraphReact({
   blocks,
-  blocksV01,
   jsonUrl,
+  schemaVersion = 'v0.1',
   language = 'en',
   orientation = 'ttb',
   showPrerequisites = true,
@@ -79,21 +81,44 @@ export function BlocksGraphReact({
 }: BlocksGraphProps) {
   const ref = useRef<BlocksGraph>(null)
 
+  // Helper to detect if blocks are in v0.1 schema format
+  const isV01Format = (data: unknown[]): data is BlockSchemaV01[] => {
+    if (data.length === 0) return false
+    const firstBlock = data[0]
+    if (typeof firstBlock !== 'object' || firstBlock === null) return false
+    if (!('title' in firstBlock)) return false
+    const title = firstBlock.title
+    return (
+      typeof title === 'object' &&
+      title !== null &&
+      'he_text' in title &&
+      'en_text' in title
+    )
+  }
+
   // Load data when blocks change
   useEffect(() => {
     if (!ref.current) return
 
     if (blocks) {
-      // Set internal format directly
-      ref.current.setBlocks(blocks)
-    } else if (blocksV01) {
-      // Convert from v0.1 schema
-      ref.current.loadFromJson(JSON.stringify(blocksV01), 'v0.1')
+      // Auto-detect schema version if not explicitly internal format
+      const isV01 = schemaVersion === 'v0.1' && isV01Format(blocks)
+
+      if (isV01) {
+        // Convert from v0.1 schema - blocks is BlockSchemaV01[] here
+        ref.current.loadFromJson(JSON.stringify(blocks), 'v0.1')
+      } else {
+        // Set internal format directly
+        // TypeScript can't narrow union types across control flow branches
+        // We've verified it's not v0.1 format, so it must be Block[]
+        // @ts-expect-error - Type guard doesn't narrow union for TypeScript
+        ref.current.setBlocks(blocks)
+      }
     } else if (jsonUrl) {
-      // Load from URL
+      // Load from URL (defaults to v0.1)
       ref.current.loadFromUrl(jsonUrl, 'v0.1').catch(console.error)
     }
-  }, [blocks, blocksV01, jsonUrl])
+  }, [blocks, jsonUrl, schemaVersion])
 
   // Sync configuration props
   useEffect(() => {
@@ -157,7 +182,9 @@ export function BlocksGraphReact({
     if (!element || !onBlocksRendered) return
 
     const handler = (event: Event) => {
-      onBlocksRendered(event as CustomEvent)
+      if (event instanceof CustomEvent) {
+        onBlocksRendered(event)
+      }
     }
 
     element.addEventListener('blocks-rendered', handler)
@@ -169,7 +196,9 @@ export function BlocksGraphReact({
     if (!element || !onBlockSelected) return
 
     const handler = (event: Event) => {
-      onBlockSelected(event as CustomEvent)
+      if (event instanceof CustomEvent) {
+        onBlockSelected(event)
+      }
     }
 
     element.addEventListener('block-selected', handler)

@@ -49,16 +49,16 @@ export const BlocksGraphVue = defineComponent({
   props: {
     // Data props
     blocks: {
-      type: Array as PropType<Block[]>,
-      default: undefined,
-    },
-    blocksV01: {
-      type: Array as PropType<BlockSchemaV01[]>,
+      type: Array as PropType<Block[] | BlockSchemaV01[]>,
       default: undefined,
     },
     jsonUrl: {
       type: String,
       default: undefined,
+    },
+    schemaVersion: {
+      type: String as PropType<'v0.1' | 'internal'>,
+      default: 'v0.1',
     },
 
     // Configuration props
@@ -148,17 +148,39 @@ export const BlocksGraphVue = defineComponent({
       }
     })
 
+    // Helper to detect if blocks are in v0.1 schema format
+    const isV01Format = (data: unknown[]): data is BlockSchemaV01[] => {
+      if (data.length === 0) return false
+      const firstBlock = data[0]
+      if (typeof firstBlock !== 'object' || firstBlock === null) return false
+      if (!('title' in firstBlock)) return false
+      const title = firstBlock.title
+      return (
+        typeof title === 'object' &&
+        title !== null &&
+        'he_text' in title &&
+        'en_text' in title
+      )
+    }
+
     // Watch data props
     watch(
-      () => [props.blocks, props.blocksV01, props.jsonUrl] as const,
-      ([blocks, blocksV01, jsonUrl]) => {
+      () => [props.blocks, props.jsonUrl, props.schemaVersion] as const,
+      ([blocks, jsonUrl, schemaVersion]) => {
         const element = elementRef.value
         if (!element) return
 
         if (blocks) {
-          element.setBlocks(blocks)
-        } else if (blocksV01) {
-          element.loadFromJson(JSON.stringify(blocksV01), 'v0.1')
+          // Auto-detect schema version if not explicitly internal format
+          const isV01 = schemaVersion === 'v0.1' && isV01Format(blocks)
+
+          if (isV01) {
+            // Convert from v0.1 schema
+            element.loadFromJson(JSON.stringify(blocks), 'v0.1')
+          } else {
+            // Set internal format directly
+            element.setBlocks(blocks)
+          }
         } else if (jsonUrl) {
           element.loadFromUrl(jsonUrl, 'v0.1').catch(console.error)
         }

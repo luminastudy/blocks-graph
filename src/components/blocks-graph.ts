@@ -11,6 +11,7 @@ import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-vers
 import { BlocksFetchError } from '../errors/blocks-fetch-error.js'
 import { parseLayoutConfigFromAttributes } from './parse-layout-config-from-attributes.js'
 import { isValidEdgeLineStyle } from '../types/is-valid-edge-line-style.js'
+import { isValidOrientation } from './is-valid-orientation.js'
 import type { EdgeLineStyle } from '../types/edge-style.js'
 
 /**
@@ -93,7 +94,7 @@ export class BlocksGraph extends HTMLElement {
               ...this.renderer['config'].edgeStyle,
               prerequisite: {
                 ...this.renderer['config'].edgeStyle.prerequisite,
-                lineStyle: newValue as EdgeLineStyle,
+                lineStyle: newValue,
               },
             },
           })
@@ -106,7 +107,7 @@ export class BlocksGraph extends HTMLElement {
               ...this.renderer['config'].edgeStyle,
               parent: {
                 ...this.renderer['config'].edgeStyle.parent,
-                lineStyle: newValue as EdgeLineStyle,
+                lineStyle: newValue,
               },
             },
           })
@@ -239,13 +240,14 @@ export class BlocksGraph extends HTMLElement {
 
     try {
       const orientationAttr = this.getAttribute('orientation')
+      const orientation = isValidOrientation(orientationAttr) ? orientationAttr : undefined
       const { svg, blockCount } = renderGraph(
         this.blocks,
         this.engine,
         this.renderer,
         this.selectedBlockId,
         this.selectionLevel,
-        orientationAttr !== null ? orientationAttr : undefined
+        orientation
       )
       this.shadowRoot!.appendChild(svg)
       attachBlockClickListeners(
@@ -293,50 +295,29 @@ export class BlocksGraph extends HTMLElement {
     this.setAttribute('show-prerequisites', String(value))
   }
 
-  /**
-   * Get current orientation
-   */
+  /** Get/set graph orientation (ttb, ltr, rtl, btt) */
   get orientation(): string {
     const orientAttr = this.getAttribute('orientation')
     return orientAttr !== null ? orientAttr : 'ttb'
   }
-
-  /**
-   * Set orientation programmatically
-   */
   set orientation(value: string) {
     this.setAttribute('orientation', value)
   }
 
-  /**
-   * Get prerequisite line style
-   */
+  /** Get/set prerequisite edge line style */
   get prerequisiteLineStyle(): EdgeLineStyle {
     const value = this.getAttribute('prerequisite-line-style')
-    return value && isValidEdgeLineStyle(value)
-      ? (value as EdgeLineStyle)
-      : 'dashed'
+    return value && isValidEdgeLineStyle(value) ? value : 'dashed'
   }
-
-  /**
-   * Set prerequisite line style
-   */
   set prerequisiteLineStyle(value: EdgeLineStyle) {
     this.setAttribute('prerequisite-line-style', value)
   }
-  /**
-   * Get parent line style
-   */
+
+  /** Get/set parent edge line style */
   get parentLineStyle(): EdgeLineStyle {
     const value = this.getAttribute('parent-line-style')
-    return value && isValidEdgeLineStyle(value)
-      ? (value as EdgeLineStyle)
-      : 'straight'
+    return value && isValidEdgeLineStyle(value) ? value : 'straight'
   }
-
-  /**
-   * Set parent line style
-   */
   set parentLineStyle(value: EdgeLineStyle) {
     this.setAttribute('parent-line-style', value)
   }

@@ -61,9 +61,9 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
   private graphElement?: ElementRef<BlocksGraph>
 
   // Data inputs
-  @Input() blocks?: Block[]
-  @Input() blocksV01?: BlockSchemaV01[]
+  @Input() blocks?: Block[] | BlockSchemaV01[]
   @Input() jsonUrl?: string
+  @Input() schemaVersion: 'v0.1' | 'internal' = 'v0.1'
 
   // Configuration inputs
   @Input() language: 'en' | 'he' = 'en'
@@ -100,15 +100,12 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
     if (!element) return
 
     // Handle data changes
-    if (changes['blocks'] && !changes['blocks'].firstChange) {
+    if (
+      (changes['blocks'] && !changes['blocks'].firstChange) ||
+      (changes['schemaVersion'] && !changes['schemaVersion'].firstChange)
+    ) {
       if (this.blocks) {
-        element.setBlocks(this.blocks)
-      }
-    }
-
-    if (changes['blocksV01'] && !changes['blocksV01'].firstChange) {
-      if (this.blocksV01) {
-        element.loadFromJson(JSON.stringify(this.blocksV01), 'v0.1')
+        this.loadBlocks(element, this.blocks)
       }
     }
 
@@ -181,6 +178,33 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
     return this.graphElement?.nativeElement ?? null
   }
 
+  private isV01Format(data: unknown[]): data is BlockSchemaV01[] {
+    if (data.length === 0) return false
+    const firstBlock = data[0]
+    if (typeof firstBlock !== 'object' || firstBlock === null) return false
+    if (!('title' in firstBlock)) return false
+    const title = firstBlock.title
+    return (
+      typeof title === 'object' &&
+      title !== null &&
+      'he_text' in title &&
+      'en_text' in title
+    )
+  }
+
+  private loadBlocks(
+    element: BlocksGraph,
+    blocks: Block[] | BlockSchemaV01[]
+  ): void {
+    const isV01 = this.schemaVersion === 'v0.1' && this.isV01Format(blocks)
+
+    if (isV01) {
+      element.loadFromJson(JSON.stringify(blocks), 'v0.1')
+    } else {
+      element.setBlocks(blocks)
+    }
+  }
+
   private setupEventListeners(): void {
     const element = this.getElement()
     if (!element) return
@@ -243,9 +267,7 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
 
     // Load data
     if (this.blocks) {
-      element.setBlocks(this.blocks)
-    } else if (this.blocksV01) {
-      element.loadFromJson(JSON.stringify(this.blocksV01), 'v0.1')
+      this.loadBlocks(element, this.blocks)
     } else if (this.jsonUrl) {
       element.loadFromUrl(this.jsonUrl, 'v0.1').catch(console.error)
     }

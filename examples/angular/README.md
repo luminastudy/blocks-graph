@@ -122,7 +122,7 @@ orientation: 'ttb' | 'ltr' | 'rtl' | 'btt' = 'ttb'
 
 // In template:
 <blocks-graph-angular
-  [blocksV01]="blocks"
+  [blocks]="blocks"
   [language]="language"
   [orientation]="orientation"
 ></blocks-graph-angular>

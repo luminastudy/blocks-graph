@@ -13,7 +13,6 @@ import './App.css'
  */
 function AppWithWrapper() {
   // State management
-  // Note: Using BlockSchemaV01 type because data comes from API in v0.1 format
   const [blocks, setBlocks] = useState<BlockSchemaV01[] | null>(null)
   const [language, setLanguage] = useState<'en' | 'he'>('en')
   const [orientation, setOrientation] = useState<'ttb' | 'ltr' | 'rtl' | 'btt'>(
@@ -25,7 +24,7 @@ function AppWithWrapper() {
 
   /**
    * Load data on mount
-   * The wrapper handles converting data and passing it to the Web Component
+   * The wrapper auto-detects the schema format
    */
   useEffect(() => {
     const loadData = async () => {
@@ -41,7 +40,7 @@ function AppWithWrapper() {
         const data = await response.json()
 
         // Data from API is in v0.1 schema format (he_text/en_text)
-        // We'll pass it to blocksV01 prop which handles conversion automatically
+        // The blocks prop auto-detects the format and converts automatically
         setBlocks(data)
         setStatus(`Loaded ${data.length} blocks successfully`)
       } catch (error) {
@@ -85,7 +84,12 @@ function AppWithWrapper() {
           <select
             id="language-select"
             value={language}
-            onChange={e => setLanguage(e.target.value as 'en' | 'he')}
+            onChange={e => {
+              const value = e.target.value
+              if (value === 'en' || value === 'he') {
+                setLanguage(value)
+              }
+            }}
           >
             <option value="en">English</option>
             <option value="he">Hebrew (עברית)</option>
@@ -97,9 +101,17 @@ function AppWithWrapper() {
           <select
             id="orientation-select"
             value={orientation}
-            onChange={e =>
-              setOrientation(e.target.value as 'ttb' | 'ltr' | 'rtl' | 'btt')
-            }
+            onChange={e => {
+              const value = e.target.value
+              if (
+                value === 'ttb' ||
+                value === 'ltr' ||
+                value === 'rtl' ||
+                value === 'btt'
+              ) {
+                setOrientation(value)
+              }
+            }}
           >
             <option value="ttb">Top to Bottom</option>
             <option value="ltr">Left to Right</option>
@@ -123,7 +135,7 @@ function AppWithWrapper() {
       {/* React Wrapper Component - Clean Props API! */}
       <div className="graph-container">
         <BlocksGraphReact
-          blocksV01={blocks}
+          blocks={blocks}
           language={language}
           orientation={orientation}
           showPrerequisites={showPrerequisites}
