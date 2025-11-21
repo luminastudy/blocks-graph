@@ -22,7 +22,7 @@ A functional React component using hooks that wraps the `<blocks-graph>` Web Com
 
 **Props Supported**:
 
-- **Data**: `blocks`, `blocksV01`, `jsonUrl`
+- **Data**: `blocks`, `jsonUrl`
 - **Configuration**: `language`, `orientation`, `showPrerequisites`, `showParents`, node sizing, spacing
 - **Events**: `onBlocksRendered`, `onBlockSelected`
 - **Standard**: `className`, `style`
