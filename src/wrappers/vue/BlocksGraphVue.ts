@@ -169,8 +169,6 @@ export const BlocksGraphVue = defineComponent({
         if (blocks) {
           // Auto-detection handled by BlocksGraph.setBlocks()
           element.setBlocks(blocks)
-        } else if (jsonUrl) {
-          element.loadFromUrl(jsonUrl, 'v0.1').catch(console.error)
         }
       },
       { immediate: true }

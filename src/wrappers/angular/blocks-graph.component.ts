@@ -129,12 +129,6 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    if (changes['jsonUrl'] && !changes['jsonUrl'].firstChange) {
-      if (this.jsonUrl) {
-        element.loadFromUrl(this.jsonUrl, 'v0.1').catch(console.error)
-      }
-    }
-
     // Handle configuration changes
     if (changes['language']) {
       element.language = this.language
@@ -264,8 +258,6 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
     // Load data
     if (this.blocks) {
       this.loadBlocks(element, this.blocks)
-    } else if (this.jsonUrl) {
-      element.loadFromUrl(this.jsonUrl, 'v0.1').catch(console.error)
     }
   }
 }

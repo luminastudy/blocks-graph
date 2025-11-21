@@ -7,7 +7,6 @@ import type { BlockSchemaV01 } from '../adaptors/v0.1/types.js'
 import { isBlockSchemaV01 } from '../adaptors/v0.1/validators.js'
 import { InvalidBlockSchemaError } from '../errors/invalid-block-schema-error.js'
 import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-version-error.js'
-import { BlocksFetchError } from '../errors/blocks-fetch-error.js'
 import { isValidEdgeLineStyle } from '../types/is-valid-edge-line-style.js'
 import type { EdgeLineStyle } from '../types/edge-style.js'
 import { createStyles } from './create-styles.js'
@@ -214,30 +213,6 @@ export class BlocksGraph extends HTMLElement {
       this.render()
     } else {
       throw new UnsupportedSchemaVersionError(version)
-    }
-  }
-
-  /**
-   * Load blocks from a URL
-   */
-  async loadFromUrl(url: string, schemaVersion?: 'v0.1'): Promise<void> {
-    const version = schemaVersion !== undefined ? schemaVersion : 'v0.1'
-    try {
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new BlocksFetchError(url, response.statusText)
-      }
-      const json = await response.text()
-      this.loadFromJson(json, version)
-    } catch (error) {
-      console.error('Error loading blocks from URL:', error)
-      this.shadowRoot!.innerHTML = ''
-      this.shadowRoot!.appendChild(createStyles())
-      this.shadowRoot!.appendChild(
-        createErrorMessage(
-          error instanceof Error ? error.message : 'Unknown error'
-        )
-      )
     }
   }
 
