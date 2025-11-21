@@ -21,6 +21,9 @@ import '../../index.js'
  * Vue wrapper component for the blocks-graph Web Component.
  * Provides a clean Vue API with props and events.
  *
+ * The `blocks` prop accepts both internal Block[] format and v0.1 schema format.
+ * Schema version is automatically detected - no need to specify it manually.
+ *
  * @example
  * ```vue
  * <template>
@@ -36,7 +39,15 @@ import '../../index.js'
  * import { BlocksGraphVue } from '@lumina-study/blocks-graph/vue';
  * import type { Block } from '@lumina-study/blocks-graph';
  *
- * const blocks: Block[] = [...];
+ * // Blocks can be in internal format or v0.1 schema format (auto-detected)
+ * const blocks: Block[] = [
+ *   {
+ *     id: 'uuid',
+ *     title: { he: 'כותרת', en: 'Title' },
+ *     prerequisites: [],
+ *     parents: []
+ *   }
+ * ];
  *
  * function handleBlockSelected(event: BlockSelectedEvent) {
  *   console.log(event.blockId, event.selectionLevel);
@@ -56,6 +67,9 @@ export const BlocksGraphVue = defineComponent({
       type: String,
       default: undefined,
     },
+    /**
+     * @deprecated Schema version is now auto-detected. This prop is ignored.
+     */
     schemaVersion: {
       type: String as PropType<'v0.1' | 'internal'>,
       default: 'v0.1',
@@ -148,39 +162,17 @@ export const BlocksGraphVue = defineComponent({
       }
     })
 
-    // Helper to detect if blocks are in v0.1 schema format
-    const isV01Format = (data: unknown[]): data is BlockSchemaV01[] => {
-      if (data.length === 0) return false
-      const firstBlock = data[0]
-      if (typeof firstBlock !== 'object' || firstBlock === null) return false
-      if (!('title' in firstBlock)) return false
-      const title = firstBlock.title
-      return (
-        typeof title === 'object' &&
-        title !== null &&
-        'he_text' in title &&
-        'en_text' in title
-      )
-    }
-
     // Watch data props
+    // Schema version is now auto-detected by BlocksGraph.setBlocks()
     watch(
-      () => [props.blocks, props.jsonUrl, props.schemaVersion] as const,
-      ([blocks, jsonUrl, schemaVersion]) => {
+      () => [props.blocks, props.jsonUrl] as const,
+      ([blocks, jsonUrl]) => {
         const element = elementRef.value
         if (!element) return
 
         if (blocks) {
-          // Auto-detect schema version if not explicitly internal format
-          const isV01 = schemaVersion === 'v0.1' && isV01Format(blocks)
-
-          if (isV01) {
-            // Convert from v0.1 schema
-            element.loadFromJson(JSON.stringify(blocks), 'v0.1')
-          } else {
-            // Set internal format directly
-            element.setBlocks(blocks)
-          }
+          // Auto-detection handled by BlocksGraph.setBlocks()
+          element.setBlocks(blocks)
         } else if (jsonUrl) {
           element.loadFromUrl(jsonUrl, 'v0.1').catch(console.error)
         }

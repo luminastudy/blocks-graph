@@ -7,42 +7,22 @@ import type { EdgeLineStyle } from '../../types/edge-style.js'
 // Import the web component to ensure it's registered
 import '../../index.js'
 
-// Helper to detect if blocks are in v0.1 schema format
-function isV01Format(data: unknown[]): data is BlockSchemaV01[] {
-  if (data.length === 0) return false
-  const firstBlock = data[0]
-  if (typeof firstBlock !== 'object' || firstBlock === null) return false
-  if (!('title' in firstBlock)) return false
-  const title = firstBlock.title
-  return (
-    typeof title === 'object' &&
-    title !== null &&
-    'he_text' in title &&
-    'en_text' in title
-  )
-}
-
 // Custom hook for data loading
+// The BlocksGraph component now auto-detects schema versions
 function useBlocksGraphData(
   ref: RefObject<BlocksGraph>,
   blocks: Block[] | BlockSchemaV01[] | undefined,
-  jsonUrl: string | undefined,
-  schemaVer: 'v0.1' | 'internal'
+  jsonUrl: string | undefined
 ) {
   useEffect(() => {
     if (!ref.current) return
     if (blocks) {
-      const isV01 = schemaVer === 'v0.1' && isV01Format(blocks)
-      if (isV01) {
-        ref.current.loadFromJson(JSON.stringify(blocks), 'v0.1')
-      } else {
-        // @ts-expect-error - Type guard doesn't narrow union for TypeScript
-        ref.current.setBlocks(blocks)
-      }
+      // Auto-detection handled by BlocksGraph.setBlocks()
+      ref.current.setBlocks(blocks)
     } else if (jsonUrl) {
       ref.current.loadFromUrl(jsonUrl, 'v0.1').catch(console.error)
     }
-  }, [ref, blocks, jsonUrl, schemaVer])
+  }, [ref, blocks, jsonUrl])
 }
 
 // Custom hook for configuration props
@@ -152,8 +132,13 @@ function useBlocksGraphEvents(
 
 export interface BlocksGraphProps {
   // Data props
+  /** Array of blocks in internal format or v0.1 schema format (auto-detected) */
   blocks?: Block[] | BlockSchemaV01[]
+  /** URL to load blocks from (always uses v0.1 schema) */
   jsonUrl?: string
+  /**
+   * @deprecated Schema version is now auto-detected. This prop is ignored.
+   */
   schemaVersion?: 'v0.1' | 'internal'
 
   // Configuration props
@@ -184,6 +169,9 @@ export interface BlocksGraphProps {
  * React wrapper component for the blocks-graph Web Component.
  * Provides a clean React API without needing refs.
  *
+ * The `blocks` prop accepts both internal Block[] format and v0.1 schema format.
+ * Schema version is automatically detected - no need to specify it manually.
+ *
  * @example
  * ```tsx
  * import { BlocksGraphReact } from '@lumina-study/blocks-graph/react';
@@ -191,7 +179,14 @@ export interface BlocksGraphProps {
  * function App() {
  *   // Blocks can be in internal format or v0.1 schema format
  *   // The component auto-detects the format
- *   const blocks = [...];
+ *   const blocks = [
+ *     {
+ *       id: 'uuid',
+ *       title: { he: 'כותרת', en: 'Title' }, // Internal format
+ *       prerequisites: [],
+ *       parents: []
+ *     }
+ *   ];
  *
  *   return (
  *     <BlocksGraphReact
@@ -207,7 +202,6 @@ export interface BlocksGraphProps {
 export function BlocksGraphReact({
   blocks,
   jsonUrl,
-  schemaVersion,
   language,
   orientation,
   showPrerequisites,
@@ -222,7 +216,6 @@ export function BlocksGraphReact({
   className,
   style,
 }: BlocksGraphProps) {
-  const schemaVer = schemaVersion !== undefined ? schemaVersion : 'v0.1'
   const lang = language !== undefined ? language : 'en'
   const orient = orientation !== undefined ? orientation : 'ttb'
   const showPrereq = showPrerequisites !== undefined ? showPrerequisites : true
@@ -231,7 +224,7 @@ export function BlocksGraphReact({
   const parentStyle =
     parentLineStyle !== undefined ? parentLineStyle : 'straight'
   const ref = useRef<BlocksGraph>(null)
-  useBlocksGraphData(ref, blocks, jsonUrl, schemaVer)
+  useBlocksGraphData(ref, blocks, jsonUrl)
   useBlocksGraphConfig(ref, lang, orient, showPrereq, prereqStyle, parentStyle)
   useBlocksGraphLayout(
     ref,

@@ -9,6 +9,7 @@ export { BlocksGraph } from './components/blocks-graph.js'
 
 // Export types
 export type { Block } from './types/block.js'
+export { isBlock } from './types/is-block.js'
 export type { BlockGraph } from './types/block-graph.js'
 export type { BlockPosition } from './types/block-position.js'
 export type { GraphEdge } from './types/graph-edge.js'
@@ -32,6 +33,7 @@ export { schemaV01Adaptor } from './adaptors/v0.1/instance.js'
 export type { BlockSchemaV01 } from './adaptors/v0.1/types.js'
 export type { BlockTitle } from './adaptors/v0.1/block-title.js'
 export { isBlockSchemaV01 } from './adaptors/v0.1/validators.js'
+export { isBlockSchemaV01Shape } from './adaptors/v0.1/is-block-schema-v01-shape.js'
 
 // Export custom errors
 export { InvalidBlockSchemaError } from './errors/invalid-block-schema-error.js'
