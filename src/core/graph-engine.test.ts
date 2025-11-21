@@ -564,8 +564,9 @@ describe('GraphEngine', () => {
 
       expect(visible.has('child1')).toBe(true)
       expect(visible.has('grandchild1')).toBe(true)
-      // Root should be dimmed
-      expect(dimmed.has('root')).toBe(true)
+      // Root should NOT be dimmed (single root with descendants - stays hidden)
+      expect(visible.has('root')).toBe(false)
+      expect(dimmed.has('root')).toBe(false)
     })
 
     it('should auto-skip single root and show its children', () => {
@@ -624,6 +625,98 @@ describe('GraphEngine', () => {
 
       // Single root with no children should be shown
       expect(visible.has('single-root')).toBe(true)
+    })
+
+    it('should keep single root hidden when viewing its direct child', () => {
+      const blocks: Block[] = [
+        {
+          id: 'single-root',
+          title: { he: 'שורש יחיד', en: 'Single Root' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'child1',
+          title: { he: 'ילד 1', en: 'Child 1' },
+          prerequisites: [],
+          parents: ['single-root'],
+        },
+        {
+          id: 'child2',
+          title: { he: 'ילד 2', en: 'Child 2' },
+          prerequisites: [],
+          parents: ['single-root'],
+        },
+        {
+          id: 'grandchild1',
+          title: { he: 'נכד 1', en: 'Grandchild 1' },
+          prerequisites: [],
+          parents: ['child1'],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+
+      // Click on child1 - should show child1 and its children
+      // but NOT show the single root (not even dimmed)
+      const { visible, dimmed } = engine.categorizeBlocks(
+        blocks,
+        graph,
+        'child1',
+        1
+      )
+
+      expect(visible.has('child1')).toBe(true)
+      expect(visible.has('grandchild1')).toBe(true)
+      // Single root should NOT be visible or dimmed
+      expect(visible.has('single-root')).toBe(false)
+      expect(dimmed.has('single-root')).toBe(false)
+    })
+
+    it('should keep single root hidden when viewing its grandchild', () => {
+      const blocks: Block[] = [
+        {
+          id: 'single-root',
+          title: { he: 'שורש יחיד', en: 'Single Root' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'child1',
+          title: { he: 'ילד 1', en: 'Child 1' },
+          prerequisites: [],
+          parents: ['single-root'],
+        },
+        {
+          id: 'grandchild1',
+          title: { he: 'נכד 1', en: 'Grandchild 1' },
+          prerequisites: [],
+          parents: ['child1'],
+        },
+        {
+          id: 'great-grandchild1',
+          title: { he: 'נין 1', en: 'Great-grandchild 1' },
+          prerequisites: [],
+          parents: ['grandchild1'],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+
+      // Click on grandchild1 (descendant of single root)
+      // The single root should remain hidden
+      const { visible, dimmed } = engine.categorizeBlocks(
+        blocks,
+        graph,
+        'grandchild1',
+        1
+      )
+
+      expect(visible.has('grandchild1')).toBe(true)
+      expect(visible.has('great-grandchild1')).toBe(true)
+      // Single root should NOT be visible or dimmed
+      expect(visible.has('single-root')).toBe(false)
+      expect(dimmed.has('single-root')).toBe(false)
     })
 
     it('should only auto-skip the root node, not recursively', () => {

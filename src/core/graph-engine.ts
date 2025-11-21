@@ -195,6 +195,27 @@ export class GraphEngine {
     return subBlocks
   }
 
+  /**
+   * Check if a block is a descendant of another block (child, grandchild, etc.)
+   */
+  private isDescendantOf(
+    blockId: string,
+    ancestorId: string,
+    graph: BlockGraph,
+    visited: Set<string> = new Set()
+  ): boolean {
+    if (visited.has(blockId)) return false
+    visited.add(blockId)
+
+    const block = graph.blocks.get(blockId)
+    if (!block) return false
+    if (block.parents.includes(ancestorId)) return true
+
+    return block.parents.some(parentId =>
+      this.isDescendantOf(parentId, ancestorId, graph, visited)
+    )
+  }
+
   getRelatedBlocks(
     blockId: string,
     graph: BlockGraph,
@@ -243,6 +264,8 @@ export class GraphEngine {
    * - No selection: Show only root blocks (blocks with no parents)
    *   - If only 1 root block exists and it has children, skip it and show its children (one level only)
    * - Block selected: Show only the selected block and its direct children
+   *   - If viewing a descendant of the single auto-skipped root, keep the root hidden (not even dimmed)
+   *   - Other root blocks are dimmed for context
    */
   categorizeBlocks(
     blocks: Block[],
@@ -291,9 +314,24 @@ export class GraphEngine {
       visible.add(child.id)
     }
 
+    // Find all root blocks
+    const rootBlocks = blocks.filter(block => block.parents.length === 0)
+
+    // Check if we're viewing a descendant of the single auto-skipped root
+    // If so, keep the root hidden (not even dimmed) to maintain clean navigation
+    const isInSingleRootSubtree =
+      rootBlocks.length === 1 &&
+      rootBlocks[0] &&
+      this.isDescendantOf(selectedBlockId, rootBlocks[0].id, graph)
+
     // All other root blocks should be dimmed (for context)
+    // Exception: Don't show the single auto-skipped root when viewing its descendants
     for (const block of blocks) {
       if (!visible.has(block.id) && block.parents.length === 0) {
+        // Skip dimming if this is the single root and we're viewing its descendant
+        if (isInSingleRootSubtree && block.id === rootBlocks[0]?.id) {
+          continue
+        }
         dimmed.add(block.id)
       }
     }
