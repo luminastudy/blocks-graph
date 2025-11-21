@@ -56,7 +56,18 @@
     "בלוק",
     "שורש",
     "יחיד",
-    "אמצע"
+    "אמצע",
+    "polyrepos",
+    "Polyrepo",
+    "commitlintrc",
+    "venv",
+    "MADRC",
+    "polyrepo",
+    "pyproject",
+    "luxon",
+    "ofetch",
+    "esbenp",
+    "lintstagedrc"
   ],
   "flagWords": [],
   "ignorePaths": [
