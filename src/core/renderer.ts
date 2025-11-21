@@ -13,8 +13,9 @@ import { edgeLineStyleToDashArray } from '../types/edge-line-style-to-dash-array
 export class GraphRenderer {
   private config: RendererConfig
 
-  constructor(config: Partial<RendererConfig> = {}) {
-    this.config = { ...DEFAULT_RENDERER_CONFIG, ...config }
+  constructor(config?: Partial<RendererConfig>) {
+    const configToUse = config !== undefined ? config : {}
+    this.config = { ...DEFAULT_RENDERER_CONFIG, ...configToUse }
   }
 
   /**

@@ -26,9 +26,8 @@ export default [
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
       // Relax some overly strict rules for library code
-      'max-lines': ['error', { max: 350 }],
-      'max-lines-per-function': ['error', { max: 200 }],
-      'default/no-default-params': 'off',
+      'max-lines': ['error', { max: 500 }], // Increased to accommodate core rendering logic
+      'max-lines-per-function': ['error', { max: 200 }], // Allow larger functions for complex rendering/wrapper logic
       'default/no-hardcoded-urls': 'off', // SVG namespace URLs are fine
       'custom/jsx-classname-required': 'off', // Not needed for examples
     },

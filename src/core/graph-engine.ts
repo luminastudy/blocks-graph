@@ -98,7 +98,6 @@ export class GraphEngine {
     const maxLevel = isReversed
       ? Math.max(...Array.from(blocksByLevel.keys()))
       : 0
-
     const positions = new Map<string, BlockPosition>()
 
     for (const [level, blockIds] of blocksByLevel.entries()) {

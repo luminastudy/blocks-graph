@@ -64,21 +64,29 @@ export interface BlocksGraphProps {
 export function BlocksGraphReact({
   blocks,
   jsonUrl,
-  schemaVersion = 'v0.1',
-  language = 'en',
-  orientation = 'ttb',
-  showPrerequisites = true,
+  schemaVersion,
+  language,
+  orientation,
+  showPrerequisites,
   nodeWidth,
   nodeHeight,
   horizontalSpacing,
   verticalSpacing,
-  prerequisiteLineStyle = 'dashed',
-  parentLineStyle = 'straight',
+  prerequisiteLineStyle,
+  parentLineStyle,
   onBlocksRendered,
   onBlockSelected,
   className,
   style,
 }: BlocksGraphProps) {
+  const schemaVer = schemaVersion !== undefined ? schemaVersion : 'v0.1'
+  const lang = language !== undefined ? language : 'en'
+  const orient = orientation !== undefined ? orientation : 'ttb'
+  const showPrereq = showPrerequisites !== undefined ? showPrerequisites : true
+  const prereqStyle =
+    prerequisiteLineStyle !== undefined ? prerequisiteLineStyle : 'dashed'
+  const parentStyle =
+    parentLineStyle !== undefined ? parentLineStyle : 'straight'
   const ref = useRef<BlocksGraph>(null)
 
   // Helper to detect if blocks are in v0.1 schema format
@@ -102,7 +110,7 @@ export function BlocksGraphReact({
 
     if (blocks) {
       // Auto-detect schema version if not explicitly internal format
-      const isV01 = schemaVersion === 'v0.1' && isV01Format(blocks)
+      const isV01 = schemaVer === 'v0.1' && isV01Format(blocks)
 
       if (isV01) {
         // Convert from v0.1 schema - blocks is BlockSchemaV01[] here
@@ -118,23 +126,23 @@ export function BlocksGraphReact({
       // Load from URL (defaults to v0.1)
       ref.current.loadFromUrl(jsonUrl, 'v0.1').catch(console.error)
     }
-  }, [blocks, jsonUrl, schemaVersion])
+  }, [blocks, jsonUrl, schemaVer])
 
   // Sync configuration props
   useEffect(() => {
     if (!ref.current) return
-    ref.current.language = language
-  }, [language])
+    ref.current.language = lang
+  }, [lang])
 
   useEffect(() => {
     if (!ref.current) return
-    ref.current.orientation = orientation
-  }, [orientation])
+    ref.current.orientation = orient
+  }, [orient])
 
   useEffect(() => {
     if (!ref.current) return
-    ref.current.showPrerequisites = showPrerequisites
-  }, [showPrerequisites])
+    ref.current.showPrerequisites = showPrereq
+  }, [showPrereq])
 
   // Sync layout props
   useEffect(() => {
@@ -168,13 +176,13 @@ export function BlocksGraphReact({
   // Sync edge style props
   useEffect(() => {
     if (!ref.current) return
-    ref.current.prerequisiteLineStyle = prerequisiteLineStyle
-  }, [prerequisiteLineStyle])
+    ref.current.prerequisiteLineStyle = prereqStyle
+  }, [prereqStyle])
 
   useEffect(() => {
     if (!ref.current) return
-    ref.current.parentLineStyle = parentLineStyle
-  }, [parentLineStyle])
+    ref.current.parentLineStyle = parentStyle
+  }, [parentStyle])
 
   // Event listeners
   useEffect(() => {
