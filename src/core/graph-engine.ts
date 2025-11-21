@@ -7,13 +7,12 @@ import type { GraphLayoutConfig } from './graph-layout-config.js'
 import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js'
 import { HorizontalRelationships } from './horizontal-relationships.js'
 import { addBlockWithSubBlocks } from './add-block-with-sub-blocks.js'
-/**
- * Graph engine responsible for building and laying out the block graph
- */
+
 export class GraphEngine {
   private config: GraphLayoutConfig
-  constructor(config: Partial<GraphLayoutConfig> = {}) {
-    this.config = { ...DEFAULT_LAYOUT_CONFIG, ...config }
+  constructor(config?: Partial<GraphLayoutConfig>) {
+    const configToUse = config !== undefined ? config : {}
+    this.config = { ...DEFAULT_LAYOUT_CONFIG, ...configToUse }
   }
 
   buildGraph(blocks: Block[]): BlockGraph {
@@ -45,19 +44,20 @@ export class GraphEngine {
     const visited = new Set<string>()
     const levels = new Map<string, number>()
 
-    const calculateLevel = (blockId: string, level = 0): void => {
+    const calculateLevel = (blockId: string, level?: number): void => {
+      const currentCalculationLevel = level !== undefined ? level : 0
       if (visited.has(blockId)) return
       visited.add(blockId)
       const currentLevelValue = levels.get(blockId)
       const currentLevel =
         currentLevelValue !== undefined ? currentLevelValue : 0
-      levels.set(blockId, Math.max(currentLevel, level))
+      levels.set(blockId, Math.max(currentLevel, currentCalculationLevel))
 
       const children = graph.edges
         .filter(edge => edge.from === blockId)
         .map(edge => edge.to)
       for (const childId of children) {
-        calculateLevel(childId, level + 1)
+        calculateLevel(childId, currentCalculationLevel + 1)
       }
     }
 
@@ -68,7 +68,7 @@ export class GraphEngine {
       rootBlocks.length > 0 ? rootBlocks : Array.from(graph.blocks.keys())
 
     for (const rootId of roots) {
-      calculateLevel(rootId)
+      calculateLevel(rootId, 0)
     }
 
     return levels
@@ -207,17 +207,18 @@ export class GraphEngine {
     blockId: string,
     ancestorId: string,
     graph: BlockGraph,
-    visited: Set<string> = new Set()
+    visited?: Set<string>
   ): boolean {
-    if (visited.has(blockId)) return false
-    visited.add(blockId)
+    const visitedSet = visited !== undefined ? visited : new Set<string>()
+    if (visitedSet.has(blockId)) return false
+    visitedSet.add(blockId)
 
     const block = graph.blocks.get(blockId)
     if (!block) return false
     if (block.parents.includes(ancestorId)) return true
 
     return block.parents.some(parentId =>
-      this.isDescendantOf(parentId, ancestorId, graph, visited)
+      this.isDescendantOf(parentId, ancestorId, graph, visitedSet)
     )
   }
 
