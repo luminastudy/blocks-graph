@@ -96,7 +96,11 @@ function useBlocksGraphEvents(
     | undefined,
   onBlockSelected:
     | ((
-        event: CustomEvent<{ blockId: string | null; selectionLevel: number }>
+        event: CustomEvent<{
+          blockId: string | null
+          selectionLevel: number
+          navigationStack: string[]
+        }>
       ) => void)
     | undefined
 ) {
@@ -155,7 +159,11 @@ export interface BlocksGraphProps {
   // Event callbacks
   onBlocksRendered?: (event: CustomEvent<{ blockCount: number }>) => void
   onBlockSelected?: (
-    event: CustomEvent<{ blockId: string | null; selectionLevel: number }>
+    event: CustomEvent<{
+      blockId: string | null
+      selectionLevel: number
+      navigationStack: string[]
+    }>
   ) => void
 
   // Standard props

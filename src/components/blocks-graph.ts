@@ -32,8 +32,7 @@ export class BlocksGraph extends HTMLElement {
   private engine: GraphEngine
   private renderer: GraphRenderer
   private blocks: Block[]
-  private selectedBlockId: string | null
-  private selectionLevel: number // 0=root view, 1=children view
+  private navigationStack: string[] // Hierarchical drill-down path
 
   constructor() {
     super()
@@ -41,8 +40,24 @@ export class BlocksGraph extends HTMLElement {
     this.engine = new GraphEngine()
     this.renderer = new GraphRenderer()
     this.blocks = []
-    this.selectedBlockId = null
-    this.selectionLevel = 0
+    this.navigationStack = []
+  }
+
+  /**
+   * Get selected block ID (top of navigation stack) for backward compatibility
+   */
+  private get selectedBlockId(): string | null {
+    return this.navigationStack.length > 0
+      ? this.navigationStack[this.navigationStack.length - 1] || null
+      : null
+  }
+
+  /**
+   * Get selection level for backward compatibility
+   * 0 = root view (empty stack), 1 = drilled down (non-empty stack)
+   */
+  private get selectionLevel(): number {
+    return this.navigationStack.length > 0 ? 1 : 0
   }
 
   /**
@@ -217,10 +232,10 @@ export class BlocksGraph extends HTMLElement {
   }
 
   /**
-   * Handle block click events
-   * - Click block with children: Show selected block and its children
-   * - Click same block again: Return to root view
-   * - Click block without children: Only send event, don't change visualization
+   * Handle block click events - Hierarchical Navigation
+   * - Click leaf block (no children): Fire event only, don't modify navigation
+   * - Click block on top of stack: Pop from stack (go up one level)
+   * - Click block with children: Push to stack (drill down)
    */
   private handleBlockClick(blockId: string): void {
     const clickedBlock = this.blocks.find(b => b.id === blockId)
@@ -229,23 +244,29 @@ export class BlocksGraph extends HTMLElement {
     const graph = this.engine.buildGraph(this.blocks)
     const children = this.engine.getSubBlocks(blockId, graph)
 
-    // If block has no children, only dispatch event without changing visualization
+    // If block has no children, only dispatch event without changing navigation
     if (children.length === 0) {
       this.dispatchEvent(
         new CustomEvent('block-selected', {
-          detail: { blockId, selectionLevel: this.selectionLevel },
+          detail: {
+            blockId,
+            selectionLevel: this.selectionLevel,
+            navigationStack: [...this.navigationStack],
+          },
         })
       )
       return
     }
 
-    // Block has children - toggle navigation state
-    if (this.selectedBlockId === blockId) {
-      this.selectedBlockId = null
-      this.selectionLevel = 0
+    // Block has children - check if it's on top of stack
+    const isTopOfStack = this.selectedBlockId === blockId
+
+    if (isTopOfStack) {
+      // Pop from stack (go up one level)
+      this.navigationStack.pop()
     } else {
-      this.selectedBlockId = blockId
-      this.selectionLevel = 1
+      // Push to stack (drill down)
+      this.navigationStack.push(blockId)
     }
 
     this.dispatchEvent(
@@ -253,6 +274,7 @@ export class BlocksGraph extends HTMLElement {
         detail: {
           blockId: this.selectedBlockId,
           selectionLevel: this.selectionLevel,
+          navigationStack: [...this.navigationStack],
         },
       })
     )

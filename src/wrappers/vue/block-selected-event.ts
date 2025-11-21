@@ -4,4 +4,5 @@
 export interface BlockSelectedEvent {
   blockId: string | null
   selectionLevel: number
+  navigationStack: string[]
 }

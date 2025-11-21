@@ -355,10 +355,10 @@ The `BlocksGraphReact` wrapper component accepts the following props:
 
 ### Event Props
 
-| Prop               | Type                                                                                | Description                     |
-| ------------------ | ----------------------------------------------------------------------------------- | ------------------------------- |
-| `onBlocksRendered` | `(event: CustomEvent<{ blockCount: number }>) => void`                              | Called when blocks are rendered |
-| `onBlockSelected`  | `(event: CustomEvent<{ blockId: string \| null; selectionLevel: number }>) => void` | Called when a block is selected |
+| Prop               | Type                                                                                                           | Description                     |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `onBlocksRendered` | `(event: CustomEvent<{ blockCount: number }>) => void`                                                         | Called when blocks are rendered |
+| `onBlockSelected`  | `(event: CustomEvent<{ blockId: string \| null; selectionLevel: number; navigationStack: string[] }>) => void` | Called when a block is selected |
 
 ### Standard Props
 
@@ -484,44 +484,63 @@ Load blocks from a URL with the specified schema version.
 
 ## Block Interaction
 
-The graph implements a **drill-down navigation model** for exploring hierarchical block structures:
+The graph implements a **hierarchical breadcrumb navigation model** for exploring deep block structures with unlimited drill-down depth:
 
 ### Navigation Behavior
 
 **Root View** (Default):
 
 - Displays only root blocks (blocks with no parents)
+- If there's a single root with children, automatically drills down to show its children
 - Provides a high-level overview of the top-level structure
 
-**Children View** (Click a block):
+**Drill-Down Navigation**:
 
-- Shows the selected block and its direct children (one level deep)
+- Maintains a navigation stack tracking your path through the hierarchy
+- Each click on a block with children drills down one level deeper
+- The selected block is highlighted with a blue border
 - Other root blocks are dimmed for context
-- Allows users to explore nested hierarchies progressively
+
+**Going Back Up**:
+
+- Click the currently highlighted block to go up one level in the hierarchy
+- Supports multi-level navigation (e.g., A → B → C → D → C → B → A)
+- Never loses your place in the navigation stack
 
 ### Click Interaction
 
-1. **Click a root block** → Navigate into that block, showing it and its children
-2. **Click the same block again** → Return to root view
-3. **Click a different block** → Navigate to that block and its children
+1. **Click a block with children** → Drill down (push to navigation stack)
+2. **Click the highlighted block** → Go up one level (pop from navigation stack)
+3. **Click a leaf block** (no children) → Fires event only, no navigation change
 
-This progressive disclosure model helps users explore large hierarchies without overwhelming them with all relationships at once.
+This hierarchical navigation model allows users to explore arbitrarily deep graph structures while maintaining clear context of their current position.
 
 ### Example
 
 ```javascript
 const graph = document.querySelector('blocks-graph')
 
-// Listen for block selection
+// Listen for block selection - now includes navigationStack
 graph.addEventListener('block-selected', event => {
-  const { blockId, selectionLevel } = event.detail
+  const { blockId, selectionLevel, navigationStack } = event.detail
 
-  if (selectionLevel === 0) {
+  if (navigationStack.length === 0) {
     console.log('Root view - showing all root blocks')
   } else {
-    console.log(`Viewing children of block: ${blockId}`)
+    console.log(`Navigation path: ${navigationStack.join(' → ')}`)
+    console.log(`Current block: ${blockId}`)
+    console.log(`Depth: ${navigationStack.length} levels deep`)
   }
 })
+
+// Example navigation sequence:
+// Initial: navigationStack = [] (shows root or auto-drilled children)
+// Click B: navigationStack = ['B'] (shows B + B's children)
+// Click C: navigationStack = ['B', 'C'] (shows C + C's children)
+// Click D: navigationStack = ['B', 'C', 'D'] (shows D + D's children)
+// Click D again: navigationStack = ['B', 'C'] (back to C + C's children)
+// Click C again: navigationStack = ['B'] (back to B + B's children)
+// Click B again: navigationStack = [] (back to root view)
 ```
 
 ## Events
