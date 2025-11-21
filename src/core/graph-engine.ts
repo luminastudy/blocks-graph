@@ -6,8 +6,6 @@ import type { PositionedBlock } from '../types/positioned-block.js'
 import type { GraphLayoutConfig } from './graph-layout-config.js'
 import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js'
 import { HorizontalRelationships } from './horizontal-relationships.js'
-import { addBlockWithSubBlocks } from './add-block-with-sub-blocks.js'
-
 /**
  * Graph engine responsible for building and laying out the block graph
  */
@@ -40,7 +38,6 @@ export class GraphEngine {
 
     return { blocks: blockMap, edges, horizontalRelationships }
   }
-
   /**
    * Calculate depth levels for all blocks in the graph
    */
@@ -52,7 +49,8 @@ export class GraphEngine {
       if (visited.has(blockId)) return
       visited.add(blockId)
       const currentLevelValue = levels.get(blockId)
-      const currentLevel = currentLevelValue !== undefined ? currentLevelValue : 0
+      const currentLevel =
+        currentLevelValue !== undefined ? currentLevelValue : 0
       levels.set(blockId, Math.max(currentLevel, level))
 
       const children = graph.edges
@@ -82,13 +80,15 @@ export class GraphEngine {
 
     for (const [blockId, level] of levels.entries()) {
       const blocksAtLevelValue = blocksByLevel.get(level)
-      const blocksAtLevel = blocksAtLevelValue !== undefined ? blocksAtLevelValue : []
+      const blocksAtLevel =
+        blocksAtLevelValue !== undefined ? blocksAtLevelValue : []
       blocksAtLevel.push(blockId)
       blocksByLevel.set(level, blocksAtLevel)
     }
 
     const orientationValue = this.config.orientation
-    const orientation = orientationValue !== undefined ? orientationValue : 'ttb'
+    const orientation =
+      orientationValue !== undefined ? orientationValue : 'ttb'
 
     // Determine axis and direction
     const isVertical = orientation === 'ttb' || orientation === 'btt'
@@ -173,9 +173,10 @@ export class GraphEngine {
    */
   getDirectPostRequisites(blockId: string, graph: BlockGraph): Block[] {
     // Use pre-computed relationships if available (O(1)), otherwise build on-demand
-    const relationships = graph.horizontalRelationships !== undefined
-      ? graph.horizontalRelationships
-      : HorizontalRelationships.fromGraph(graph)
+    const relationships =
+      graph.horizontalRelationships !== undefined
+        ? graph.horizontalRelationships
+        : HorizontalRelationships.fromGraph(graph)
     const postreqIds = relationships.getPostrequisites(blockId)
     const dependents: Block[] = []
 

@@ -59,7 +59,7 @@ export class AppComponent implements OnInit {
       const data = await response.json()
 
       // Data from API is in v0.1 schema format (he_text/en_text)
-      // We'll pass it to blocksV01 input which handles conversion automatically
+      // We'll pass it to blocks input which auto-detects and converts automatically
       this.blocks = data
       this.status = `Loaded ${data.length} blocks successfully`
     } catch (error) {

@@ -240,7 +240,9 @@ export class BlocksGraph extends HTMLElement {
 
     try {
       const orientationAttr = this.getAttribute('orientation')
-      const orientation = isValidOrientation(orientationAttr) ? orientationAttr : undefined
+      const orientation = isValidOrientation(orientationAttr)
+        ? orientationAttr
+        : undefined
       const { svg, blockCount } = renderGraph(
         this.blocks,
         this.engine,

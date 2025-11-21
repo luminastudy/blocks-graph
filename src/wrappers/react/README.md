@@ -62,13 +62,13 @@ function App() {
 
 ### Data Props
 
-| Prop        | Type               | Description                                            |
-| ----------- | ------------------ | ------------------------------------------------------ |
-| `blocks`    | `Block[]`          | Array of blocks in internal format                     |
-| `blocksV01` | `BlockSchemaV01[]` | Array of blocks in v0.1 schema format (auto-converted) |
-| `jsonUrl`   | `string`           | URL to load blocks from                                |
+| Prop            | Type                          | Description                                                                             |
+| --------------- | ----------------------------- | --------------------------------------------------------------------------------------- |
+| `blocks`        | `Block[] \| BlockSchemaV01[]` | Array of blocks in internal or v0.1 schema format (auto-detects and converts if needed) |
+| `jsonUrl`       | `string`                      | URL to load blocks from                                                                 |
+| `schemaVersion` | `'v0.1' \| 'internal'`        | Optional: Explicitly specify schema version (defaults to 'v0.1' with auto-detection)    |
 
-**Note**: Provide only ONE of these data props. `blocks` is recommended for best performance.
+**Note**: Provide only ONE of `blocks` or `jsonUrl`. The `blocks` prop automatically detects the format.
 
 ### Configuration Props
 
@@ -205,11 +205,11 @@ import { BlocksGraphReact } from '@lumina-study/blocks-graph/react'
 import type { BlockSchemaV01 } from '@lumina-study/blocks-graph'
 
 function App() {
-  const blocksV01: BlockSchemaV01[] = [
+  const blocksFromAPI: BlockSchemaV01[] = [
     {
       id: 'uuid',
       title: {
-        he_text: 'כותרת', // Note: he_text/en_text
+        he_text: 'כותרת', // Note: he_text/en_text (v0.1 format)
         en_text: 'Title',
       },
       prerequisites: [],
@@ -217,7 +217,8 @@ function App() {
     },
   ]
 
-  return <BlocksGraphReact blocksV01={blocksV01} />
+  // Auto-detects v0.1 format and converts automatically
+  return <BlocksGraphReact blocks={blocksFromAPI} />
 }
 ```
 

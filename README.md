@@ -334,11 +334,11 @@ The `BlocksGraphReact` wrapper component accepts the following props:
 
 ### Data Props
 
-| Prop            | Type                            | Description                                                                                   |
-| --------------- | ------------------------------- | --------------------------------------------------------------------------------------------- |
-| `blocks`        | `Block[] \| BlockSchemaV01[]`   | Array of blocks in internal format or v0.1 schema format (auto-detects and converts if needed) |
-| `jsonUrl`       | `string`                        | URL to load blocks from                                                                       |
-| `schemaVersion` | `'v0.1' \| 'internal'`          | Optional: Explicitly specify schema version (defaults to auto-detect)                        |
+| Prop            | Type                          | Description                                                                                    |
+| --------------- | ----------------------------- | ---------------------------------------------------------------------------------------------- |
+| `blocks`        | `Block[] \| BlockSchemaV01[]` | Array of blocks in internal format or v0.1 schema format (auto-detects and converts if needed) |
+| `jsonUrl`       | `string`                      | URL to load blocks from                                                                        |
+| `schemaVersion` | `'v0.1' \| 'internal'`        | Optional: Explicitly specify schema version (defaults to auto-detect)                          |
 
 ### Configuration Props
 
