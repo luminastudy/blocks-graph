@@ -24,13 +24,23 @@ import {
 })
 export class AppComponent implements OnInit {
   // State management
-  blocks: BlockSchemaV01[] | null = null
-  language: 'en' | 'he' = 'en'
-  orientation: 'ttb' | 'ltr' | 'rtl' | 'btt' = 'ttb'
-  showPrerequisites = true
-  showParents = true
-  status = 'Loading data...'
-  selectedBlock: string | null = null
+  blocks: BlockSchemaV01[] | null
+  language: 'en' | 'he'
+  orientation: 'ttb' | 'ltr' | 'rtl' | 'btt'
+  showPrerequisites: boolean
+  showParents: boolean
+  status: string
+  selectedBlock: string | null
+
+  constructor() {
+    this.blocks = null
+    this.language = 'en'
+    this.orientation = 'ttb'
+    this.showPrerequisites = true
+    this.showParents = true
+    this.status = 'Loading data...'
+    this.selectedBlock = null
+  }
 
   /**
    * Load data on component init

@@ -27,15 +27,18 @@ import type { EdgeLineStyle } from '../types/edge-style.js'
 export class BlocksGraph extends HTMLElement {
   private engine: GraphEngine
   private renderer: GraphRenderer
-  private blocks: Block[] = []
-  private selectedBlockId: string | null = null
-  private selectionLevel: number = 0 // 0=root view, 1=children view
+  private blocks: Block[]
+  private selectedBlockId: string | null
+  private selectionLevel: number // 0=root view, 1=children view
 
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
     this.engine = new GraphEngine()
     this.renderer = new GraphRenderer()
+    this.blocks = []
+    this.selectedBlockId = null
+    this.selectionLevel = 0
   }
 
   /**

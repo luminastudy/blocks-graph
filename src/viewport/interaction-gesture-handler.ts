@@ -21,11 +21,13 @@ export class InteractionGestureHandler {
   private viewportManager: ViewportManager
   private config: InteractionConfig
   private gestureState: GestureState
-  private initialPanX: number = 0
-  private initialPanY: number = 0
+  private initialPanX: number
+  private initialPanY: number
 
   constructor(viewportManager: ViewportManager) {
     this.viewportManager = viewportManager
+    this.initialPanX = 0
+    this.initialPanY = 0
 
     this.config = {
       enablePan: true,
