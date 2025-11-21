@@ -11,6 +11,10 @@ coverage/
 .vitest/
 .playwright-mcp/
 
+# Loki visual testing (keep .loki/reference, ignore temp files)
+.loki/current/
+.loki/difference/
+
 # IDE
 .vscode/
 .idea/

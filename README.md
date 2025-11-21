@@ -615,6 +615,9 @@ pnpm test
 # Run tests with UI
 pnpm test:ui
 
+# Run visual regression tests
+pnpm test:visual
+
 # Build
 pnpm build
 
@@ -626,6 +629,24 @@ pnpm typecheck
 
 # Serve example
 pnpm serve
+```
+
+### Visual Regression Testing
+
+This project uses [Loki](https://loki.js.org/) for visual regression testing. See [VISUAL-TESTING.md](./VISUAL-TESTING.md) for detailed documentation on:
+
+- Running visual tests
+- Updating reference images
+- Approving visual changes
+- CI/CD integration
+- Troubleshooting
+
+**Quick commands**:
+
+```bash
+pnpm test:visual              # Run visual tests
+pnpm test:visual:update       # Update reference images
+pnpm test:visual:approve      # Approve pending changes
 ```
 
 ## Dependencies

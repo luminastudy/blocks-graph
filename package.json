@@ -29,6 +29,9 @@
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
+    "test:visual": "pnpm build-storybook && pnpm loki test",
+    "test:visual:update": "pnpm build-storybook && pnpm loki update",
+    "test:visual:approve": "pnpm loki approve",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,md}\"",
@@ -90,6 +93,7 @@
     "jsdom": "^25.0.1",
     "lint-staged": "^16.2.6",
     "lit": "^3",
+    "loki": "^0.35.1",
     "prettier": "^3.6.2",
     "release-it": "^17.10.0",
     "storybook": "^8",
@@ -113,5 +117,17 @@
     "react": {
       "optional": true
     }
+  },
+  "loki": {
+    "configurations": {
+      "chrome.laptop": {
+        "target": "chrome.docker",
+        "width": 1366,
+        "height": 768
+      }
+    },
+    "chromeSelector": "blocks-graph, .sb-show-main",
+    "diffingEngine": "pixelmatch",
+    "storybookStaticBuildPath": "storybook-static"
   }
 }
