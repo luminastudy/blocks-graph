@@ -329,7 +329,11 @@ export class GraphEngine {
     for (const block of blocks) {
       if (!visible.has(block.id) && block.parents.length === 0) {
         // Skip dimming if this is the single root and we're viewing its descendant
-        if (isInSingleRootSubtree && block.id === rootBlocks[0]?.id) {
+        if (
+          isInSingleRootSubtree &&
+          rootBlocks[0] &&
+          block.id === rootBlocks[0].id
+        ) {
           continue
         }
         dimmed.add(block.id)
