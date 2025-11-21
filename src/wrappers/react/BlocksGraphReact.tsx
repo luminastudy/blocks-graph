@@ -19,8 +19,6 @@ function useBlocksGraphData(
     if (blocks) {
       // Auto-detection handled by BlocksGraph.setBlocks()
       ref.current.setBlocks(blocks)
-    } else if (jsonUrl) {
-      ref.current.loadFromUrl(jsonUrl, 'v0.1').catch(console.error)
     }
   }, [ref, blocks, jsonUrl])
 }
