@@ -1,11 +1,11 @@
 import type { BlockGraph } from '../types/block-graph.js'
 import type { PositionedBlock } from '../types/positioned-block.js'
 import type { BlockPosition } from '../types/block-position.js'
-import type { RendererConfig } from './renderer-config.js'
 import type { Orientation } from '../types/orientation.js'
+import { edgeLineStyleToDashArray } from '../types/edge-line-style-to-dash-array.js'
+import type { RendererConfig } from './renderer-config.js'
 import { DEFAULT_RENDERER_CONFIG } from './default-renderer-config.js'
 import { wrapTextToLines } from './text-wrapper.js'
-import { edgeLineStyleToDashArray } from '../types/edge-line-style-to-dash-array.js'
 
 /**
  * SVG renderer for block graphs
@@ -154,12 +154,101 @@ export class GraphRenderer {
   }
 
   /**
+   * Create a block rectangle element
+   */
+  private createBlockRect(
+    position: BlockPosition,
+    isSelected: boolean,
+    opacity: string
+  ): SVGRectElement {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('x', String(position.x))
+    rect.setAttribute('y', String(position.y))
+    rect.setAttribute('width', String(position.width))
+    rect.setAttribute('height', String(position.height))
+    rect.setAttribute('fill', this.config.blockStyle.fill)
+    if (isSelected) {
+      rect.setAttribute('stroke', '#4a90e2')
+      rect.setAttribute(
+        'stroke-width',
+        String(this.config.blockStyle.strokeWidth + 2)
+      )
+      rect.setAttribute(
+        'filter',
+        'drop-shadow(0 0 8px rgba(74, 144, 226, 0.5))'
+      )
+    } else {
+      rect.setAttribute('stroke', this.config.blockStyle.stroke)
+      rect.setAttribute(
+        'stroke-width',
+        String(this.config.blockStyle.strokeWidth)
+      )
+    }
+    rect.setAttribute('rx', String(this.config.blockStyle.cornerRadius))
+    rect.setAttribute('opacity', opacity)
+    return rect
+  }
+
+  /**
+   * Create block text element with wrapping
+   */
+  private createBlockText(
+    title: string,
+    position: BlockPosition,
+    opacity: string
+  ): { text: SVGTextElement; isTruncated: boolean; lineCount: number } {
+    const fontSize = this.config.textStyle.fontSize
+    const fontFamily = this.config.textStyle.fontFamily
+    const lineHeight =
+      this.config.textStyle.lineHeight !== undefined
+        ? this.config.textStyle.lineHeight
+        : 1.2
+    const horizontalPadding =
+      this.config.textStyle.horizontalPadding !== undefined
+        ? this.config.textStyle.horizontalPadding
+        : 10
+    const maxLines =
+      this.config.textStyle.maxLines !== undefined
+        ? this.config.textStyle.maxLines
+        : 3
+    const maxTextWidth = position.width - 2 * horizontalPadding
+    const { lines, isTruncated } = wrapTextToLines(
+      title,
+      maxTextWidth,
+      fontSize,
+      fontFamily,
+      maxLines
+    )
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+    text.setAttribute('x', String(position.x + position.width / 2))
+    text.setAttribute('text-anchor', 'middle')
+    text.setAttribute('fill', this.config.textStyle.fill)
+    text.setAttribute('font-size', String(fontSize))
+    text.setAttribute('font-family', fontFamily)
+    text.setAttribute('opacity', opacity)
+    const totalTextHeight = lines.length * fontSize * lineHeight
+    const startY =
+      position.y + position.height / 2 - totalTextHeight / 2 + fontSize / 2
+    lines.forEach((line, index) => {
+      const tspan = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'tspan'
+      )
+      tspan.setAttribute('x', String(position.x + position.width / 2))
+      tspan.setAttribute('y', String(startY + index * fontSize * lineHeight))
+      tspan.setAttribute('dominant-baseline', 'middle')
+      tspan.textContent = line
+      text.appendChild(tspan)
+    })
+    return { text, isTruncated, lineCount: lines.length }
+  }
+
+  /**
    * Render blocks (nodes in the graph)
    */
   private renderBlocks(positioned: PositionedBlock[]): SVGGElement {
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     group.setAttribute('class', 'blocks')
-
     for (const { block, position } of positioned) {
       const blockGroup = document.createElementNS(
         'http://www.w3.org/2000/svg',
@@ -167,112 +256,22 @@ export class GraphRenderer {
       )
       blockGroup.setAttribute('class', 'block')
       blockGroup.setAttribute('data-id', block.id)
-
-      // Determine visual state
       const isSelected = this.config.selectedBlockId === block.id
       const isDimmed = this.config.dimmedBlocks
         ? this.config.dimmedBlocks.has(block.id)
         : false
       const opacity = isDimmed ? '0.3' : '1'
-
-      // Render block rectangle
-      const rect = document.createElementNS(
-        'http://www.w3.org/2000/svg',
-        'rect'
-      )
-      rect.setAttribute('x', String(position.x))
-      rect.setAttribute('y', String(position.y))
-      rect.setAttribute('width', String(position.width))
-      rect.setAttribute('height', String(position.height))
-      rect.setAttribute('fill', this.config.blockStyle.fill)
-
-      // Highlight selected block
-      if (isSelected) {
-        rect.setAttribute('stroke', '#4a90e2')
-        rect.setAttribute(
-          'stroke-width',
-          String(this.config.blockStyle.strokeWidth + 2)
-        )
-        rect.setAttribute(
-          'filter',
-          'drop-shadow(0 0 8px rgba(74, 144, 226, 0.5))'
-        )
-      } else {
-        rect.setAttribute('stroke', this.config.blockStyle.stroke)
-        rect.setAttribute(
-          'stroke-width',
-          String(this.config.blockStyle.strokeWidth)
-        )
-      }
-
-      rect.setAttribute('rx', String(this.config.blockStyle.cornerRadius))
-      rect.setAttribute('opacity', opacity)
+      const rect = this.createBlockRect(position, isSelected, opacity)
       blockGroup.appendChild(rect)
-
-      // Render block text with wrapping
       const title =
         this.config.language === 'he' ? block.title.he : block.title.en
-      const fontSize = this.config.textStyle.fontSize
-      const fontFamily = this.config.textStyle.fontFamily
-      const lineHeight =
-        this.config.textStyle.lineHeight !== undefined
-          ? this.config.textStyle.lineHeight
-          : 1.2
-      const horizontalPadding =
-        this.config.textStyle.horizontalPadding !== undefined
-          ? this.config.textStyle.horizontalPadding
-          : 10
-      const maxLines =
-        this.config.textStyle.maxLines !== undefined
-          ? this.config.textStyle.maxLines
-          : 3
-
-      // Calculate max text width
-      const maxTextWidth = position.width - 2 * horizontalPadding
-
-      // Wrap text into lines
-      const { lines, isTruncated } = wrapTextToLines(
+      const { text, isTruncated, lineCount } = this.createBlockText(
         title,
-        maxTextWidth,
-        fontSize,
-        fontFamily,
-        maxLines
+        position,
+        opacity
       )
-
-      // Create text element
-      const text = document.createElementNS(
-        'http://www.w3.org/2000/svg',
-        'text'
-      )
-      text.setAttribute('x', String(position.x + position.width / 2))
-      text.setAttribute('text-anchor', 'middle')
-      text.setAttribute('fill', this.config.textStyle.fill)
-      text.setAttribute('font-size', String(fontSize))
-      text.setAttribute('font-family', fontFamily)
-      text.setAttribute('opacity', opacity)
-
-      // Calculate vertical centering
-      const totalTextHeight = lines.length * fontSize * lineHeight
-      const startY =
-        position.y + position.height / 2 - totalTextHeight / 2 + fontSize / 2
-
-      // Add each line as a tspan
-      lines.forEach((line, index) => {
-        const tspan = document.createElementNS(
-          'http://www.w3.org/2000/svg',
-          'tspan'
-        )
-        tspan.setAttribute('x', String(position.x + position.width / 2))
-        tspan.setAttribute('y', String(startY + index * fontSize * lineHeight))
-        tspan.setAttribute('dominant-baseline', 'middle')
-        tspan.textContent = line
-        text.appendChild(tspan)
-      })
-
       blockGroup.appendChild(text)
-
-      // Add tooltip if text was truncated or wrapped
-      if (isTruncated || lines.length > 1) {
+      if (isTruncated || lineCount > 1) {
         const titleElement = document.createElementNS(
           'http://www.w3.org/2000/svg',
           'title'
@@ -280,10 +279,8 @@ export class GraphRenderer {
         titleElement.textContent = title
         blockGroup.appendChild(titleElement)
       }
-
       group.appendChild(blockGroup)
     }
-
     return group
   }
 

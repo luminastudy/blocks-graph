@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from 'react'
+import { useEffect, useRef, type CSSProperties, type RefObject } from 'react'
 import type { Block } from '../../types/block.js'
 import type { BlockSchemaV01 } from '../../adaptors/v0.1/types.js'
 import type { BlocksGraph } from '../../components/blocks-graph.js'
@@ -6,6 +6,149 @@ import type { EdgeLineStyle } from '../../types/edge-style.js'
 
 // Import the web component to ensure it's registered
 import '../../index.js'
+
+// Helper to detect if blocks are in v0.1 schema format
+function isV01Format(data: unknown[]): data is BlockSchemaV01[] {
+  if (data.length === 0) return false
+  const firstBlock = data[0]
+  if (typeof firstBlock !== 'object' || firstBlock === null) return false
+  if (!('title' in firstBlock)) return false
+  const title = firstBlock.title
+  return (
+    typeof title === 'object' &&
+    title !== null &&
+    'he_text' in title &&
+    'en_text' in title
+  )
+}
+
+// Custom hook for data loading
+function useBlocksGraphData(
+  ref: RefObject<BlocksGraph>,
+  blocks: Block[] | BlockSchemaV01[] | undefined,
+  jsonUrl: string | undefined,
+  schemaVer: 'v0.1' | 'internal'
+) {
+  useEffect(() => {
+    if (!ref.current) return
+    if (blocks) {
+      const isV01 = schemaVer === 'v0.1' && isV01Format(blocks)
+      if (isV01) {
+        ref.current.loadFromJson(JSON.stringify(blocks), 'v0.1')
+      } else {
+        // @ts-expect-error - Type guard doesn't narrow union for TypeScript
+        ref.current.setBlocks(blocks)
+      }
+    } else if (jsonUrl) {
+      ref.current.loadFromUrl(jsonUrl, 'v0.1').catch(console.error)
+    }
+  }, [ref, blocks, jsonUrl, schemaVer])
+}
+
+// Custom hook for configuration props
+function useBlocksGraphConfig(
+  ref: RefObject<BlocksGraph>,
+  lang: 'en' | 'he',
+  orient: 'ttb' | 'ltr' | 'rtl' | 'btt',
+  showPrereq: boolean,
+  prereqStyle: EdgeLineStyle,
+  parentStyle: EdgeLineStyle
+) {
+  useEffect(() => {
+    if (!ref.current) return
+    ref.current.language = lang
+  }, [ref, lang])
+  useEffect(() => {
+    if (!ref.current) return
+    ref.current.orientation = orient
+  }, [ref, orient])
+  useEffect(() => {
+    if (!ref.current) return
+    ref.current.showPrerequisites = showPrereq
+  }, [ref, showPrereq])
+  useEffect(() => {
+    if (!ref.current) return
+    ref.current.prerequisiteLineStyle = prereqStyle
+  }, [ref, prereqStyle])
+  useEffect(() => {
+    if (!ref.current) return
+    ref.current.parentLineStyle = parentStyle
+  }, [ref, parentStyle])
+}
+
+// Custom hook for layout props
+function useBlocksGraphLayout(
+  ref: RefObject<BlocksGraph>,
+  nodeWidth: number | undefined,
+  nodeHeight: number | undefined,
+  horizontalSpacing: number | undefined,
+  verticalSpacing: number | undefined
+) {
+  useEffect(() => {
+    if (!ref.current) return
+    if (nodeWidth !== undefined) {
+      ref.current.setAttribute('node-width', String(nodeWidth))
+    }
+  }, [ref, nodeWidth])
+  useEffect(() => {
+    if (!ref.current) return
+    if (nodeHeight !== undefined) {
+      ref.current.setAttribute('node-height', String(nodeHeight))
+    }
+  }, [ref, nodeHeight])
+  useEffect(() => {
+    if (!ref.current) return
+    if (horizontalSpacing !== undefined) {
+      ref.current.setAttribute('horizontal-spacing', String(horizontalSpacing))
+    }
+  }, [ref, horizontalSpacing])
+  useEffect(() => {
+    if (!ref.current) return
+    if (verticalSpacing !== undefined) {
+      ref.current.setAttribute('vertical-spacing', String(verticalSpacing))
+    }
+  }, [ref, verticalSpacing])
+}
+
+// Custom hook for event listeners
+function useBlocksGraphEvents(
+  ref: RefObject<BlocksGraph>,
+  onBlocksRendered:
+    | ((event: CustomEvent<{ blockCount: number }>) => void)
+    | undefined,
+  onBlockSelected:
+    | ((
+        event: CustomEvent<{ blockId: string | null; selectionLevel: number }>
+      ) => void)
+    | undefined
+) {
+  useEffect(() => {
+    const element = ref.current
+    if (!element || !onBlocksRendered) return
+    const handler = (e: Event) => {
+      // Event is actually CustomEvent from web component
+      // @ts-expect-error - Web component dispatches CustomEvent but typed as Event
+      onBlocksRendered(e)
+    }
+    element.addEventListener('blocks-rendered', handler)
+    return () => {
+      element.removeEventListener('blocks-rendered', handler)
+    }
+  }, [ref, onBlocksRendered])
+  useEffect(() => {
+    const element = ref.current
+    if (!element || !onBlockSelected) return
+    const handler = (e: Event) => {
+      // Event is actually CustomEvent from web component
+      // @ts-expect-error - Web component dispatches CustomEvent but typed as Event
+      onBlockSelected(e)
+    }
+    element.addEventListener('block-selected', handler)
+    return () => {
+      element.removeEventListener('block-selected', handler)
+    }
+  }, [ref, onBlockSelected])
+}
 
 export interface BlocksGraphProps {
   // Data props
@@ -88,130 +231,16 @@ export function BlocksGraphReact({
   const parentStyle =
     parentLineStyle !== undefined ? parentLineStyle : 'straight'
   const ref = useRef<BlocksGraph>(null)
-
-  // Helper to detect if blocks are in v0.1 schema format
-  const isV01Format = (data: unknown[]): data is BlockSchemaV01[] => {
-    if (data.length === 0) return false
-    const firstBlock = data[0]
-    if (typeof firstBlock !== 'object' || firstBlock === null) return false
-    if (!('title' in firstBlock)) return false
-    const title = firstBlock.title
-    return (
-      typeof title === 'object' &&
-      title !== null &&
-      'he_text' in title &&
-      'en_text' in title
-    )
-  }
-
-  // Load data when blocks change
-  useEffect(() => {
-    if (!ref.current) return
-
-    if (blocks) {
-      // Auto-detect schema version if not explicitly internal format
-      const isV01 = schemaVer === 'v0.1' && isV01Format(blocks)
-
-      if (isV01) {
-        // Convert from v0.1 schema - blocks is BlockSchemaV01[] here
-        ref.current.loadFromJson(JSON.stringify(blocks), 'v0.1')
-      } else {
-        // Set internal format directly
-        // TypeScript can't narrow union types across control flow branches
-        // We've verified it's not v0.1 format, so it must be Block[]
-        // @ts-expect-error - Type guard doesn't narrow union for TypeScript
-        ref.current.setBlocks(blocks)
-      }
-    } else if (jsonUrl) {
-      // Load from URL (defaults to v0.1)
-      ref.current.loadFromUrl(jsonUrl, 'v0.1').catch(console.error)
-    }
-  }, [blocks, jsonUrl, schemaVer])
-
-  // Sync configuration props
-  useEffect(() => {
-    if (!ref.current) return
-    ref.current.language = lang
-  }, [lang])
-
-  useEffect(() => {
-    if (!ref.current) return
-    ref.current.orientation = orient
-  }, [orient])
-
-  useEffect(() => {
-    if (!ref.current) return
-    ref.current.showPrerequisites = showPrereq
-  }, [showPrereq])
-
-  // Sync layout props
-  useEffect(() => {
-    if (!ref.current) return
-    if (nodeWidth !== undefined) {
-      ref.current.setAttribute('node-width', String(nodeWidth))
-    }
-  }, [nodeWidth])
-
-  useEffect(() => {
-    if (!ref.current) return
-    if (nodeHeight !== undefined) {
-      ref.current.setAttribute('node-height', String(nodeHeight))
-    }
-  }, [nodeHeight])
-
-  useEffect(() => {
-    if (!ref.current) return
-    if (horizontalSpacing !== undefined) {
-      ref.current.setAttribute('horizontal-spacing', String(horizontalSpacing))
-    }
-  }, [horizontalSpacing])
-
-  useEffect(() => {
-    if (!ref.current) return
-    if (verticalSpacing !== undefined) {
-      ref.current.setAttribute('vertical-spacing', String(verticalSpacing))
-    }
-  }, [verticalSpacing])
-
-  // Sync edge style props
-  useEffect(() => {
-    if (!ref.current) return
-    ref.current.prerequisiteLineStyle = prereqStyle
-  }, [prereqStyle])
-
-  useEffect(() => {
-    if (!ref.current) return
-    ref.current.parentLineStyle = parentStyle
-  }, [parentStyle])
-
-  // Event listeners
-  useEffect(() => {
-    const element = ref.current
-    if (!element || !onBlocksRendered) return
-
-    const handler = (event: Event) => {
-      if (event instanceof CustomEvent) {
-        onBlocksRendered(event)
-      }
-    }
-
-    element.addEventListener('blocks-rendered', handler)
-    return () => element.removeEventListener('blocks-rendered', handler)
-  }, [onBlocksRendered])
-
-  useEffect(() => {
-    const element = ref.current
-    if (!element || !onBlockSelected) return
-
-    const handler = (event: Event) => {
-      if (event instanceof CustomEvent) {
-        onBlockSelected(event)
-      }
-    }
-
-    element.addEventListener('block-selected', handler)
-    return () => element.removeEventListener('block-selected', handler)
-  }, [onBlockSelected])
+  useBlocksGraphData(ref, blocks, jsonUrl, schemaVer)
+  useBlocksGraphConfig(ref, lang, orient, showPrereq, prereqStyle, parentStyle)
+  useBlocksGraphLayout(
+    ref,
+    nodeWidth,
+    nodeHeight,
+    horizontalSpacing,
+    verticalSpacing
+  )
+  useBlocksGraphEvents(ref, onBlocksRendered, onBlockSelected)
 
   return (
     <blocks-graph

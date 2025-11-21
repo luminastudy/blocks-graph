@@ -1,4 +1,3 @@
-/* eslint-disable max-lines -- Core relationship manager with extensive API surface */
 import type { Block } from '../types/block.js'
 import type { BlockGraph } from '../types/block-graph.js'
 import { SelfLoopError } from '../errors/self-loop-error.js'

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, waitFor } from '@testing-library/react'
-import { BlocksGraphReact } from './BlocksGraphReact.js'
 import type { Block } from '../../types/block.js'
 import type { BlocksGraph } from '../../components/blocks-graph.js'
+import { BlocksGraphReact } from './BlocksGraphReact.js'
 
 /**
  * Helper to get blocks-graph element from container with proper typing
