@@ -384,10 +384,10 @@ CORS issues, module loading, server requirements
 
 - **Inbound**: HTML example (fetch), React example (import or fetch)
 - **Outbound**: None (pure data file)
-- **External**: Complies with @tupe12334/block-schema v0.1 format
+- **External**: Complies with @lumina-study/block-schema v0.1 format
 
 **External Dependencies Investigation**:
-The v0.1 schema is defined by @tupe12334/block-schema package (already a dependency). Schema validation is handled by the library's SchemaV01Adaptor using AJV. No additional external dependencies are required for the data file itself.
+The v0.1 schema is defined by @lumina-study/block-schema package (already a dependency). Schema validation is handled by the library's SchemaV01Adaptor using AJV. No additional external dependencies are required for the data file itself.
 
 **Contract Definition**
 
@@ -848,7 +848,7 @@ Demonstrates React integration with TypeScript
 
 ### Sample Data Model
 
-The sample data follows the v0.1 block schema format defined by @tupe12334/block-schema:
+The sample data follows the v0.1 block schema format defined by @lumina-study/block-schema:
 
 ```typescript
 interface BlockSchemaV01 {

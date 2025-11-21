@@ -7,7 +7,7 @@ import { getValidationErrors } from './get-validation-errors.js'
 /**
  * Adaptor for schema v0.1
  * Converts from schema v0.1 format to internal block format
- * Uses @tupe12334/block-schema for validation
+ * Uses @lumina-study/block-schema for validation
  */
 export class SchemaV01Adaptor {
   /**

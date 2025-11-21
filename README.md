@@ -538,7 +538,7 @@ graph.addEventListener('blocks-rendered', event => {
 
 ## Schema Versions
 
-This package uses [`@tupe12334/block-schema`](https://www.npmjs.com/package/@tupe12334/block-schema) for JSON Schema validation.
+This package uses [`@lumina-study/block-schema`](https://www.npmjs.com/package/@lumina-study/block-schema) for JSON Schema validation.
 
 ### v0.1
 
@@ -651,7 +651,7 @@ pnpm test:visual:approve      # Approve pending changes
 ## Dependencies
 
 - **Runtime**:
-  - `@tupe12334/block-schema` - JSON Schema definitions for block validation
+  - `@lumina-study/block-schema` - JSON Schema definitions for block validation
   - `ajv` - JSON Schema validator
   - `ajv-formats` - Format validation for AJV (UUID support)
 
