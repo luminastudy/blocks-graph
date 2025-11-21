@@ -2,6 +2,7 @@ import type { BlockGraph } from '../types/block-graph.js'
 import type { PositionedBlock } from '../types/positioned-block.js'
 import type { BlockPosition } from '../types/block-position.js'
 import type { RendererConfig } from './renderer-config.js'
+import type { Orientation } from '../types/orientation.js'
 import { DEFAULT_RENDERER_CONFIG } from './default-renderer-config.js'
 import { wrapTextToLines } from './text-wrapper.js'
 import { edgeLineStyleToDashArray } from '../types/edge-line-style-to-dash-array.js'
@@ -29,7 +30,7 @@ export class GraphRenderer {
   private calculateConnectionPoints(
     fromPos: BlockPosition,
     toPos: BlockPosition,
-    orientation: string
+    orientation: Orientation
   ): { x1: number; y1: number; x2: number; y2: number } {
     switch (orientation) {
       case 'ttb':
@@ -64,14 +65,6 @@ export class GraphRenderer {
           x2: toPos.x + toPos.width,
           y2: toPos.y + toPos.height / 2,
         }
-      default:
-        // Default to TTB
-        return {
-          x1: fromPos.x + fromPos.width / 2,
-          y1: fromPos.y + fromPos.height,
-          x2: toPos.x + toPos.width / 2,
-          y2: toPos.y,
-        }
     }
   }
 
@@ -88,7 +81,8 @@ export class GraphRenderer {
     const positionMap = new Map(
       positioned.map(pb => [pb.block.id, pb.position])
     )
-    const orientation = this.config.orientation ?? 'ttb'
+    const orientation =
+      this.config.orientation !== undefined ? this.config.orientation : 'ttb'
 
     for (const edge of graph.edges) {
       const fromPos = positionMap.get(edge.from)
@@ -219,9 +213,18 @@ export class GraphRenderer {
         this.config.language === 'he' ? block.title.he : block.title.en
       const fontSize = this.config.textStyle.fontSize
       const fontFamily = this.config.textStyle.fontFamily
-      const lineHeight = this.config.textStyle.lineHeight ?? 1.2
-      const horizontalPadding = this.config.textStyle.horizontalPadding ?? 10
-      const maxLines = this.config.textStyle.maxLines ?? 3
+      const lineHeight =
+        this.config.textStyle.lineHeight !== undefined
+          ? this.config.textStyle.lineHeight
+          : 1.2
+      const horizontalPadding =
+        this.config.textStyle.horizontalPadding !== undefined
+          ? this.config.textStyle.horizontalPadding
+          : 10
+      const maxLines =
+        this.config.textStyle.maxLines !== undefined
+          ? this.config.textStyle.maxLines
+          : 3
 
       // Calculate max text width
       const maxTextWidth = position.width - 2 * horizontalPadding
