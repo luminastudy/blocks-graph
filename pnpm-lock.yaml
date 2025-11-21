@@ -8,7 +8,7 @@ importers:
 
   .:
     dependencies:
-      '@tupe12334/block-schema':
+      '@lumina-study/block-schema':
         specifier: ^1.0.0
         version: 1.0.0
       ajv:
@@ -2100,6 +2100,9 @@ packages:
   '@loki/target-native-ios-simulator@0.35.0':
     resolution: {integrity: sha512-KyN0vmDWr0elcOJJA97wS795zVA/R3WLqOip7rb2RvTt3Zb8gBigRFMHs8DZyXVL0uBMfeIYL9zcQNjH6eraHA==}
 
+  '@lumina-study/block-schema@1.0.0':
+    resolution: {integrity: sha512-5mwR1cqKHoW1e95FaL3PYCXY4uqqDE7u0yLGMPwyCqe2viFgQTKjwSGb1fWNDgmDf2LqmCyXVGD79EcRbBU1dQ==}
+
   '@mdx-js/react@3.1.1':
     resolution: {integrity: sha512-f++rKLQgUVYDAtECQ6fn/is15GkEH9+nZPM3MS0RcxVqoTfawHvDlSCH7JbMhAM6uJ32v3eXLvLmLvjGu7PTQw==}
     peerDependencies:
@@ -2889,9 +2892,6 @@ packages:
   '@tufjs/models@3.0.1':
     resolution: {integrity: sha512-UUYHISyhCU3ZgN8yaear3cGATHb3SMuKHsQ/nVbHXcmnBf+LzQ/cQfhNG+rfaSHgqGKNEm2cOCLVLELStUQ1JA==}
     engines: {node: ^18.17.0 || >=20.5.0}
-
-  '@tupe12334/block-schema@1.0.0':
-    resolution: {integrity: sha512-MTA7aITFFizVVtkQuOnKY9Twda49x4h2YMmJ0EgM7T+wOZGLHp1XRC0AHLQsziqEaguTGSQ5/Y0EmxQvCAYELg==}
 
   '@types/aria-query@5.0.4':
     resolution: {integrity: sha512-rfT93uj5s0PRL7EzccGMs3brplhcrghnDoV26NqKhCAS1hVo+WdNsPvE/yb6ilfr5hi2MEk6d5EWJTKdxg8jVw==}
@@ -9858,6 +9858,8 @@ snapshots:
       - supports-color
       - utf-8-validate
 
+  '@lumina-study/block-schema@1.0.0': {}
+
   '@mdx-js/react@3.1.1(@types/react@18.3.26)(react@18.3.1)':
     dependencies:
       '@types/mdx': 2.0.13
@@ -10599,8 +10601,6 @@ snapshots:
     dependencies:
       '@tufjs/canonical-json': 2.0.0
       minimatch: 9.0.5
-
-  '@tupe12334/block-schema@1.0.0': {}
 
   '@types/aria-query@5.0.4': {}
 

@@ -106,7 +106,7 @@
     "pnpm": ">=10.21.0"
   },
   "dependencies": {
-    "@tupe12334/block-schema": "^1.0.0",
+    "@lumina-study/block-schema": "^1.0.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"
   },
