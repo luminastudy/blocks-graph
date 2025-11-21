@@ -86,13 +86,13 @@ describe('BlocksGraph - Auto-detection', () => {
     it('should convert v0.1 format to internal format', () => {
       const v01Blocks: BlockSchemaV01[] = [
         {
-          id: 'test-id',
+          id: '550e8400-e29b-41d4-a716-446655440010',
           title: {
             he_text: 'כותרת',
             en_text: 'Title',
           },
-          prerequisites: ['prereq-1'],
-          parents: ['parent-1'],
+          prerequisites: ['550e8400-e29b-41d4-a716-446655440011'],
+          parents: ['550e8400-e29b-41d4-a716-446655440012'],
         },
       ]
 
@@ -109,7 +109,7 @@ describe('BlocksGraph - Auto-detection', () => {
     it('should preserve extra properties from v0.1 format', () => {
       const v01Blocks = [
         {
-          id: 'test-id',
+          id: '550e8400-e29b-41d4-a716-446655440020',
           title: {
             he_text: 'כותרת',
             en_text: 'Title',
@@ -210,15 +210,24 @@ describe('BlocksGraph - Auto-detection', () => {
     it('should handle large arrays of v0.1 format blocks', () => {
       const largeV01Array: BlockSchemaV01[] = Array.from(
         { length: 100 },
-        (_, i) => ({
-          id: `block-${i}`,
-          title: {
-            he_text: `כותרת ${i}`,
-            en_text: `Title ${i}`,
-          },
-          prerequisites: i > 0 ? [`block-${i - 1}`] : [],
-          parents: i > 0 ? [`block-${i - 1}`] : [],
-        })
+        (_, i) => {
+          // Generate valid UUIDs with sequential increments for testing
+          const currentId = `550e8400-e29b-41d4-a716-4466554400${String(i).padStart(2, '0')}`
+          const prevId =
+            i > 0
+              ? `550e8400-e29b-41d4-a716-4466554400${String(i - 1).padStart(2, '0')}`
+              : null
+
+          return {
+            id: currentId,
+            title: {
+              he_text: `כותרת ${i}`,
+              en_text: `Title ${i}`,
+            },
+            prerequisites: prevId ? [prevId] : [],
+            parents: prevId ? [prevId] : [],
+          }
+        }
       )
 
       expect(() => element.setBlocks(largeV01Array)).not.toThrow()
@@ -262,19 +271,19 @@ describe('BlocksGraph - Auto-detection', () => {
     it('should detect all blocks as v0.1 format when all are valid', () => {
       const allV01: BlockSchemaV01[] = [
         {
-          id: 'block-1',
+          id: '550e8400-e29b-41d4-a716-446655440100',
           title: { he_text: 'כותרת 1', en_text: 'Title 1' },
           prerequisites: [],
           parents: [],
         },
         {
-          id: 'block-2',
+          id: '550e8400-e29b-41d4-a716-446655440101',
           title: { he_text: 'כותרת 2', en_text: 'Title 2' },
           prerequisites: [],
           parents: [],
         },
         {
-          id: 'block-3',
+          id: '550e8400-e29b-41d4-a716-446655440102',
           title: { he_text: 'כותרת 3', en_text: 'Title 3' },
           prerequisites: [],
           parents: [],
@@ -287,13 +296,13 @@ describe('BlocksGraph - Auto-detection', () => {
     it('should reject array with second block in different format', () => {
       const inconsistent = [
         {
-          id: 'block-1',
+          id: '550e8400-e29b-41d4-a716-446655440110',
           title: { he: 'כותרת 1', en: 'Title 1' }, // Internal
           prerequisites: [],
           parents: [],
         },
         {
-          id: 'block-2',
+          id: '550e8400-e29b-41d4-a716-446655440111',
           title: { he_text: 'כותרת 2', en_text: 'Title 2' }, // v0.1
           prerequisites: [],
           parents: [],

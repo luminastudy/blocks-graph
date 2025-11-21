@@ -4,7 +4,7 @@ import { GraphEngine } from '../core/graph-engine.js'
 import { GraphRenderer } from '../core/renderer.js'
 import { schemaV01Adaptor } from '../adaptors/v0.1/instance.js'
 import type { BlockSchemaV01 } from '../adaptors/v0.1/types.js'
-import { isBlockSchemaV01Shape } from '../adaptors/v0.1/is-block-schema-v01-shape.js'
+import { isBlockSchemaV01 } from '../adaptors/v0.1/validators.js'
 import { InvalidBlockSchemaError } from '../errors/invalid-block-schema-error.js'
 import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-version-error.js'
 import { BlocksFetchError } from '../errors/blocks-fetch-error.js'
@@ -174,18 +174,16 @@ export class BlocksGraph extends HTMLElement {
     // Auto-detect format based on first block
     const firstBlock = blocks[0]
 
-    if (isBlockSchemaV01Shape(firstBlock)) {
+    if (isBlockSchemaV01(firstBlock)) {
       // v0.1 schema format - convert to internal format
       // Validate all blocks are v0.1 format
-      const allValid = blocks.every(isBlockSchemaV01Shape)
+      const allValid = blocks.every(isBlockSchemaV01)
       if (!allValid) {
         throw new InvalidBlockSchemaError(
           'Mixed block formats detected. All blocks must be in the same format.'
         )
       }
-      this.blocks = schemaV01Adaptor.adaptMany(
-        blocks.filter(isBlockSchemaV01Shape)
-      )
+      this.blocks = schemaV01Adaptor.adaptMany(blocks.filter(isBlockSchemaV01))
     } else if (isBlock(firstBlock)) {
       // Internal format - use directly
       // Validate all blocks are internal format
