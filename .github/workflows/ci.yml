@@ -179,8 +179,20 @@ jobs:
       - name: Build Storybook
         run: pnpm build-storybook
 
+      - name: Start Storybook server
+        run: |
+          npx http-server storybook-static --port 6006 &
+          STORYBOOK_PID=$!
+          echo "STORYBOOK_PID=$STORYBOOK_PID" >> $GITHUB_ENV
+          sleep 5
+          curl -s http://localhost:6006 > /dev/null || (echo "Storybook not ready" && exit 1)
+
       - name: Run Loki visual tests
-        run: pnpm test:visual
+        run: pnpm loki test
+
+      - name: Stop Storybook server
+        if: always()
+        run: kill $STORYBOOK_PID || true
 
       - name: Upload visual test artifacts on failure
         if: failure()
