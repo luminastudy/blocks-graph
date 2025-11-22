@@ -93,6 +93,7 @@
     "eslint-config-publishable-package-json": "^1.0.0",
     "husky": "^9.1.7",
     "jsdom": "^25.0.1",
+    "knip": "^5.70.1",
     "lint-staged": "^16.2.6",
     "lit": "^3",
     "loki": "^0.35.1",
