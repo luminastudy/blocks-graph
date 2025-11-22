@@ -43,6 +43,7 @@
     "release": "release-it",
     "spell": "cspell lint --no-progress --show-suggestions \"**/*.{ts,tsx,js,jsx,mjs,md,json}\"",
     "spell:check": "cspell lint --no-progress \"**/*.{ts,tsx,js,jsx,mjs,md,json}\"",
+    "knip": "knip",
     "prepare": "husky"
   },
   "keywords": [

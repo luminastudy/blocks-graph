@@ -1,0 +1,46 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "src/index.ts",
+    "src/wrappers/react/index.ts",
+    "src/wrappers/angular/index.ts",
+    "src/wrappers/vue/index.ts"
+  ],
+  "project": ["src/**/*.ts", "src/**/*.tsx"],
+  "ignore": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "dist/**",
+    "coverage/**",
+    "storybook-static/**",
+    ".storybook/**",
+    "examples/**",
+    "src/core/add-block-to-visibility.ts",
+    "src/core/is-root-node.ts",
+    "src/core/is-root-single-node.ts"
+  ],
+  "ignoreDependencies": [
+    "@angular/core",
+    "@storybook/addon-a11y",
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions",
+    "@storybook/test",
+    "@storybook/web-components",
+    "@storybook/web-components-vite",
+    "@testing-library/jest-dom",
+    "@testing-library/react",
+    "@vitest/ui",
+    "canvas",
+    "http-server",
+    "loki",
+    "react",
+    "storybook",
+    "vite",
+    "vue"
+  ],
+  "ignoreBinaries": ["http-server", "knip"],
+  "ignoreExportsUsedInFile": true
+}
