@@ -73,7 +73,9 @@
     "luxon",
     "ofetch",
     "esbenp",
-    "lintstagedrc"
+    "lintstagedrc",
+    "createdb",
+    "WCAG"
   ],
   "flagWords": [],
   "ignorePaths": [

@@ -1,5 +1,5 @@
 ---
-description: Initialize or validate package setup with correct package.json, release-it, commitlint, CI/CD, build/test configuration, and code coverage testing. Handles both publishable packages and internal packages.
+description: Initialize or validate package setup with correct package.json, release-it, commitlint, knip, CI/CD, build/test configuration, and code coverage testing. Handles both publishable packages and internal packages.
 ---
 
 # Package Setup and Validation
@@ -19,6 +19,7 @@ Both scenarios ensure:
 - ✅ Proper testing setup with coverage thresholds (vitest if needed)
 - ✅ Code coverage reporting with 80% minimum thresholds
 - ✅ Proper build setup (vite if needed for libraries)
+- ✅ Unused code detection (knip configuration)
 - ✅ Working CI/CD pipeline with coverage uploads (GitHub Actions)
 - ✅ pnpm as package manager
 
@@ -114,6 +115,7 @@ Then ensure it has these essential fields:
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
     "spell": "cspell lint '**/*.{ts,js,md,json}' --gitignore",
     "spell:check": "cspell lint '**/*.{ts,js,md,json}' --gitignore",
+    "knip": "knip",
     "prepare": "husky"
   },
   "keywords": [],
@@ -165,6 +167,9 @@ pnpm add -D @commitlint/cli @commitlint/config-conventional
 
 # Spell checking
 pnpm add -D cspell
+
+# Knip for finding unused files, dependencies, and exports
+pnpm add -D knip
 
 # Add vitest if tests needed
 if [ "$NEEDS_TESTS" = "true" ]; then
@@ -371,7 +376,49 @@ Spell checking configuration for the project with Hebrew support:
 - Add project-specific words to the `words` array as needed
 - The spell checker will now recognize both English and Hebrew text
 
-### Step 5: Create commitlint.config.mjs
+### Step 5: Create knip.json
+
+Knip finds unused files, dependencies, and exports in your TypeScript project:
+
+```json
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": ["src/index.ts", "src/cli.ts"],
+  "project": ["src/**/*.ts"],
+  "ignore": ["**/*.spec.ts", "**/*.test.ts", "dist/**", "coverage/**"],
+  "ignoreDependencies": [],
+  "ignoreExportsUsedInFile": true,
+  "ignoreWorkspaces": []
+}
+```
+
+**Configuration Explanation**:
+
+- **entry**: Main entry points of your package (where execution starts)
+- **project**: All TypeScript files to analyze
+- **ignore**: Files to exclude from analysis (tests, build output, coverage)
+- **ignoreDependencies**: Dependencies to ignore (useful for runtime-only deps)
+- **ignoreExportsUsedInFile**: Allows exports that are only used in the same file
+- **ignoreWorkspaces**: For monorepos, workspaces to skip
+
+**Common Entry Points**:
+
+- **CLI packages**: `["src/cli.ts", "src/index.ts"]`
+- **Libraries**: `["src/index.ts"]`
+- **Applications**: `["src/main.ts", "src/app.ts"]`
+
+**What Knip Detects**:
+
+- Unused files (files not imported anywhere)
+- Unused dependencies (installed but never imported)
+- Unused devDependencies (installed but not used in scripts or code)
+- Unused exports (exported but never imported)
+- Duplicate exports
+- Unlisted dependencies (imported but not in package.json)
+
+**Note**: Adjust the `entry` field based on your package's actual entry points. Check package.json `main`, `bin`, and `exports` fields to identify all entry points.
+
+### Step 6: Create commitlint.config.mjs
 
 Commit message linting configuration for enforcing conventional commits:
 
@@ -450,6 +497,13 @@ pnpm format:check || {
 echo "📖 Checking spelling..."
 pnpm spell || {
   echo "❌ Spell check failed. Please fix spelling errors."
+  exit 1
+}
+
+# Check for unused code
+echo "🔍 Checking for unused code..."
+pnpm knip || {
+  echo "❌ Knip found unused code. Please review and fix."
   exit 1
 }
 
@@ -545,7 +599,7 @@ ls -la .husky/
 # Should show:
 # - pre-commit (runs lint-staged on staged files)
 # - commit-msg (validates commit message format)
-# - pre-push (runs full lint, format, spell, test checks)
+# - pre-push (runs full lint, format, spell, knip, test checks)
 
 # Test pre-commit hook manually
 git add .
@@ -575,6 +629,7 @@ echo "feat(test): testing commitlint" | .husky/commit-msg
    - Full project lint check
    - Full format check
    - Full spell check
+   - Full knip check (unused code detection)
    - All tests must pass
    - Ensures nothing broken is pushed
 
@@ -669,6 +724,9 @@ jobs:
 
       - name: Spell check
         run: pnpm spell
+
+      - name: Check for unused code
+        run: pnpm knip
 
       - name: Run tests with coverage
         run: pnpm test:coverage --run
@@ -806,6 +864,9 @@ jobs:
 
       - name: Spell check
         run: pnpm spell
+
+      - name: Check for unused code
+        run: pnpm knip
 
       - name: Run tests with coverage
         run: pnpm test:coverage --run
@@ -985,6 +1046,7 @@ pnpm test:watch
 - `pnpm format` - Format code
 - `pnpm format:check` - Check formatting
 - `pnpm spell` - Check spelling
+- `pnpm knip` - Find unused files, dependencies, and exports
 
 ## Making Changes
 
@@ -1048,7 +1110,7 @@ This project uses Husky for git hooks:
 
 - **Pre-commit**: Runs lint-staged (lints, formats, and spell-checks staged files)
 - **Commit-msg**: Validates commit message format using commitlint (enforces conventional commits)
-- **Pre-push**: Runs full validation (lint, format, spell check, tests)
+- **Pre-push**: Runs full validation (lint, format, spell, knip, tests)
 
 These hooks ensure code quality and consistent commit messages before commits and pushes.
 
@@ -1078,6 +1140,7 @@ These hooks ensure code quality and consistent commit messages before commits an
    pnpm lint
    pnpm format:check
    pnpm spell
+   pnpm knip
    pnpm test
    pnpm build
    ```
@@ -1219,6 +1282,9 @@ pnpm lint
 # Check formatting
 pnpm format:check
 
+# Check for unused code
+pnpm knip
+
 # Run tests (if configured)
 if [ "$NEEDS_TESTS" = "true" ]; then
   pnpm test --run
@@ -1346,16 +1412,18 @@ Review and confirm:
 - ✅ If publishable: eslint-config-publishable-package-json validates package.json
 - ✅ .prettierrc exists
 - ✅ cspell.json exists
+- ✅ knip.json exists with correct entry points
 - ✅ Linting passes (`pnpm lint`)
 - ✅ Formatting is correct (`pnpm format:check`)
 - ✅ Spell checking passes (`pnpm spell`)
+- ✅ Knip reports no unused files/dependencies (`pnpm knip`)
 
 **CI/CD**:
 
 - ✅ .github/workflows/ci.yml exists
 - ✅ Workflow is valid YAML
 - ✅ Tests node versions 20, 22
-- ✅ Runs lint, format, spell, test with coverage, build
+- ✅ Runs lint, format, spell, knip, test with coverage, build
 - ✅ Uploads coverage reports to Codecov (if CODECOV_TOKEN set)
 - ✅ If publishable: Has publish job with NPM_TOKEN
 - ✅ If publishable: Publish only runs when package.json version changes
@@ -1411,6 +1479,7 @@ Version: X.X.X
   - .prettierrc (formatting)
   - .prettierignore
   - cspell.json (spell checking)
+  - knip.json (unused code detection)
   - commitlint.config.mjs (conventional commits)
   - .lintstagedrc.json (staged file linting)
   - .husky/pre-commit (lint-staged on commit)
@@ -1427,6 +1496,7 @@ Version: X.X.X
   - ESLint@latest + eslint-config-agent@latest
   - Prettier
   - cspell (spell checking)
+  - knip (unused code detection)
   - commitlint + @commitlint/config-conventional (commit message linting)
   - Husky + lint-staged (git hooks)
   - Vitest (testing)
@@ -1444,12 +1514,13 @@ Version: X.X.X
   pnpm format        - Format code
   pnpm format:check  - Check formatting
   pnpm spell         - Spell check
+  pnpm knip          - Find unused code
   [pnpm release]     - Create release - if publishable
 
 ✅ Git Hooks Configured:
   Pre-commit:  Runs lint-staged (lint, format, spell check staged files)
   Commit-msg:  Validates commit message format (conventional commits)
-  Pre-push:    Runs full validation (lint, format, spell, tests)
+  Pre-push:    Runs full validation (lint, format, spell, knip, tests)
 
 ✅ CI/CD Setup:
   - GitHub Actions workflow configured
@@ -1474,8 +1545,9 @@ Version: X.X.X
   9. View coverage reports locally: open coverage/index.html
   10. Update package.json metadata (author, keywords, description, repository URL)
   11. Add project-specific words to cspell.json
-  12. Push to GitHub to trigger CI with coverage reporting
-  [13. Run `pnpm release` to publish first version] - if publishable
+  12. Run `pnpm knip` and review/remove unused files, dependencies, and exports
+  13. Push to GitHub to trigger CI with coverage reporting
+  [14. Run `pnpm release` to publish first version] - if publishable
 
 🚀 Ready to develop!
 ```
@@ -1521,6 +1593,36 @@ Version: X.X.X
 - **Optional for apps**: But highly recommended
 - **Coverage**: Aim for >80% coverage
 
+### Using Knip for Code Quality
+
+Knip helps maintain clean codebases by detecting:
+
+1. **Unused Files**: Source files that are never imported
+2. **Unused Dependencies**: Packages installed but never used
+3. **Unused Exports**: Functions/classes exported but never imported
+4. **Duplicate Exports**: Same symbol exported multiple times
+5. **Unlisted Dependencies**: Imports without package.json entries
+
+**Running Knip**:
+
+```bash
+# Check for unused code
+pnpm knip
+
+# Output will show:
+# - Unused files (delete or use them)
+# - Unused dependencies (remove from package.json)
+# - Unused exports (remove or make private)
+```
+
+**Common Scenarios**:
+
+- **False Positives**: Add to `ignoreDependencies` in knip.json if a dependency is runtime-only or used dynamically
+- **Entry Points**: Update `entry` array if you add new entry points (CLI commands, exported modules)
+- **Plugins**: Knip auto-detects vitest, eslint, prettier configs - you don't need to configure them
+
+**Best Practice**: Run `pnpm knip` regularly during development to keep your codebase lean and maintainable.
+
 ## Troubleshooting
 
 ### Common Issues
@@ -1549,6 +1651,12 @@ Version: X.X.X
    - Verify test files match pattern `*.spec.ts`
    - Run locally first: `pnpm test`
 
+6. **Knip reports false positives**:
+   - Add runtime-only dependencies to `ignoreDependencies` in knip.json
+   - Update `entry` array if you have additional entry points
+   - Check if imports are dynamic (use string literals for better detection)
+   - Verify entry points match package.json `main`, `bin`, `exports` fields
+
 ## Success Criteria
 
 After running this command, the package should:
@@ -1562,6 +1670,7 @@ After running this command, the package should:
 ✅ Pass linting with `pnpm lint`
 ✅ Pass formatting checks with `pnpm format:check`
 ✅ Pass spell checking with `pnpm spell`
+✅ Have no unused code (checked with `pnpm knip`)
 ✅ Have working CI/CD pipeline with coverage reporting
 ✅ Be ready to publish (if publishable) or use (if internal)
 
