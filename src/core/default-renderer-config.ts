@@ -25,7 +25,7 @@ export const DEFAULT_RENDERER_CONFIG: RendererConfig = {
     prerequisite: {
       stroke: '#4a90e2',
       strokeWidth: 2,
-      lineStyle: 'dashed',
+      lineStyle: 'straight',
     },
     parent: {
       stroke: '#666666',
