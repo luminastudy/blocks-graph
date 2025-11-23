@@ -10,7 +10,7 @@ import '../../index.js'
 // Custom hook for data loading
 // The BlocksGraph component now auto-detects schema versions
 function useBlocksGraphData(
-  ref: RefObject<BlocksGraph>,
+  ref: RefObject<BlocksGraph | null>,
   blocks: Block[] | BlockSchemaV01[] | undefined,
   jsonUrl: string | undefined
 ) {
@@ -25,7 +25,7 @@ function useBlocksGraphData(
 
 // Custom hook for configuration props
 function useBlocksGraphConfig(
-  ref: RefObject<BlocksGraph>,
+  ref: RefObject<BlocksGraph | null>,
   lang: 'en' | 'he',
   orient: 'ttb' | 'ltr' | 'rtl' | 'btt',
   showPrereq: boolean,
@@ -56,7 +56,7 @@ function useBlocksGraphConfig(
 
 // Custom hook for layout props
 function useBlocksGraphLayout(
-  ref: RefObject<BlocksGraph>,
+  ref: RefObject<BlocksGraph | null>,
   nodeWidth: number | undefined,
   nodeHeight: number | undefined,
   horizontalSpacing: number | undefined,
@@ -90,7 +90,7 @@ function useBlocksGraphLayout(
 
 // Custom hook for event listeners
 function useBlocksGraphEvents(
-  ref: RefObject<BlocksGraph>,
+  ref: RefObject<BlocksGraph | null>,
   onBlocksRendered:
     | ((event: CustomEvent<{ blockCount: number }>) => void)
     | undefined,
@@ -202,6 +202,7 @@ export interface BlocksGraphProps {
  *       onBlockSelected={(e) => console.log(e.detail)}
  *     />
  *   );
+ *   }
  * }
  * ```
  */
@@ -242,11 +243,7 @@ export function BlocksGraphReact({
   useBlocksGraphEvents(ref, onBlocksRendered, onBlockSelected)
 
   return (
-    <blocks-graph
-      ref={ref}
-      class={className}
-      // @ts-expect-error - React CSSProperties type conflicts with DOM CSSStyleDeclaration
-      style={style}
-    />
+    // @ts-expect-error - Web Component is not in JSX.IntrinsicElements
+    <blocks-graph ref={ref} class={className} style={style} />
   )
 }
