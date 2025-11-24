@@ -1,6 +1,6 @@
 {
   "name": "@lumina-study/blocks-graph",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Framework-agnostic Web Component for visualizing Lumina Study block schemas",
   "type": "module",
   "main": "./dist/index.js",
@@ -109,7 +109,7 @@
     "pnpm": ">=10.21.0"
   },
   "dependencies": {
-    "@lumina-study/block-schema": "^1.0.0",
+    "@lumina-study/block-schema": "^1.0.1",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"
   },

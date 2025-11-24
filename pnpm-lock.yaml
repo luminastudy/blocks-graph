@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@lumina-study/block-schema':
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^1.0.1
+        version: 1.0.1
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
@@ -2156,8 +2156,9 @@ packages:
   '@loki/target-native-ios-simulator@0.35.0':
     resolution: {integrity: sha512-KyN0vmDWr0elcOJJA97wS795zVA/R3WLqOip7rb2RvTt3Zb8gBigRFMHs8DZyXVL0uBMfeIYL9zcQNjH6eraHA==}
 
-  '@lumina-study/block-schema@1.0.0':
-    resolution: {integrity: sha512-5mwR1cqKHoW1e95FaL3PYCXY4uqqDE7u0yLGMPwyCqe2viFgQTKjwSGb1fWNDgmDf2LqmCyXVGD79EcRbBU1dQ==}
+  '@lumina-study/block-schema@1.0.1':
+    resolution: {integrity: sha512-d6vVyoggXb1lxubUfpesnLA19P1GAU1MuiQR1SYRRiPq7/Mb8mxhfVHTkZ5VOQqgrSgRSIOZsxoDkcP4jHya3w==}
+    engines: {node: '>=20.0.0'}
 
   '@mdx-js/react@3.1.1':
     resolution: {integrity: sha512-f++rKLQgUVYDAtECQ6fn/is15GkEH9+nZPM3MS0RcxVqoTfawHvDlSCH7JbMhAM6uJ32v3eXLvLmLvjGu7PTQw==}
@@ -10343,7 +10344,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@lumina-study/block-schema@1.0.0': {}
+  '@lumina-study/block-schema@1.0.1': {}
 
   '@mdx-js/react@3.1.1(@types/react@19.2.6)(react@19.2.0)':
     dependencies:
