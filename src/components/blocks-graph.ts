@@ -7,6 +7,7 @@ import type { BlockSchemaV01 } from '../adaptors/v0.1/types.js'
 import { isBlockSchemaV01 } from '../adaptors/v0.1/validators.js'
 import { InvalidBlockSchemaError } from '../errors/invalid-block-schema-error.js'
 import { UnsupportedSchemaVersionError } from '../errors/unsupported-schema-version-error.js'
+import { DuplicateBlockIdError } from '../errors/duplicate-block-id-error.js'
 import { isValidEdgeLineStyle } from '../types/is-valid-edge-line-style.js'
 import type { EdgeLineStyle } from '../types/edge-style.js'
 import { createStyles } from './create-styles.js'
@@ -16,6 +17,24 @@ import { attachBlockClickListeners } from './attach-block-click-listeners.js'
 import { renderGraph } from './render-graph.js'
 import { parseLayoutConfigFromAttributes } from './parse-layout-config-from-attributes.js'
 import { isValidOrientation } from './is-valid-orientation.js'
+
+/**
+ * Find duplicate IDs in an array of blocks
+ * @returns Array of duplicate IDs, empty if no duplicates
+ */
+function findDuplicateIds(blocks: Array<{ id: string }>): string[] {
+  const seen = new Set<string>()
+  const duplicates = new Set<string>()
+
+  for (const block of blocks) {
+    if (seen.has(block.id)) {
+      duplicates.add(block.id)
+    }
+    seen.add(block.id)
+  }
+
+  return Array.from(duplicates)
+}
 
 /**
  * Custom element for rendering block graphs
@@ -157,6 +176,7 @@ export class BlocksGraph extends HTMLElement {
    *
    * @param blocks - Array of blocks in internal format or v0.1 schema format
    * @throws {InvalidBlockSchemaError} If blocks array contains invalid or mixed formats
+   * @throws {DuplicateBlockIdError} If blocks array contains duplicate IDs
    *
    * @example
    * ```typescript
@@ -183,6 +203,12 @@ export class BlocksGraph extends HTMLElement {
       this.blocks = []
       this.render()
       return
+    }
+
+    // Check for duplicate IDs
+    const duplicateIds = findDuplicateIds(blocks)
+    if (duplicateIds.length > 0) {
+      throw new DuplicateBlockIdError(duplicateIds)
     }
 
     // Auto-detect format based on first block

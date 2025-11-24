@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { BlocksGraph } from './blocks-graph.js'
 import type { Block } from '../types/block.js'
 import type { BlockSchemaV01 } from '../adaptors/v0.1/types.js'
+import { DuplicateBlockIdError } from '../errors/duplicate-block-id-error.js'
 
 describe('BlocksGraph - Auto-detection', () => {
   let element: BlocksGraph
@@ -310,6 +311,167 @@ describe('BlocksGraph - Auto-detection', () => {
       ] as (Block | BlockSchemaV01)[]
 
       expect(() => element.setBlocks(inconsistent)).toThrow()
+    })
+  })
+
+  describe('setBlocks duplicate ID detection', () => {
+    it('should throw DuplicateBlockIdError when blocks have duplicate IDs', () => {
+      const blocksWithDuplicates: Block[] = [
+        {
+          id: 'duplicate-id',
+          title: { he: 'כותרת 1', en: 'Title 1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'duplicate-id',
+          title: { he: 'כותרת 2', en: 'Title 2' },
+          prerequisites: [],
+          parents: [],
+        },
+      ]
+
+      expect(() => element.setBlocks(blocksWithDuplicates)).toThrow(
+        DuplicateBlockIdError
+      )
+    })
+
+    it('should include duplicate IDs in the error message', () => {
+      const blocksWithDuplicates: Block[] = [
+        {
+          id: 'dup-1',
+          title: { he: 'כותרת 1', en: 'Title 1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'dup-1',
+          title: { he: 'כותרת 2', en: 'Title 2' },
+          prerequisites: [],
+          parents: [],
+        },
+      ]
+
+      expect(() => element.setBlocks(blocksWithDuplicates)).toThrow('dup-1')
+    })
+
+    it('should detect multiple duplicate IDs', () => {
+      const blocksWithMultipleDuplicates: Block[] = [
+        {
+          id: 'dup-a',
+          title: { he: 'כותרת 1', en: 'Title 1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'dup-b',
+          title: { he: 'כותרת 2', en: 'Title 2' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'dup-a',
+          title: { he: 'כותרת 3', en: 'Title 3' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'dup-b',
+          title: { he: 'כותרת 4', en: 'Title 4' },
+          prerequisites: [],
+          parents: [],
+        },
+      ]
+
+      try {
+        element.setBlocks(blocksWithMultipleDuplicates)
+        expect.fail('Expected DuplicateBlockIdError to be thrown')
+      } catch (error) {
+        expect(error).toBeInstanceOf(DuplicateBlockIdError)
+        const dupError = error as DuplicateBlockIdError
+        expect(dupError.duplicateIds).toContain('dup-a')
+        expect(dupError.duplicateIds).toContain('dup-b')
+      }
+    })
+
+    it('should detect duplicate IDs in v0.1 schema format', () => {
+      const v01BlocksWithDuplicates: BlockSchemaV01[] = [
+        {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          title: { he_text: 'כותרת 1', en_text: 'Title 1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          title: { he_text: 'כותרת 2', en_text: 'Title 2' },
+          prerequisites: [],
+          parents: [],
+        },
+      ]
+
+      expect(() => element.setBlocks(v01BlocksWithDuplicates)).toThrow(
+        DuplicateBlockIdError
+      )
+    })
+
+    it('should allow blocks with unique IDs', () => {
+      const uniqueBlocks: Block[] = [
+        {
+          id: 'unique-1',
+          title: { he: 'כותרת 1', en: 'Title 1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'unique-2',
+          title: { he: 'כותרת 2', en: 'Title 2' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'unique-3',
+          title: { he: 'כותרת 3', en: 'Title 3' },
+          prerequisites: [],
+          parents: [],
+        },
+      ]
+
+      expect(() => element.setBlocks(uniqueBlocks)).not.toThrow()
+    })
+
+    it('should detect duplicate when same ID appears more than twice', () => {
+      const blocksWithTriplicate: Block[] = [
+        {
+          id: 'triple-id',
+          title: { he: 'כותרת 1', en: 'Title 1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'triple-id',
+          title: { he: 'כותרת 2', en: 'Title 2' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'triple-id',
+          title: { he: 'כותרת 3', en: 'Title 3' },
+          prerequisites: [],
+          parents: [],
+        },
+      ]
+
+      try {
+        element.setBlocks(blocksWithTriplicate)
+        expect.fail('Expected DuplicateBlockIdError to be thrown')
+      } catch (error) {
+        expect(error).toBeInstanceOf(DuplicateBlockIdError)
+        const dupError = error as DuplicateBlockIdError
+        // Should only report the ID once even if it appears 3 times
+        expect(dupError.duplicateIds).toHaveLength(1)
+        expect(dupError.duplicateIds[0]).toBe('triple-id')
+      }
     })
   })
 })
