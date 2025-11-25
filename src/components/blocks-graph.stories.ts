@@ -1296,6 +1296,150 @@ export const ComplexPrerequisiteWeb: Story = {
 }
 
 /**
+ * Story demonstrating automatic transitive edge reduction.
+ * Shows how redundant prerequisite edges are automatically removed for cleaner visualization.
+ * When A→B→C→D exists with direct shortcuts (A→C, A→D, B→D), only the direct chain is shown.
+ */
+export const TransitiveReduction: Story = {
+  render: args => {
+    const storyId = `transitive-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+
+    const transitiveBlocks = [
+      {
+        id: '550e8400-e29b-41d4-a716-446655440070',
+        title: {
+          he_text: 'מתמטיקה בסיסית',
+          en_text: 'Basic Math',
+        },
+        prerequisites: [],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440071',
+        title: {
+          he_text: 'אלגברה',
+          en_text: 'Algebra',
+        },
+        prerequisites: ['550e8400-e29b-41d4-a716-446655440070'],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440072',
+        title: {
+          he_text: 'חשבון אינפיניטסימלי',
+          en_text: 'Calculus',
+        },
+        prerequisites: [
+          '550e8400-e29b-41d4-a716-446655440071',
+          '550e8400-e29b-41d4-a716-446655440070', // Transitive - will be hidden
+        ],
+        parents: [],
+      },
+      {
+        id: '550e8400-e29b-41d4-a716-446655440073',
+        title: {
+          he_text: 'אנליזה מתקדמת',
+          en_text: 'Advanced Analysis',
+        },
+        prerequisites: [
+          '550e8400-e29b-41d4-a716-446655440072',
+          '550e8400-e29b-41d4-a716-446655440071', // Transitive - will be hidden
+          '550e8400-e29b-41d4-a716-446655440070', // Transitive - will be hidden
+        ],
+        parents: [],
+      },
+    ]
+
+    return html`
+      <div style="padding: 16px;">
+        <div
+          style="padding: 16px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; margin-bottom: 16px;"
+        >
+          <h3 style="margin: 0 0 8px 0; color: #2e7d32;">
+            Automatic Transitive Reduction
+          </h3>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
+            <strong>Feature:</strong> Automatically removes redundant prerequisite
+            edges for cleaner visualization
+          </p>
+          <div
+            style="margin: 8px 0; padding: 12px; background: white; border-radius: 4px;"
+          >
+            <p style="margin: 0 0 8px 0; font-size: 13px; color: #333;">
+              <strong>Data in JSON:</strong>
+            </p>
+            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #333;">
+              <li>Basic Math → Algebra</li>
+              <li>Algebra → Calculus</li>
+              <li><del>Basic Math → Calculus</del> (transitive, removed)</li>
+              <li>Calculus → Advanced Analysis</li>
+              <li><del>Algebra → Advanced Analysis</del> (transitive, removed)</li>
+              <li><del>Basic Math → Advanced Analysis</del> (transitive, removed)</li>
+            </ul>
+          </div>
+          <div
+            style="margin-top: 12px; padding: 12px; background: #c8e6c9; border-radius: 4px;"
+          >
+            <p style="margin: 0; font-size: 13px; color: #1b5e20;">
+              <strong>✨ Result:</strong> Only <strong>3 clean edges</strong> are
+              displayed (Basic Math → Algebra → Calculus → Advanced Analysis),
+              even though the data contained 6 prerequisite edges. The transitive
+              edges are automatically detected and hidden!
+            </p>
+          </div>
+        </div>
+        <div
+          style="width: 100%; height: 450px; border: 1px solid #ddd; border-radius: 4px;"
+        >
+          <blocks-graph
+            id="${storyId}"
+            language="${args.language}"
+            show-prerequisites="true"
+            orientation="ttb"
+            node-width="200"
+            node-height="70"
+            horizontal-spacing="80"
+            vertical-spacing="100"
+          ></blocks-graph>
+        </div>
+        <div
+          style="margin-top: 16px; padding: 16px; background: #f5f5f5; border-radius: 4px;"
+        >
+          <h4 style="margin: 0 0 8px 0;">How It Works</h4>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
+            The graph engine uses <strong>transitive reduction</strong>: when an
+            edge A→C exists but there's also a path A→B→C, the direct A→C edge
+            is considered redundant and automatically removed from the
+            visualization.
+          </p>
+          <p style="margin: 0; font-size: 14px; color: #666;">
+            This feature is <strong>always active</strong> and requires no
+            configuration. It makes complex prerequisite chains much easier to
+            understand at a glance.
+          </p>
+        </div>
+      </div>
+      <script>
+        setTimeout(() => {
+          const graph = document.getElementById('${storyId}')
+          if (graph && typeof graph.loadFromJson === 'function') {
+            graph.loadFromJson(
+              ${JSON.stringify(JSON.stringify(transitiveBlocks))},
+              'v0.1'
+            )
+          }
+        }, 100)
+      </script>
+    `
+  },
+  args: {
+    language: 'en',
+  },
+}
+
+/**
  * Story demonstrating a single isolated block.
  * Shows the edge case where only one block exists in the graph.
  */

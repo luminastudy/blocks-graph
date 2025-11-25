@@ -26,6 +26,7 @@ export { HorizontalRelationships } from './core/horizontal-relationships.js'
 export type { GraphLayoutConfig } from './core/graph-layout-config.js'
 export { GraphRenderer } from './core/renderer.js'
 export type { RendererConfig } from './core/renderer-config.js'
+export { removeTransitiveEdges } from './core/transitive-reduction.js'
 
 // Export adaptors
 export { SchemaV01Adaptor } from './adaptors/v0.1/adaptor.js'

@@ -7,6 +7,7 @@ import type { GraphLayoutConfig } from './graph-layout-config.js'
 import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js'
 import { HorizontalRelationships } from './horizontal-relationships.js'
 import { addBlockWithSubBlocks } from './add-block-with-sub-blocks.js'
+import { removeTransitiveEdges } from './transitive-reduction.js'
 
 export class GraphEngine {
   private config: GraphLayoutConfig
@@ -32,10 +33,14 @@ export class GraphEngine {
       }
     }
 
+    // Apply transitive reduction to remove redundant prerequisite edges
+    // E.g., if A→B→C exists, remove direct A→C edge for cleaner visualization
+    const reducedEdges = removeTransitiveEdges(edges)
+
     // Build horizontal relationships for efficient O(1) prerequisite/post-requisite lookups
     const horizontalRelationships = HorizontalRelationships.fromBlocks(blocks)
 
-    return { blocks: blockMap, edges, horizontalRelationships }
+    return { blocks: blockMap, edges: reducedEdges, horizontalRelationships }
   }
   /**
    * Calculate depth levels for all blocks in the graph
