@@ -32,11 +32,5 @@ export interface RendererConfig {
       lineStyle: EdgeLineStyle
       dashArray?: string // Deprecated: Use lineStyle instead
     }
-    parent: {
-      stroke: string
-      strokeWidth: number
-      lineStyle: EdgeLineStyle
-      dashArray?: string // Deprecated: Use lineStyle instead
-    }
   }
 }

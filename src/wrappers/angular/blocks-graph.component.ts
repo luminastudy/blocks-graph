@@ -97,7 +97,6 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
 
   // Edge style inputs
   @Input() prerequisiteLineStyle: EdgeLineStyle = 'dashed'
-  @Input() parentLineStyle: EdgeLineStyle = 'straight'
 
   // Standard inputs
   @Input() className?: string
@@ -174,10 +173,6 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
     if (changes['prerequisiteLineStyle']) {
       element.prerequisiteLineStyle = this.prerequisiteLineStyle
     }
-
-    if (changes['parentLineStyle']) {
-      element.parentLineStyle = this.parentLineStyle
-    }
   }
 
   ngOnDestroy(): void {
@@ -239,7 +234,6 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
     element.orientation = this.orientation
     element.showPrerequisites = this.showPrerequisites
     element.prerequisiteLineStyle = this.prerequisiteLineStyle
-    element.parentLineStyle = this.parentLineStyle
 
     // Apply layout config if provided
     if (this.nodeWidth !== undefined) {

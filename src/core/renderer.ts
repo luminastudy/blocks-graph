@@ -118,7 +118,7 @@ export class GraphRenderer {
       line.setAttribute('x2', String(x2))
       line.setAttribute('y2', String(y2))
 
-      const style = this.config.edgeStyle[edge.type]
+      const style = this.config.edgeStyle.prerequisite
       line.setAttribute('stroke', style.stroke)
       line.setAttribute('stroke-width', String(style.strokeWidth))
 

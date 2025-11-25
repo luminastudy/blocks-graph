@@ -92,7 +92,6 @@ export class BlocksGraph extends HTMLElement {
       'vertical-spacing',
       'orientation',
       'prerequisite-line-style',
-      'parent-line-style',
     ]
   }
 
@@ -131,19 +130,6 @@ export class BlocksGraph extends HTMLElement {
               ...this.renderer['config'].edgeStyle,
               prerequisite: {
                 ...this.renderer['config'].edgeStyle.prerequisite,
-                lineStyle: newValue,
-              },
-            },
-          })
-        }
-        break
-      case 'parent-line-style':
-        if (newValue && isValidEdgeLineStyle(newValue)) {
-          this.renderer.updateConfig({
-            edgeStyle: {
-              ...this.renderer['config'].edgeStyle,
-              parent: {
-                ...this.renderer['config'].edgeStyle.parent,
                 lineStyle: newValue,
               },
             },
@@ -398,15 +384,6 @@ export class BlocksGraph extends HTMLElement {
   }
   set prerequisiteLineStyle(value: EdgeLineStyle) {
     this.setAttribute('prerequisite-line-style', value)
-  }
-
-  /** Get/set parent edge line style */
-  get parentLineStyle(): EdgeLineStyle {
-    const value = this.getAttribute('parent-line-style')
-    return value && isValidEdgeLineStyle(value) ? value : 'straight'
-  }
-  set parentLineStyle(value: EdgeLineStyle) {
-    this.setAttribute('parent-line-style', value)
   }
 }
 

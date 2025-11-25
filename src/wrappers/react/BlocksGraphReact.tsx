@@ -29,8 +29,7 @@ function useBlocksGraphConfig(
   lang: 'en' | 'he',
   orient: 'ttb' | 'ltr' | 'rtl' | 'btt',
   showPrereq: boolean,
-  prereqStyle: EdgeLineStyle,
-  parentStyle: EdgeLineStyle
+  prereqStyle: EdgeLineStyle
 ) {
   useEffect(() => {
     if (!ref.current) return
@@ -48,10 +47,6 @@ function useBlocksGraphConfig(
     if (!ref.current) return
     ref.current.prerequisiteLineStyle = prereqStyle
   }, [ref, prereqStyle])
-  useEffect(() => {
-    if (!ref.current) return
-    ref.current.parentLineStyle = parentStyle
-  }, [ref, parentStyle])
 }
 
 // Custom hook for layout props
@@ -154,7 +149,6 @@ export interface BlocksGraphProps {
 
   // Edge style props
   prerequisiteLineStyle?: EdgeLineStyle
-  parentLineStyle?: EdgeLineStyle
 
   // Event callbacks
   onBlocksRendered?: (event: CustomEvent<{ blockCount: number }>) => void
@@ -217,7 +211,6 @@ export function BlocksGraphReact({
   horizontalSpacing,
   verticalSpacing,
   prerequisiteLineStyle,
-  parentLineStyle,
   onBlocksRendered,
   onBlockSelected,
   className,
@@ -228,11 +221,9 @@ export function BlocksGraphReact({
   const showPrereq = showPrerequisites !== undefined ? showPrerequisites : true
   const prereqStyle =
     prerequisiteLineStyle !== undefined ? prerequisiteLineStyle : 'dashed'
-  const parentStyle =
-    parentLineStyle !== undefined ? parentLineStyle : 'straight'
   const ref = useRef<BlocksGraph>(null)
   useBlocksGraphData(ref, blocks, jsonUrl)
-  useBlocksGraphConfig(ref, lang, orient, showPrereq, prereqStyle, parentStyle)
+  useBlocksGraphConfig(ref, lang, orient, showPrereq, prereqStyle)
   useBlocksGraphLayout(
     ref,
     nodeWidth,

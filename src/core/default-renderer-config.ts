@@ -27,10 +27,5 @@ export const DEFAULT_RENDERER_CONFIG: RendererConfig = {
       strokeWidth: 2,
       lineStyle: 'straight',
     },
-    parent: {
-      stroke: '#666666',
-      strokeWidth: 2,
-      lineStyle: 'straight',
-    },
   },
 }

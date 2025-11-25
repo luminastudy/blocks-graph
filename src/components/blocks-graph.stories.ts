@@ -121,15 +121,6 @@ const meta: Meta = {
         defaultValue: { summary: 'dashed' },
       },
     },
-    parentLineStyle: {
-      control: 'select',
-      options: ['straight', 'dashed', 'dotted'],
-      description:
-        'Line style for parent edges: straight (solid), dashed (8px/4px), dotted (2px/3px)',
-      table: {
-        defaultValue: { summary: 'straight' },
-      },
-    },
   },
   parameters: {
     docs: {
@@ -174,7 +165,6 @@ export const Default: Story = {
           vertical-spacing="${args.verticalSpacing || ''}"
           orientation="${args.orientation || 'ttb'}"
           prerequisite-line-style="${args.prerequisiteLineStyle || 'dashed'}"
-          parent-line-style="${args.parentLineStyle || 'straight'}"
           @block-selected="${(e: CustomEvent) => {
             console.log('Block selected:', e.detail)
           }}"
@@ -415,65 +405,35 @@ export const AllOrientations: Story = {
 }
 
 /**
- * Story demonstrating all edge line style combinations.
- * Shows how different line styles can be used to visually distinguish
- * prerequisite and parent relationships in the graph.
+ * Story demonstrating prerequisite edge line styles.
+ * Shows how different line styles can be used to customize prerequisite relationship edges.
  */
 export const EdgeLineStyles: Story = {
   render: () => {
     const styleConfigs = [
       {
-        prerequisite: 'straight',
-        parent: 'straight',
-        description: 'Both solid (default clean look)',
+        style: 'straight',
+        description: 'Solid line with no pattern',
       },
       {
-        prerequisite: 'dashed',
-        parent: 'straight',
-        description: 'Default: Dashed prerequisites, solid parents',
+        style: 'dashed',
+        description: 'Default: Dashed line (8px/4px)',
       },
       {
-        prerequisite: 'dotted',
-        parent: 'straight',
-        description: 'Dotted prerequisites, solid parents',
-      },
-      {
-        prerequisite: 'straight',
-        parent: 'dashed',
-        description: 'Solid prerequisites, dashed parents',
-      },
-      {
-        prerequisite: 'dashed',
-        parent: 'dashed',
-        description: 'Both dashed',
-      },
-      {
-        prerequisite: 'dotted',
-        parent: 'dotted',
-        description: 'Both dotted',
-      },
-      {
-        prerequisite: 'straight',
-        parent: 'dotted',
-        description: 'Solid prerequisites, dotted parents',
-      },
-      {
-        prerequisite: 'dotted',
-        parent: 'dashed',
-        description: 'Dotted prerequisites, dashed parents',
+        style: 'dotted',
+        description: 'Dotted line (2px/3px)',
       },
     ]
 
     return html`
       <div style="padding: 16px;">
-        <h2 style="margin: 0 0 16px 0;">Edge Line Style Combinations</h2>
+        <h2 style="margin: 0 0 16px 0;">Prerequisite Line Styles</h2>
         <p style="margin: 0 0 8px 0; color: #666;">
-          Customize the appearance of prerequisite (blue) and parent (gray)
-          relationship edges.
+          Customize the appearance of prerequisite relationship edges.
         </p>
         <p style="margin: 0 0 24px 0; color: #666;">
-          <strong>Styles:</strong> Straight (solid), Dashed (8px/4px), Dotted
-          (2px/3px)
+          <strong>Available Styles:</strong> Straight (solid), Dashed (8px/4px),
+          Dotted (2px/3px)
         </p>
 
         <div
@@ -501,8 +461,7 @@ export const EdgeLineStyles: Story = {
               >
                 <div style="margin-bottom: 12px;">
                   <h3 style="margin: 0 0 4px 0; color: #333; font-size: 16px;">
-                    Prerequisites: ${config.prerequisite} / Parents:
-                    ${config.parent}
+                    ${config.style}
                   </h3>
                   <p style="margin: 0; font-size: 13px; color: #666;">
                     ${config.description}
@@ -515,9 +474,7 @@ export const EdgeLineStyles: Story = {
                     id="${storyId}"
                     language="en"
                     show-prerequisites="true"
-                    show-parents="true"
-                    prerequisite-line-style="${config.prerequisite}"
-                    parent-line-style="${config.parent}"
+                    prerequisite-line-style="${config.style}"
                     orientation="ttb"
                     node-width="160"
                     node-height="60"
@@ -537,39 +494,26 @@ export const EdgeLineStyles: Story = {
           <pre
             style="margin: 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto; font-size: 13px;"
           ><code><!-- HTML -->
-&lt;blocks-graph
-  prerequisite-line-style="dotted"
-  parent-line-style="dashed"
-&gt;&lt;/blocks-graph&gt;
+&lt;blocks-graph prerequisite-line-style="dotted"&gt;&lt;/blocks-graph&gt;
 
 /* JavaScript */
 const graph = document.querySelector('blocks-graph');
 graph.prerequisiteLineStyle = 'straight';
-graph.parentLineStyle = 'dotted';
 
 /* React */
-&lt;BlocksGraphReact
-  prerequisiteLineStyle="dashed"
-  parentLineStyle="straight"
-/&gt;</code></pre>
+&lt;BlocksGraphReact prerequisiteLineStyle="dashed" /&gt;</code></pre>
         </div>
 
         <div
           style="margin-top: 16px; padding: 16px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;"
         >
-          <h4 style="margin: 0 0 8px 0; color: #1565c0;">
-            Edge Color Reference
-          </h4>
-          <ul style="margin: 0; padding-left: 20px; color: #333;">
-            <li>
-              <strong style="color: #4a90e2;">Blue edges</strong>: Prerequisite
-              relationships
-            </li>
-            <li>
-              <strong style="color: #666;">Gray edges</strong>: Parent
-              relationships
-            </li>
-          </ul>
+          <h4 style="margin: 0 0 8px 0; color: #1565c0;">Note</h4>
+          <p style="margin: 0; color: #333;">
+            <strong style="color: #4a90e2;">Blue edges</strong> represent
+            prerequisite relationships. Parent-child relationships are
+            visualized through the drill-down navigation model, not as
+            connecting lines.
+          </p>
         </div>
       </div>
     `

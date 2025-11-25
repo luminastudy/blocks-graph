@@ -110,10 +110,6 @@ export const BlocksGraphVue = defineComponent({
       type: String as PropType<EdgeLineStyle>,
       default: 'dashed',
     },
-    parentLineStyle: {
-      type: String as PropType<EdgeLineStyle>,
-      default: 'straight',
-    },
 
     // Standard props
     className: {
@@ -251,15 +247,6 @@ export const BlocksGraphVue = defineComponent({
       prerequisiteLineStyle => {
         if (elementRef.value) {
           elementRef.value.prerequisiteLineStyle = prerequisiteLineStyle
-        }
-      }
-    )
-
-    watch(
-      () => props.parentLineStyle,
-      parentLineStyle => {
-        if (elementRef.value) {
-          elementRef.value.parentLineStyle = parentLineStyle
         }
       }
     )
