@@ -131,6 +131,9 @@
     },
     "chromeSelector": "blocks-graph, .sb-show-main",
     "diffingEngine": "pixelmatch",
+    "pixelmatch": {
+      "threshold": 0.1
+    },
     "storybookStaticBuildPath": "storybook-static"
   }
 }
