@@ -104,6 +104,10 @@ export const BlocksGraphVue = defineComponent({
       type: Number,
       default: undefined,
     },
+    maxNodesPerLevel: {
+      type: Number,
+      default: undefined,
+    },
 
     // Edge style props
     prerequisiteLineStyle: {
@@ -247,6 +251,18 @@ export const BlocksGraphVue = defineComponent({
       prerequisiteLineStyle => {
         if (elementRef.value) {
           elementRef.value.prerequisiteLineStyle = prerequisiteLineStyle
+        }
+      }
+    )
+
+    watch(
+      () => props.maxNodesPerLevel,
+      maxNodesPerLevel => {
+        if (elementRef.value && maxNodesPerLevel !== undefined) {
+          elementRef.value.setAttribute(
+            'max-nodes-per-level',
+            String(maxNodesPerLevel)
+          )
         }
       }
     )

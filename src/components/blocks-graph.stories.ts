@@ -121,6 +121,15 @@ const meta: Meta = {
         defaultValue: { summary: 'dashed' },
       },
     },
+    maxNodesPerLevel: {
+      control: { type: 'number', min: 1, max: 20, step: 1 },
+      description:
+        'Maximum nodes per row (vertical) or column (horizontal) before wrapping to grid layout. ' +
+        'Defaults to unlimited (no wrapping).',
+      table: {
+        defaultValue: { summary: 'undefined (unlimited)' },
+      },
+    },
   },
   parameters: {
     docs: {
@@ -1505,5 +1514,358 @@ export const SingleBlock: Story = {
   },
   args: {
     language: 'en',
+  },
+}
+
+/**
+ * Story demonstrating grid layout with maxNodesPerLevel.
+ * Shows how nodes automatically wrap into a grid when exceeding the maximum per level.
+ */
+export const GridLayoutWrapping: Story = {
+  render: () => {
+    const configs = [
+      {
+        label: 'Unlimited (Default)',
+        maxNodesPerLevel: undefined,
+        description: 'All 10 nodes in a single row',
+      },
+      {
+        label: 'Max 5 per row',
+        maxNodesPerLevel: 5,
+        description: 'Wraps into 2 rows: 5 + 5',
+      },
+      {
+        label: 'Max 3 per row',
+        maxNodesPerLevel: 3,
+        description: 'Wraps into 4 rows: 3 + 3 + 3 + 1',
+      },
+    ]
+
+    // Create many blocks at the same level
+    const manyBlocks = Array.from({ length: 10 }, (_, i) => ({
+      id: `550e8400-e29b-41d4-a716-44665544${String(i).padStart(4, '0')}`,
+      title: {
+        he_text: `בלוק ${i + 1}`,
+        en_text: `Block ${i + 1}`,
+      },
+      prerequisites: [],
+      parents: [],
+    }))
+
+    return html`
+      <div style="padding: 16px;">
+        <h2 style="margin: 0 0 8px 0;">Grid Layout with maxNodesPerLevel</h2>
+        <p style="margin: 0 0 8px 0; color: #666;">
+          Control how many nodes appear per row (vertical orientation) or per
+          column (horizontal orientation) before wrapping to a grid.
+        </p>
+        <p style="margin: 0 0 24px 0; color: #666;">
+          <strong>Use case:</strong> When you have many blocks at the same
+          level, grid wrapping creates a more compact and organized layout.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 32px;">
+          ${configs.map((config, index) => {
+            const storyId = `grid-${index}-${Date.now()}-${Math.random()
+              .toString(36)
+              .substring(2, 11)}`
+
+            setTimeout(() => {
+              const graph = document.getElementById(storyId)
+              if (
+                graph &&
+                'loadFromJson' in graph &&
+                typeof graph.loadFromJson === 'function'
+              ) {
+                graph.loadFromJson(JSON.stringify(manyBlocks), 'v0.1')
+              }
+            }, 100)
+
+            return html`
+              <div
+                style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;"
+              >
+                <div style="margin-bottom: 12px;">
+                  <h3 style="margin: 0 0 4px 0; color: #333;">
+                    ${config.label}
+                  </h3>
+                  <p style="margin: 0; font-size: 13px; color: #666;">
+                    ${config.description}
+                  </p>
+                </div>
+                <div
+                  style="width: 100%; height: 400px; border: 1px solid #e0e0e0; border-radius: 4px; overflow: auto;"
+                >
+                  <blocks-graph
+                    id="${storyId}"
+                    language="en"
+                    show-prerequisites="true"
+                    orientation="ttb"
+                    node-width="140"
+                    node-height="60"
+                    horizontal-spacing="20"
+                    vertical-spacing="20"
+                    max-nodes-per-level="${config.maxNodesPerLevel || ''}"
+                  ></blocks-graph>
+                </div>
+              </div>
+            `
+          })}
+        </div>
+
+        <div
+          style="margin-top: 24px; padding: 16px; background: #f5f5f5; border-radius: 4px;"
+        >
+          <h4 style="margin: 0 0 8px 0;">Usage Examples</h4>
+          <pre
+            style="margin: 0; padding: 12px; background: white; border-radius: 4px; overflow-x: auto; font-size: 13px;"
+          ><code><!-- HTML: Wrap after 5 nodes -->
+&lt;blocks-graph max-nodes-per-level="5"&gt;&lt;/blocks-graph&gt;
+
+/* JavaScript */
+const graph = document.querySelector('blocks-graph');
+graph.maxNodesPerLevel = 3;
+
+/* React */
+&lt;BlocksGraphReact maxNodesPerLevel={5} /&gt;
+
+/* Vue */
+&lt;BlocksGraphVue :max-nodes-per-level="5" /&gt;
+
+/* Angular */
+&lt;blocks-graph-angular [maxNodesPerLevel]="5"&gt;&lt;/blocks-graph-angular&gt;</code></pre>
+        </div>
+      </div>
+    `
+  },
+  parameters: {
+    layout: 'fullscreen',
+  },
+}
+
+/**
+ * Story demonstrating grid layout with horizontal orientation (LTR).
+ * Shows how wrapping works differently in horizontal layouts.
+ */
+export const GridLayoutHorizontal: Story = {
+  render: () => {
+    const configs = [
+      {
+        orientation: 'ltr',
+        maxNodesPerLevel: undefined,
+        label: 'LTR - Unlimited',
+        description: 'All nodes in a single column',
+      },
+      {
+        orientation: 'ltr',
+        maxNodesPerLevel: 4,
+        label: 'LTR - Max 4 per column',
+        description: 'Wraps into 3 columns: 4 + 4 + 2',
+      },
+      {
+        orientation: 'rtl',
+        maxNodesPerLevel: 4,
+        label: 'RTL - Max 4 per column',
+        description: 'Same wrapping, right-to-left direction',
+      },
+    ]
+
+    // Create many blocks at the same level
+    const manyBlocks = Array.from({ length: 10 }, (_, i) => ({
+      id: `550e8400-e29b-41d4-a716-44665555${String(i).padStart(4, '0')}`,
+      title: {
+        he_text: `בלוק ${i + 1}`,
+        en_text: `Block ${i + 1}`,
+      },
+      prerequisites: [],
+      parents: [],
+    }))
+
+    return html`
+      <div style="padding: 16px;">
+        <h2 style="margin: 0 0 8px 0;">
+          Grid Layout - Horizontal Orientations
+        </h2>
+        <p style="margin: 0 0 24px 0; color: #666;">
+          In horizontal orientations (LTR/RTL), maxNodesPerLevel controls
+          <strong>columns</strong> instead of rows. Nodes wrap into multiple
+          columns when the limit is exceeded.
+        </p>
+
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px;"
+        >
+          ${configs.map((config, index) => {
+            const storyId = `grid-horiz-${index}-${Date.now()}-${Math.random()
+              .toString(36)
+              .substring(2, 11)}`
+
+            setTimeout(() => {
+              const graph = document.getElementById(storyId)
+              if (
+                graph &&
+                'loadFromJson' in graph &&
+                typeof graph.loadFromJson === 'function'
+              ) {
+                graph.loadFromJson(JSON.stringify(manyBlocks), 'v0.1')
+              }
+            }, 100)
+
+            return html`
+              <div
+                style="border: 1px solid #ddd; border-radius: 8px; padding: 16px; background: white;"
+              >
+                <div style="margin-bottom: 12px;">
+                  <h3 style="margin: 0 0 4px 0; color: #333; font-size: 16px;">
+                    ${config.label}
+                  </h3>
+                  <p style="margin: 0; font-size: 13px; color: #666;">
+                    ${config.description}
+                  </p>
+                </div>
+                <div
+                  style="width: 100%; height: 400px; border: 1px solid #e0e0e0; border-radius: 4px; overflow: auto;"
+                >
+                  <blocks-graph
+                    id="${storyId}"
+                    language="en"
+                    show-prerequisites="true"
+                    orientation="${config.orientation}"
+                    node-width="120"
+                    node-height="50"
+                    horizontal-spacing="20"
+                    vertical-spacing="20"
+                    max-nodes-per-level="${config.maxNodesPerLevel || ''}"
+                  ></blocks-graph>
+                </div>
+              </div>
+            `
+          })}
+        </div>
+
+        <div
+          style="margin-top: 24px; padding: 16px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;"
+        >
+          <h4 style="margin: 0 0 8px 0; color: #1565c0;">Orientation Guide</h4>
+          <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #333;">
+            <li>
+              <strong>TTB/BTT (vertical):</strong> maxNodesPerLevel limits
+              <strong>columns</strong>, wraps into <strong>rows</strong>
+            </li>
+            <li>
+              <strong>LTR/RTL (horizontal):</strong> maxNodesPerLevel limits
+              <strong>rows</strong>, wraps into <strong>columns</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
+    `
+  },
+  parameters: {
+    layout: 'fullscreen',
+  },
+}
+
+/**
+ * Story demonstrating grid layout with multiple levels of different sizes.
+ * Shows how each level can wrap independently based on its node count.
+ */
+export const GridLayoutMultipleLevels: Story = {
+  render: args => {
+    const storyId = `grid-multi-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 11)}`
+
+    // Create a multi-level graph with varying node counts per level
+    const rootBlock = {
+      id: '550e8400-e29b-41d4-a716-446655660000',
+      title: {
+        he_text: 'שורש',
+        en_text: 'Root',
+      },
+      prerequisites: [],
+      parents: [],
+    }
+
+    const level1Blocks = Array.from({ length: 8 }, (_, i) => ({
+      id: `550e8400-e29b-41d4-a716-446655660${String(i + 1).padStart(3, '0')}`,
+      title: {
+        he_text: `רמה 1-${i + 1}`,
+        en_text: `Level 1-${i + 1}`,
+      },
+      prerequisites: [rootBlock.id],
+      parents: [],
+    }))
+
+    const level2Blocks = Array.from({ length: 12 }, (_, i) => ({
+      id: `550e8400-e29b-41d4-a716-446655661${String(i).padStart(3, '0')}`,
+      title: {
+        he_text: `רמה 2-${i + 1}`,
+        en_text: `Level 2-${i + 1}`,
+      },
+      prerequisites: [level1Blocks[i % 8]?.id ?? ''],
+      parents: [],
+    }))
+
+    const multiLevelBlocks = [rootBlock, ...level1Blocks, ...level2Blocks]
+
+    return html`
+      <div style="padding: 16px;">
+        <div
+          style="padding: 16px; background: #e8f5e9; border-left: 4px solid #4caf50; border-radius: 4px; margin-bottom: 16px;"
+        >
+          <h3 style="margin: 0 0 8px 0; color: #2e7d32;">
+            Grid Layout - Multiple Levels
+          </h3>
+          <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
+            <strong>Scenario:</strong> Three levels with different node counts
+          </p>
+          <ul
+            style="margin: 0; padding-left: 20px; font-size: 14px; color: #333;"
+          >
+            <li>Level 0: 1 root block (no wrapping)</li>
+            <li>Level 1: 8 blocks → wraps into 2 rows (4 + 4)</li>
+            <li>Level 2: 12 blocks → wraps into 3 rows (4 + 4 + 4)</li>
+          </ul>
+          <p
+            style="margin: 8px 0 0 0; padding: 8px; background: white; border-radius: 4px; font-size: 13px;"
+          >
+            💡 Each level wraps independently based on its own node count. The
+            grid layout creates a clean, organized visualization even with many
+            nodes.
+          </p>
+        </div>
+        <div
+          style="width: 100%; height: 650px; border: 1px solid #ddd; border-radius: 4px; overflow: auto;"
+        >
+          <blocks-graph
+            id="${storyId}"
+            language="${args.language}"
+            show-prerequisites="true"
+            orientation="ttb"
+            node-width="120"
+            node-height="50"
+            horizontal-spacing="15"
+            vertical-spacing="30"
+            max-nodes-per-level="4"
+          ></blocks-graph>
+        </div>
+      </div>
+      <script>
+        setTimeout(() => {
+          const graph = document.getElementById('${storyId}')
+          if (graph && typeof graph.loadFromJson === 'function') {
+            graph.loadFromJson(
+              ${JSON.stringify(JSON.stringify(multiLevelBlocks))},
+              'v0.1'
+            )
+          }
+        }, 100)
+      </script>
+    `
+  },
+  args: {
+    language: 'en',
+    maxNodesPerLevel: 2,
   },
 }

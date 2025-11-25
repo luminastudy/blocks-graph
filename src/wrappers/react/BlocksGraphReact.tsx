@@ -55,7 +55,8 @@ function useBlocksGraphLayout(
   nodeWidth: number | undefined,
   nodeHeight: number | undefined,
   horizontalSpacing: number | undefined,
-  verticalSpacing: number | undefined
+  verticalSpacing: number | undefined,
+  maxNodesPerLevel: number | undefined
 ) {
   useEffect(() => {
     if (!ref.current) return
@@ -81,6 +82,12 @@ function useBlocksGraphLayout(
       ref.current.setAttribute('vertical-spacing', String(verticalSpacing))
     }
   }, [ref, verticalSpacing])
+  useEffect(() => {
+    if (!ref.current) return
+    if (maxNodesPerLevel !== undefined) {
+      ref.current.setAttribute('max-nodes-per-level', String(maxNodesPerLevel))
+    }
+  }, [ref, maxNodesPerLevel])
 }
 
 // Custom hook for event listeners
@@ -146,6 +153,7 @@ export interface BlocksGraphProps {
   nodeHeight?: number
   horizontalSpacing?: number
   verticalSpacing?: number
+  maxNodesPerLevel?: number
 
   // Edge style props
   prerequisiteLineStyle?: EdgeLineStyle
@@ -210,6 +218,7 @@ export function BlocksGraphReact({
   nodeHeight,
   horizontalSpacing,
   verticalSpacing,
+  maxNodesPerLevel,
   prerequisiteLineStyle,
   onBlocksRendered,
   onBlockSelected,
@@ -229,7 +238,8 @@ export function BlocksGraphReact({
     nodeWidth,
     nodeHeight,
     horizontalSpacing,
-    verticalSpacing
+    verticalSpacing,
+    maxNodesPerLevel
   )
   useBlocksGraphEvents(ref, onBlocksRendered, onBlockSelected)
 

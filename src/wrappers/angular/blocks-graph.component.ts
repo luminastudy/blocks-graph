@@ -94,6 +94,7 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
   @Input() nodeHeight?: number
   @Input() horizontalSpacing?: number
   @Input() verticalSpacing?: number
+  @Input() maxNodesPerLevel?: number
 
   // Edge style inputs
   @Input() prerequisiteLineStyle: EdgeLineStyle = 'dashed'
@@ -166,6 +167,15 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
     if (changes['verticalSpacing']) {
       if (this.verticalSpacing !== undefined) {
         element.setAttribute('vertical-spacing', String(this.verticalSpacing))
+      }
+    }
+
+    if (changes['maxNodesPerLevel']) {
+      if (this.maxNodesPerLevel !== undefined) {
+        element.setAttribute(
+          'max-nodes-per-level',
+          String(this.maxNodesPerLevel)
+        )
       }
     }
 
@@ -247,6 +257,9 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (this.verticalSpacing !== undefined) {
       element.setAttribute('vertical-spacing', String(this.verticalSpacing))
+    }
+    if (this.maxNodesPerLevel !== undefined) {
+      element.setAttribute('max-nodes-per-level', String(this.maxNodesPerLevel))
     }
 
     // Load data

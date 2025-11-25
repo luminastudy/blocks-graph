@@ -53,4 +53,26 @@ export interface GraphLayoutConfig {
    * When undefined, defaults to 'ttb' for backward compatibility.
    */
   orientation?: Orientation
+
+  /**
+   * Maximum number of nodes to display per row (vertical) or column (horizontal) at each level.
+   * When a level has more nodes than this limit, they will wrap into a grid layout.
+   *
+   * - For vertical orientations (ttb, btt): Limits nodes per row, wraps into multiple rows
+   * - For horizontal orientations (ltr, rtl): Limits nodes per column, wraps into multiple columns
+   *
+   * When undefined, all nodes at a level are placed in a single row/column (default behavior).
+   *
+   * @default undefined (no limit)
+   * @example
+   * ```typescript
+   * // Vertical orientation with max 3 nodes per row
+   * const engine = new GraphEngine({
+   *   orientation: 'ttb',
+   *   maxNodesPerLevel: 3
+   * });
+   * // Level with 7 nodes creates 3 rows: [3, 3, 1]
+   * ```
+   */
+  maxNodesPerLevel?: number
 }

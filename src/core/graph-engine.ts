@@ -7,6 +7,8 @@ import type { GraphLayoutConfig } from './graph-layout-config.js'
 import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js'
 import { HorizontalRelationships } from './horizontal-relationships.js'
 import { addBlockWithSubBlocks } from './add-block-with-sub-blocks.js'
+import { calculateLevelOffsets } from './calculate-level-offsets.js'
+import { calculateBlockPosition } from './calculate-block-position.js'
 import { removeTransitiveEdges } from './transitive-reduction.js'
 
 export class GraphEngine {
@@ -105,36 +107,31 @@ export class GraphEngine {
       : 0
     const positions = new Map<string, BlockPosition>()
 
-    for (const [level, blockIds] of blocksByLevel.entries()) {
-      // Calculate level position based on orientation
-      const adjustedLevel = isReversed ? maxLevel - level : level
+    // Pass 1: Calculate level dimensions and offsets
+    const levelOffsets = calculateLevelOffsets(
+      blocksByLevel,
+      isVertical,
+      isReversed,
+      maxLevel,
+      this.config
+    )
 
-      if (isVertical) {
-        // TTB or BTT: levels progress along y-axis
-        const y =
-          adjustedLevel * (this.config.nodeHeight + this.config.verticalSpacing)
-        blockIds.forEach((blockId, index) => {
-          positions.set(blockId, {
-            x: index * (this.config.nodeWidth + this.config.horizontalSpacing),
-            y,
-            width: this.config.nodeWidth,
-            height: this.config.nodeHeight,
-          })
-        })
-      } else {
-        // LTR or RTL: levels progress along x-axis
-        const x =
-          adjustedLevel *
-          (this.config.nodeWidth + this.config.horizontalSpacing)
-        blockIds.forEach((blockId, index) => {
-          positions.set(blockId, {
-            x,
-            y: index * (this.config.nodeHeight + this.config.verticalSpacing),
-            width: this.config.nodeWidth,
-            height: this.config.nodeHeight,
-          })
-        })
-      }
+    // Pass 2: Position individual blocks
+    for (const [level, blockIds] of blocksByLevel.entries()) {
+      const adjustedLevel = isReversed ? maxLevel - level : level
+      const levelOffsetValue = levelOffsets.get(adjustedLevel)
+      const levelOffset = levelOffsetValue !== undefined ? levelOffsetValue : 0
+
+      blockIds.forEach((blockId, index) => {
+        const position = calculateBlockPosition(
+          index,
+          levelOffset,
+          blockIds.length,
+          isVertical,
+          this.config
+        )
+        positions.set(blockId, position)
+      })
     }
 
     const positionedBlocks: PositionedBlock[] = []

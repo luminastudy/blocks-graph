@@ -41,5 +41,17 @@ export function parseLayoutConfigFromAttributes(
     )
   }
 
+  const maxNodesPerLevel = element.getAttribute('max-nodes-per-level')
+  if (maxNodesPerLevel) {
+    const parsed = Number.parseInt(maxNodesPerLevel, 10)
+    if (!Number.isNaN(parsed) && parsed >= 1) {
+      config.maxNodesPerLevel = parsed
+    } else {
+      console.warn(
+        `Invalid max-nodes-per-level "${maxNodesPerLevel}". Must be a positive integer. Using default (unlimited).`
+      )
+    }
+  }
+
   return config
 }

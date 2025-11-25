@@ -92,6 +92,7 @@ export class BlocksGraph extends HTMLElement {
       'vertical-spacing',
       'orientation',
       'prerequisite-line-style',
+      'max-nodes-per-level',
     ]
   }
 
@@ -141,6 +142,7 @@ export class BlocksGraph extends HTMLElement {
       case 'horizontal-spacing':
       case 'vertical-spacing':
       case 'orientation':
+      case 'max-nodes-per-level':
         this.updateLayoutConfig()
         break
     }
@@ -384,6 +386,21 @@ export class BlocksGraph extends HTMLElement {
   }
   set prerequisiteLineStyle(value: EdgeLineStyle) {
     this.setAttribute('prerequisite-line-style', value)
+  }
+
+  /** Get/set maximum nodes per level for grid wrapping */
+  get maxNodesPerLevel(): number | undefined {
+    const value = this.getAttribute('max-nodes-per-level')
+    if (!value) return undefined
+    const parsed = Number.parseInt(value, 10)
+    return !Number.isNaN(parsed) && parsed >= 1 ? parsed : undefined
+  }
+  set maxNodesPerLevel(value: number | undefined) {
+    if (value === undefined) {
+      this.removeAttribute('max-nodes-per-level')
+    } else {
+      this.setAttribute('max-nodes-per-level', String(value))
+    }
   }
 }
 

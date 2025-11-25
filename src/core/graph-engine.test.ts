@@ -798,4 +798,315 @@ describe('GraphEngine', () => {
       expect(visible.has('child1')).toBe(false)
     })
   })
+
+  describe('layoutGraph - grid wrapping with maxNodesPerLevel', () => {
+    it('should wrap vertical orientation (ttb) into multiple rows when maxNodesPerLevel is exceeded', () => {
+      const engine = new GraphEngine({
+        nodeWidth: 100,
+        nodeHeight: 50,
+        horizontalSpacing: 20,
+        verticalSpacing: 30,
+        orientation: 'ttb',
+        maxNodesPerLevel: 3,
+      })
+
+      // Create 7 blocks at same level
+      const blocks: Block[] = Array.from({ length: 7 }, (_, i) => ({
+        id: String(i + 1),
+        title: { he: `${i + 1}`, en: `${i + 1}` },
+        prerequisites: [],
+        parents: [],
+      }))
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      // Should create 3 rows: [3, 3, 1]
+      // Row 0: blocks 1-3 at y=0
+      expect(positioned[0]?.position.y).toBe(0)
+      expect(positioned[1]?.position.y).toBe(0)
+      expect(positioned[2]?.position.y).toBe(0)
+
+      // Row 1: blocks 4-6 at y=80 (50 + 30)
+      expect(positioned[3]?.position.y).toBe(80)
+      expect(positioned[4]?.position.y).toBe(80)
+      expect(positioned[5]?.position.y).toBe(80)
+
+      // Row 2: block 7 at y=160 (50 + 30 + 50 + 30)
+      expect(positioned[6]?.position.y).toBe(160)
+
+      // Verify x positions (columns within rows)
+      expect(positioned[0]?.position.x).toBe(0) // col 0
+      expect(positioned[1]?.position.x).toBe(120) // col 1 (100 + 20)
+      expect(positioned[2]?.position.x).toBe(240) // col 2 (100 + 20 + 100 + 20)
+    })
+
+    it('should wrap horizontal orientation (ltr) into multiple columns when maxNodesPerLevel is exceeded', () => {
+      const engine = new GraphEngine({
+        nodeWidth: 100,
+        nodeHeight: 50,
+        horizontalSpacing: 20,
+        verticalSpacing: 30,
+        orientation: 'ltr',
+        maxNodesPerLevel: 2,
+      })
+
+      // Create 5 blocks at same level
+      const blocks: Block[] = Array.from({ length: 5 }, (_, i) => ({
+        id: String(i + 1),
+        title: { he: `${i + 1}`, en: `${i + 1}` },
+        prerequisites: [],
+        parents: [],
+      }))
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      // Should create 3 columns: [2, 2, 1]
+      // Col 0: blocks 1-2 at x=0
+      expect(positioned[0]?.position.x).toBe(0)
+      expect(positioned[1]?.position.x).toBe(0)
+
+      // Col 1: blocks 3-4 at x=120 (100 + 20)
+      expect(positioned[2]?.position.x).toBe(120)
+      expect(positioned[3]?.position.x).toBe(120)
+
+      // Col 2: block 5 at x=240
+      expect(positioned[4]?.position.x).toBe(240)
+
+      // Verify y positions (rows within columns)
+      expect(positioned[0]?.position.y).toBe(0) // row 0
+      expect(positioned[1]?.position.y).toBe(80) // row 1 (50 + 30)
+    })
+
+    it('should not wrap when maxNodesPerLevel is undefined', () => {
+      const engine = new GraphEngine({
+        orientation: 'ttb',
+        // maxNodesPerLevel undefined
+      })
+
+      const blocks: Block[] = Array.from({ length: 10 }, (_, i) => ({
+        id: String(i + 1),
+        title: { he: `${i + 1}`, en: `${i + 1}` },
+        prerequisites: [],
+        parents: [],
+      }))
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      // All blocks should be at same y (single row)
+      const yValues = positioned.map(p => p.position.y)
+      expect(new Set(yValues).size).toBe(1)
+      expect(yValues[0]).toBe(0)
+    })
+
+    it('should not wrap when maxNodesPerLevel is 0 or negative', () => {
+      const engine = new GraphEngine({
+        orientation: 'ttb',
+        maxNodesPerLevel: 0, // Invalid - should be treated as no limit
+      })
+
+      const blocks: Block[] = Array.from({ length: 5 }, (_, i) => ({
+        id: String(i + 1),
+        title: { he: `${i + 1}`, en: `${i + 1}` },
+        prerequisites: [],
+        parents: [],
+      }))
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      // All blocks should be at same y (single row, no wrapping)
+      const yValues = positioned.map(p => p.position.y)
+      expect(new Set(yValues).size).toBe(1)
+    })
+
+    it('should handle maxNodesPerLevel=1 (each node in its own row)', () => {
+      const engine = new GraphEngine({
+        nodeWidth: 100,
+        nodeHeight: 50,
+        verticalSpacing: 30,
+        orientation: 'ttb',
+        maxNodesPerLevel: 1,
+      })
+
+      const blocks: Block[] = Array.from({ length: 3 }, (_, i) => ({
+        id: String(i + 1),
+        title: { he: `${i + 1}`, en: `${i + 1}` },
+        prerequisites: [],
+        parents: [],
+      }))
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      // Each block in its own row
+      expect(positioned[0]?.position.y).toBe(0)
+      expect(positioned[1]?.position.y).toBe(80) // 50 + 30
+      expect(positioned[2]?.position.y).toBe(160) // 50 + 30 + 50 + 30
+
+      // All at x=0 (single column)
+      expect(positioned[0]?.position.x).toBe(0)
+      expect(positioned[1]?.position.x).toBe(0)
+      expect(positioned[2]?.position.x).toBe(0)
+    })
+
+    it('should not wrap when maxNodesPerLevel > total nodes', () => {
+      const engine = new GraphEngine({
+        orientation: 'ttb',
+        maxNodesPerLevel: 100, // More than we have
+      })
+
+      const blocks: Block[] = Array.from({ length: 5 }, (_, i) => ({
+        id: String(i + 1),
+        title: { he: `${i + 1}`, en: `${i + 1}` },
+        prerequisites: [],
+        parents: [],
+      }))
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      // All blocks in single row
+      const yValues = positioned.map(p => p.position.y)
+      expect(new Set(yValues).size).toBe(1)
+    })
+
+    it('should handle multi-level graphs with wrapping at different levels', () => {
+      const engine = new GraphEngine({
+        nodeWidth: 100,
+        nodeHeight: 50,
+        horizontalSpacing: 20,
+        verticalSpacing: 30,
+        orientation: 'ttb',
+        maxNodesPerLevel: 2,
+      })
+
+      // Level 0: 3 blocks (wraps to 2 rows)
+      // Level 1: 1 block (no wrap)
+      const blocks: Block[] = [
+        {
+          id: '1',
+          title: { he: '1', en: '1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: '2',
+          title: { he: '2', en: '2' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: '3',
+          title: { he: '3', en: '3' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: '4',
+          title: { he: '4', en: '4' },
+          prerequisites: [],
+          parents: ['1', '2', '3'],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      // Level 0 blocks (1, 2, 3) should wrap into 2 rows
+      const level0Blocks = positioned.filter(p =>
+        ['1', '2', '3'].includes(p.block.id)
+      )
+      expect(level0Blocks[0]?.position.y).toBe(0)
+      expect(level0Blocks[1]?.position.y).toBe(0)
+      expect(level0Blocks[2]?.position.y).toBe(80) // Second row
+
+      // Level 1 block (4) should be after level 0
+      // Level 0 takes up 2 rows: 50 + 30 + 50 = 130
+      // Plus spacing to level 1: 130 + 30 = 160
+      const block4 = positioned.find(p => p.block.id === '4')
+      expect(block4?.position.y).toBe(160)
+    })
+
+    it('should work with reversed orientations (btt)', () => {
+      const engine = new GraphEngine({
+        nodeWidth: 100,
+        nodeHeight: 50,
+        horizontalSpacing: 20,
+        verticalSpacing: 30,
+        orientation: 'btt',
+        maxNodesPerLevel: 2,
+      })
+
+      const blocks: Block[] = [
+        {
+          id: '1',
+          title: { he: '1', en: '1' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: '2',
+          title: { he: '2', en: '2' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: '3',
+          title: { he: '3', en: '3' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: '4',
+          title: { he: '4', en: '4' },
+          prerequisites: [],
+          parents: ['1', '2', '3'],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      // In BTT, levels are reversed
+      // Level 1 (block 4) should be at bottom (y=0)
+      const block4 = positioned.find(p => p.block.id === '4')
+      expect(block4?.position.y).toBe(0)
+
+      // Level 0 (blocks 1,2,3) should be higher up
+      const level0Blocks = positioned.filter(p =>
+        ['1', '2', '3'].includes(p.block.id)
+      )
+      // After block 4 (50) + spacing (30) + level 0 rows
+      expect(level0Blocks[0]?.position.y).toBeGreaterThan(0)
+    })
+
+    it('should work with reversed orientations (rtl)', () => {
+      const engine = new GraphEngine({
+        nodeWidth: 100,
+        nodeHeight: 50,
+        horizontalSpacing: 20,
+        verticalSpacing: 30,
+        orientation: 'rtl',
+        maxNodesPerLevel: 2,
+      })
+
+      const blocks: Block[] = Array.from({ length: 5 }, (_, i) => ({
+        id: String(i + 1),
+        title: { he: `${i + 1}`, en: `${i + 1}` },
+        prerequisites: [],
+        parents: [],
+      }))
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      // RTL wraps into columns
+      // Should create 3 columns
+      const xPositions = new Set(positioned.map(p => p.position.x))
+      expect(xPositions.size).toBe(3) // 3 columns
+    })
+  })
 })
