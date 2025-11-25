@@ -1361,8 +1361,8 @@ export const TransitiveReduction: Story = {
             Automatic Transitive Reduction
           </h3>
           <p style="margin: 0 0 8px 0; font-size: 14px; color: #333;">
-            <strong>Feature:</strong> Automatically removes redundant prerequisite
-            edges for cleaner visualization
+            <strong>Feature:</strong> Automatically removes redundant
+            prerequisite edges for cleaner visualization
           </p>
           <div
             style="margin: 8px 0; padding: 12px; background: white; border-radius: 4px;"
@@ -1370,23 +1370,30 @@ export const TransitiveReduction: Story = {
             <p style="margin: 0 0 8px 0; font-size: 13px; color: #333;">
               <strong>Data in JSON:</strong>
             </p>
-            <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #333;">
+            <ul
+              style="margin: 0; padding-left: 20px; font-size: 13px; color: #333;"
+            >
               <li>Basic Math → Algebra</li>
               <li>Algebra → Calculus</li>
               <li><del>Basic Math → Calculus</del> (transitive, removed)</li>
               <li>Calculus → Advanced Analysis</li>
-              <li><del>Algebra → Advanced Analysis</del> (transitive, removed)</li>
-              <li><del>Basic Math → Advanced Analysis</del> (transitive, removed)</li>
+              <li>
+                <del>Algebra → Advanced Analysis</del> (transitive, removed)
+              </li>
+              <li>
+                <del>Basic Math → Advanced Analysis</del> (transitive, removed)
+              </li>
             </ul>
           </div>
           <div
             style="margin-top: 12px; padding: 12px; background: #c8e6c9; border-radius: 4px;"
           >
             <p style="margin: 0; font-size: 13px; color: #1b5e20;">
-              <strong>✨ Result:</strong> Only <strong>3 clean edges</strong> are
-              displayed (Basic Math → Algebra → Calculus → Advanced Analysis),
-              even though the data contained 6 prerequisite edges. The transitive
-              edges are automatically detected and hidden!
+              <strong>✨ Result:</strong> Only
+              <strong>3 clean edges</strong> are displayed (Basic Math → Algebra
+              → Calculus → Advanced Analysis), even though the data contained 6
+              prerequisite edges. The transitive edges are automatically
+              detected and hidden!
             </p>
           </div>
         </div>
