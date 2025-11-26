@@ -145,15 +145,20 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>@lumina-study/blocks-graph</h1>
-        <p>The Open University - Combinatorics Course</p>
+        <h1 className="header-title">@lumina-study/blocks-graph</h1>
+        <p className="header-subtitle">
+          The Open University - Combinatorics Course
+        </p>
       </header>
 
       {/* Interactive Controls Panel */}
       <div className="controls">
         <div className="control-group">
-          <label htmlFor="language-select">Language:</label>
+          <label className="control-label" htmlFor="language-select">
+            Language:
+          </label>
           <select
+            className="control-select"
             id="language-select"
             value={language}
             onChange={e => {
@@ -163,14 +168,19 @@ function App() {
               }
             }}
           >
-            <option value="en">English</option>
-            <option value="he">Hebrew (עברית)</option>
+            <option className="control-option" value="en">
+              English
+            </option>
+            <option className="control-option" value="he">
+              Hebrew (עברית)
+            </option>
           </select>
         </div>
 
         <div className="control-group checkbox">
-          <label>
+          <label className="control-label">
             <input
+              className="control-checkbox"
               type="checkbox"
               checked={showPrerequisites}
               onChange={e => setShowPrerequisites(e.target.checked)}
@@ -189,6 +199,7 @@ function App() {
           - Inline styles can be applied via the style prop
         */}
         <blocks-graph
+          className="blocks-graph-component"
           ref={graphRef}
           language={language}
           show-prerequisites={showPrerequisites ? 'true' : 'false'}
@@ -202,22 +213,31 @@ function App() {
 
       {/* Info Panel */}
       <div className="info-panel">
-        <h3>How to Use This Example</h3>
-        <ul>
-          <li>Click on blocks to explore their relationships</li>
-          <li>
+        <h3 className="info-title">How to Use This Example</h3>
+        <ul className="info-list">
+          <li className="info-list-item">
+            Click on blocks to explore their relationships
+          </li>
+          <li className="info-list-item">
             Use the language selector to switch between English and Hebrew
           </li>
-          <li>Toggle checkboxes to show/hide relationships</li>
-          <li>Observe how React state updates the Web Component</li>
-          <li>Check the browser console for event logs</li>
+          <li className="info-list-item">
+            Toggle checkboxes to show/hide relationships
+          </li>
+          <li className="info-list-item">
+            Observe how React state updates the Web Component
+          </li>
+          <li className="info-list-item">
+            Check the browser console for event logs
+          </li>
         </ul>
         <div className="status">
-          <strong>Status:</strong> {status}
+          <strong className="status-label">Status:</strong> {status}
         </div>
         {selectedBlock && (
           <div className="selected-block">
-            <strong>Selected Block ID:</strong> {selectedBlock.substring(0, 8)}
+            <strong className="selected-block-label">Selected Block ID:</strong>{' '}
+            {selectedBlock.substring(0, 8)}
             ...
           </div>
         )}

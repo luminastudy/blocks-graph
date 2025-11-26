@@ -229,8 +229,10 @@ export function BlocksGraphReact({
   )
   useBlocksGraphEvents(ref, onBlocksRendered, onBlockSelected)
 
+  const cssClass = className !== undefined ? className : 'blocks-graph'
   return (
     // @ts-expect-error - Web Component is not in JSX.IntrinsicElements
-    <blocks-graph ref={ref} class={className} style={style} />
+    // eslint-disable-next-line custom/jsx-classname-required -- Web components use 'class' attribute, not 'className'
+    <blocks-graph ref={ref} class={cssClass} style={style} />
   )
 }

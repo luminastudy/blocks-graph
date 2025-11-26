@@ -59,11 +59,11 @@ function AppWithWrapper() {
     return (
       <div className="app">
         <header className="header">
-          <h1>@lumina-study/blocks-graph</h1>
-          <p>React Wrapper Example</p>
+          <h1 className="header-title">@lumina-study/blocks-graph</h1>
+          <p className="header-subtitle">React Wrapper Example</p>
         </header>
         <div className="info-panel">
-          <p>{status}</p>
+          <p className="info-text">{status}</p>
         </div>
       </div>
     )
@@ -72,16 +72,23 @@ function AppWithWrapper() {
   return (
     <div className="app">
       <header className="header">
-        <h1>@lumina-study/blocks-graph</h1>
-        <p>The Open University - Combinatorics Course</p>
-        <small>Using React Wrapper (No refs needed!)</small>
+        <h1 className="header-title">@lumina-study/blocks-graph</h1>
+        <p className="header-subtitle">
+          The Open University - Combinatorics Course
+        </p>
+        <small className="header-note">
+          Using React Wrapper (No refs needed!)
+        </small>
       </header>
 
       {/* Interactive Controls Panel */}
       <div className="controls">
         <div className="control-group">
-          <label htmlFor="language-select">Language:</label>
+          <label className="control-label" htmlFor="language-select">
+            Language:
+          </label>
           <select
+            className="control-select"
             id="language-select"
             value={language}
             onChange={e => {
@@ -91,14 +98,21 @@ function AppWithWrapper() {
               }
             }}
           >
-            <option value="en">English</option>
-            <option value="he">Hebrew (עברית)</option>
+            <option className="control-option" value="en">
+              English
+            </option>
+            <option className="control-option" value="he">
+              Hebrew (עברית)
+            </option>
           </select>
         </div>
 
         <div className="control-group">
-          <label htmlFor="orientation-select">Orientation:</label>
+          <label className="control-label" htmlFor="orientation-select">
+            Orientation:
+          </label>
           <select
+            className="control-select"
             id="orientation-select"
             value={orientation}
             onChange={e => {
@@ -113,16 +127,25 @@ function AppWithWrapper() {
               }
             }}
           >
-            <option value="ttb">Top to Bottom</option>
-            <option value="ltr">Left to Right</option>
-            <option value="rtl">Right to Left</option>
-            <option value="btt">Bottom to Top</option>
+            <option className="control-option" value="ttb">
+              Top to Bottom
+            </option>
+            <option className="control-option" value="ltr">
+              Left to Right
+            </option>
+            <option className="control-option" value="rtl">
+              Right to Left
+            </option>
+            <option className="control-option" value="btt">
+              Bottom to Top
+            </option>
           </select>
         </div>
 
         <div className="control-group checkbox">
-          <label>
+          <label className="control-label">
             <input
+              className="control-checkbox"
               type="checkbox"
               checked={showPrerequisites}
               onChange={e => setShowPrerequisites(e.target.checked)}
@@ -171,22 +194,27 @@ function AppWithWrapper() {
 
       {/* Info Panel */}
       <div className="info-panel">
-        <h3>React Wrapper Benefits</h3>
-        <ul>
-          <li>✅ No refs needed - just pass props</li>
-          <li>✅ Full TypeScript support with autocomplete</li>
-          <li>
+        <h3 className="info-title">React Wrapper Benefits</h3>
+        <ul className="info-list">
+          <li className="info-list-item">
+            ✅ No refs needed - just pass props
+          </li>
+          <li className="info-list-item">
+            ✅ Full TypeScript support with autocomplete
+          </li>
+          <li className="info-list-item">
             ✅ React-style event handlers (onBlocksRendered, onBlockSelected)
           </li>
-          <li>✅ Automatic prop synchronization</li>
-          <li>✅ Clean, declarative API</li>
+          <li className="info-list-item">✅ Automatic prop synchronization</li>
+          <li className="info-list-item">✅ Clean, declarative API</li>
         </ul>
         <div className="status">
-          <strong>Status:</strong> {status}
+          <strong className="status-label">Status:</strong> {status}
         </div>
         {selectedBlock && (
           <div className="selected-block">
-            <strong>Selected Block ID:</strong> {selectedBlock.substring(0, 8)}
+            <strong className="selected-block-label">Selected Block ID:</strong>{' '}
+            {selectedBlock.substring(0, 8)}
             ...
           </div>
         )}
