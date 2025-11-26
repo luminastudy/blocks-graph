@@ -128,6 +128,7 @@ export class GraphEngine {
           levelOffset,
           blockIds.length,
           isVertical,
+          isReversed,
           this.config
         )
         positions.set(blockId, position)

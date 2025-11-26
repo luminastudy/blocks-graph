@@ -14,7 +14,13 @@ export function calculateLevelOffsets(
   const maxNodesPerLevel = config.maxNodesPerLevel
   let currentOffset = 0
 
-  for (const [level, blockIds] of blocksByLevel.entries()) {
+  // For reversed orientations, we need to iterate levels in reverse order
+  // so that cumulative offsets build correctly (later levels appear first visually)
+  const sortedLevels = Array.from(blocksByLevel.entries()).sort((a, b) =>
+    isReversed ? b[0] - a[0] : a[0] - b[0]
+  )
+
+  for (const [level, blockIds] of sortedLevels) {
     const adjustedLevel = isReversed ? maxLevel - level : level
     levelOffsets.set(adjustedLevel, currentOffset)
 
