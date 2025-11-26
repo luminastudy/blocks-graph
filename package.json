@@ -14,6 +14,14 @@
     "./react": {
       "types": "./dist/wrappers/react/index.d.ts",
       "import": "./dist/wrappers/react/index.js"
+    },
+    "./vue": {
+      "types": "./dist/wrappers/vue/index.d.ts",
+      "import": "./dist/wrappers/vue/index.js"
+    },
+    "./angular": {
+      "types": "./dist/wrappers/angular/index.d.ts",
+      "import": "./dist/wrappers/angular/index.js"
     }
   },
   "files": [
