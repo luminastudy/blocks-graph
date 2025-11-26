@@ -78,7 +78,7 @@ jobs:
 
       - name: Build Angular example
         working-directory: examples/angular
-        run: pnpm build -- --base-href /blocks-graph/angular/
+        run: pnpm ng build --base-href /blocks-graph/angular/
 
       - name: Prepare deployment directory
         run: |
