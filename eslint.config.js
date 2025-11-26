@@ -50,7 +50,7 @@ export default [
       // Library core files are legitimately longer than typical application code
       'max-lines': [
         'error',
-        { max: 300, skipBlankLines: true, skipComments: true },
+        { max: 250, skipBlankLines: true, skipComments: true },
       ],
       // For a visualization library, most files are either:
       // 1. Core algorithmic/business logic (tested via integration tests in blocks-graph.spec.ts)
