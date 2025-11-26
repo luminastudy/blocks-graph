@@ -8,12 +8,16 @@
  * need to be updated manually after the main build.
  */
 
-import { writeFileSync } from 'node:fs'
+import { writeFileSync, mkdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const distDir = join(__dirname, '..', 'dist', 'wrappers')
+
+// Ensure directories exist
+mkdirSync(join(distDir, 'vue'), { recursive: true })
+mkdirSync(join(distDir, 'angular'), { recursive: true })
 
 // Vue wrapper index.d.ts
 const vueIndexDts = `export { BlocksGraphVue } from './BlocksGraphVue.js';
