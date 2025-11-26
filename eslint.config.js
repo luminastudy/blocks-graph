@@ -45,7 +45,6 @@ export default [
     rules: {
       // Relax some overly strict rules for library code
       'default/no-hardcoded-urls': 'off', // SVG namespace URLs are fine
-      'custom/jsx-classname-required': 'off', // Not needed for examples
       // Library core files are legitimately longer than typical application code
       'max-lines': [
         'error',
