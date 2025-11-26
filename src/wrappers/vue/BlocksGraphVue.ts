@@ -11,8 +11,9 @@ import type { Block } from '../../types/block.js'
 import type { BlockSchemaV01 } from '../../adaptors/v0.1/types.js'
 import type { BlocksGraph } from '../../components/blocks-graph.js'
 import type { EdgeLineStyle } from '../../types/edge-style.js'
-import type { BlocksRenderedEvent } from './blocks-rendered-event.js'
-import type { BlockSelectedEvent } from './block-selected-event.js'
+import type { BlocksRenderedEvent } from '../blocks-rendered-event.js'
+import type { BlockSelectedEvent } from '../block-selected-event.js'
+import { DEFAULT_CONFIG } from '../default-config.js'
 
 // Import the web component to ensure it's registered
 import '../../index.js'
@@ -78,15 +79,15 @@ export const BlocksGraphVue = defineComponent({
     // Configuration props
     language: {
       type: String as PropType<'en' | 'he'>,
-      default: 'en',
+      default: DEFAULT_CONFIG.language,
     },
     orientation: {
       type: String as PropType<'ttb' | 'ltr' | 'rtl' | 'btt'>,
-      default: 'ttb',
+      default: DEFAULT_CONFIG.orientation,
     },
     showPrerequisites: {
       type: Boolean,
-      default: true,
+      default: DEFAULT_CONFIG.showPrerequisites,
     },
     nodeWidth: {
       type: Number,
@@ -112,7 +113,7 @@ export const BlocksGraphVue = defineComponent({
     // Edge style props
     prerequisiteLineStyle: {
       type: String as PropType<EdgeLineStyle>,
-      default: 'dashed',
+      default: DEFAULT_CONFIG.prerequisiteLineStyle,
     },
 
     // Standard props

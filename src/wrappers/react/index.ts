@@ -26,3 +26,8 @@ export type { Block } from '../../types/block.js'
 export type { BlockSchemaV01 } from '../../adaptors/v0.1/types.js'
 export type { BlockTitle } from '../../adaptors/v0.1/block-title.js'
 export type { EdgeLineStyle } from '../../types/edge-style.js'
+
+// Re-export shared config types
+export type { BlocksGraphBaseConfig } from '../blocks-graph-base-config.js'
+export type { BlocksRenderedEvent } from '../blocks-rendered-event.js'
+export type { BlockSelectedEvent } from '../block-selected-event.js'

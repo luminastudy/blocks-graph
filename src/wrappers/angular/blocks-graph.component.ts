@@ -15,8 +15,9 @@ import type { Block } from '../../types/block.js'
 import type { BlockSchemaV01 } from '../../adaptors/v0.1/types.js'
 import type { BlocksGraph } from '../../components/blocks-graph.js'
 import type { EdgeLineStyle } from '../../types/edge-style.js'
-import type { BlocksRenderedEvent } from './blocks-rendered-event.js'
-import type { BlockSelectedEvent } from './block-selected-event.js'
+import type { BlocksRenderedEvent } from '../blocks-rendered-event.js'
+import type { BlockSelectedEvent } from '../block-selected-event.js'
+import { DEFAULT_CONFIG } from '../default-config.js'
 
 // Import the web component to ensure it's registered
 import '../../index.js'
@@ -87,9 +88,10 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
   @Input() schemaVersion: 'v0.1' | 'internal' = 'v0.1'
 
   // Configuration inputs
-  @Input() language: 'en' | 'he' = 'en'
-  @Input() orientation: 'ttb' | 'ltr' | 'rtl' | 'btt' = 'ttb'
-  @Input() showPrerequisites = true
+  @Input() language: 'en' | 'he' = DEFAULT_CONFIG.language
+  @Input() orientation: 'ttb' | 'ltr' | 'rtl' | 'btt' =
+    DEFAULT_CONFIG.orientation
+  @Input() showPrerequisites = DEFAULT_CONFIG.showPrerequisites
   @Input() nodeWidth?: number
   @Input() nodeHeight?: number
   @Input() horizontalSpacing?: number
@@ -97,7 +99,8 @@ export class BlocksGraphComponent implements OnInit, OnChanges, OnDestroy {
   @Input() maxNodesPerLevel?: number
 
   // Edge style inputs
-  @Input() prerequisiteLineStyle: EdgeLineStyle = 'dashed'
+  @Input() prerequisiteLineStyle: EdgeLineStyle =
+    DEFAULT_CONFIG.prerequisiteLineStyle
 
   // Standard inputs
   @Input() className?: string

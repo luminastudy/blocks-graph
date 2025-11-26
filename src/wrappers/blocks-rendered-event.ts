@@ -1,5 +1,5 @@
 /**
- * Event emitted when blocks are rendered
+ * Event payload when blocks are rendered
  */
 export interface BlocksRenderedEvent {
   blockCount: number

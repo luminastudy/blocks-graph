@@ -3,6 +3,10 @@ import type { Block } from '../../types/block.js'
 import type { BlockSchemaV01 } from '../../adaptors/v0.1/types.js'
 import type { BlocksGraph } from '../../components/blocks-graph.js'
 import type { EdgeLineStyle } from '../../types/edge-style.js'
+import type { BlocksGraphBaseConfig } from '../blocks-graph-base-config.js'
+import type { BlocksRenderedEvent } from '../blocks-rendered-event.js'
+import type { BlockSelectedEvent } from '../block-selected-event.js'
+import { DEFAULT_CONFIG } from '../default-config.js'
 
 // Import the web component to ensure it's registered
 import '../../index.js'
@@ -134,39 +138,15 @@ function useBlocksGraphEvents(
   }, [ref, onBlockSelected])
 }
 
-export interface BlocksGraphProps {
-  // Data props
-  /** Array of blocks in internal format or v0.1 schema format (auto-detected) */
-  blocks?: Block[] | BlockSchemaV01[]
-  /** URL to load blocks from (always uses v0.1 schema) */
-  jsonUrl?: string
+export interface BlocksGraphProps extends BlocksGraphBaseConfig {
   /**
    * @deprecated Schema version is now auto-detected. This prop is ignored.
    */
   schemaVersion?: 'v0.1' | 'internal'
 
-  // Configuration props
-  language?: 'en' | 'he'
-  orientation?: 'ttb' | 'ltr' | 'rtl' | 'btt'
-  showPrerequisites?: boolean
-  nodeWidth?: number
-  nodeHeight?: number
-  horizontalSpacing?: number
-  verticalSpacing?: number
-  maxNodesPerLevel?: number
-
-  // Edge style props
-  prerequisiteLineStyle?: EdgeLineStyle
-
   // Event callbacks
-  onBlocksRendered?: (event: CustomEvent<{ blockCount: number }>) => void
-  onBlockSelected?: (
-    event: CustomEvent<{
-      blockId: string | null
-      selectionLevel: number
-      navigationStack: string[]
-    }>
-  ) => void
+  onBlocksRendered?: (event: CustomEvent<BlocksRenderedEvent>) => void
+  onBlockSelected?: (event: CustomEvent<BlockSelectedEvent>) => void
 
   // Standard props
   className?: string
@@ -225,11 +205,17 @@ export function BlocksGraphReact({
   className,
   style,
 }: BlocksGraphProps) {
-  const lang = language !== undefined ? language : 'en'
-  const orient = orientation !== undefined ? orientation : 'ttb'
-  const showPrereq = showPrerequisites !== undefined ? showPrerequisites : true
+  const lang = language !== undefined ? language : DEFAULT_CONFIG.language
+  const orient =
+    orientation !== undefined ? orientation : DEFAULT_CONFIG.orientation
+  const showPrereq =
+    showPrerequisites !== undefined
+      ? showPrerequisites
+      : DEFAULT_CONFIG.showPrerequisites
   const prereqStyle =
-    prerequisiteLineStyle !== undefined ? prerequisiteLineStyle : 'dashed'
+    prerequisiteLineStyle !== undefined
+      ? prerequisiteLineStyle
+      : DEFAULT_CONFIG.prerequisiteLineStyle
   const ref = useRef<BlocksGraph>(null)
   useBlocksGraphData(ref, blocks, jsonUrl)
   useBlocksGraphConfig(ref, lang, orient, showPrereq, prereqStyle)
