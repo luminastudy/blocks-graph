@@ -1,0 +1,27 @@
+/**
+ * AJV validator setup for schema v0.2
+ */
+
+import AjvImport from 'ajv'
+import addFormatsImport from 'ajv-formats'
+import blockSchemaV02 from '@lumina-study/block-schema/v0.2' with { type: 'json' }
+
+// Handle both ESM and CJS imports
+type AjvModule = typeof AjvImport & { default?: typeof AjvImport }
+type AddFormatsModule = typeof addFormatsImport & {
+  default?: typeof addFormatsImport
+}
+
+const AjvModule: AjvModule = AjvImport
+const Ajv = AjvModule.default !== undefined ? AjvModule.default : AjvImport
+
+const AddFormatsModule: AddFormatsModule = addFormatsImport
+const addFormats =
+  AddFormatsModule.default !== undefined
+    ? AddFormatsModule.default
+    : addFormatsImport
+
+// Create AJV validator (draft-07 compatible)
+const ajv = new Ajv({ strict: false })
+addFormats(ajv)
+export const validateBlock = ajv.compile(blockSchemaV02)

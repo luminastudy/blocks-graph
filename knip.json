@@ -20,7 +20,8 @@
     "examples/**",
     "src/core/add-block-to-visibility.ts",
     "src/core/is-root-node.ts",
-    "src/core/is-root-single-node.ts"
+    "src/core/is-root-single-node.ts",
+    "src/adaptors/v0.2/**"
   ],
   "ignoreDependencies": [
     "@angular/core",

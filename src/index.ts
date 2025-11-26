@@ -28,12 +28,25 @@ export { GraphRenderer } from './core/renderer.js'
 export type { RendererConfig } from './core/renderer-config.js'
 export { removeTransitiveEdges } from './core/transitive-reduction.js'
 
-// Export adaptors
+// Export adaptors - v0.1
 export { SchemaV01Adaptor } from './adaptors/v0.1/adaptor.js'
 export { schemaV01Adaptor } from './adaptors/v0.1/instance.js'
 export type { BlockSchemaV01 } from './adaptors/v0.1/types.js'
 export type { BlockTitle } from './adaptors/v0.1/block-title.js'
 export { isBlockSchemaV01 } from './adaptors/v0.1/validators.js'
+
+// Export adaptors - v0.2
+export { SchemaV02Adaptor } from './adaptors/v0.2/adaptor.js'
+export { schemaV02Adaptor } from './adaptors/v0.2/instance.js'
+export type { BlockSchemaV02 } from './adaptors/v0.2/types.js'
+export { isBlockSchemaV02 } from './adaptors/v0.2/validators.js'
+export { isLocalUuid } from './adaptors/v0.2/is-local-uuid.js'
+export { isExternalReference } from './adaptors/v0.2/is-external-reference.js'
+export { parseExternalReference } from './adaptors/v0.2/parse-external-reference.js'
+export { getExternalReferenceUrl } from './adaptors/v0.2/get-external-reference-url.js'
+export { getExternalReferenceLabel } from './adaptors/v0.2/get-external-reference-label.js'
+export type { ExternalPlatform } from './adaptors/v0.2/external-platform.js'
+export type { ParsedExternalReference } from './adaptors/v0.2/parsed-external-reference.js'
 
 // Export custom errors
 export { InvalidBlockSchemaError } from './errors/invalid-block-schema-error.js'
