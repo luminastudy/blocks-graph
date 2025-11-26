@@ -9,6 +9,7 @@ import { addBlockWithSubBlocks } from './add-block-with-sub-blocks.js'
 import { calculateLevelOffsets } from './calculate-level-offsets.js'
 import { calculateParentCenteredPositions } from './calculate-parent-centered-positions.js'
 import { removeTransitiveEdges } from './transitive-reduction.js'
+import { isDescendantOf } from './is-descendant-of.js'
 
 export class GraphEngine {
   private config: GraphLayoutConfig
@@ -192,28 +193,6 @@ export class GraphEngine {
     return subBlocks
   }
 
-  /**
-   * Check if a block is a descendant of another block (child, grandchild, etc.)
-   */
-  private isDescendantOf(
-    blockId: string,
-    ancestorId: string,
-    graph: BlockGraph,
-    visited?: Set<string>
-  ): boolean {
-    const visitedSet = visited !== undefined ? visited : new Set<string>()
-    if (visitedSet.has(blockId)) return false
-    visitedSet.add(blockId)
-
-    const block = graph.blocks.get(blockId)
-    if (!block) return false
-    if (block.parents.includes(ancestorId)) return true
-
-    return block.parents.some(parentId =>
-      this.isDescendantOf(parentId, ancestorId, graph, visitedSet)
-    )
-  }
-
   getRelatedBlocks(
     blockId: string,
     graph: BlockGraph,
@@ -320,7 +299,7 @@ export class GraphEngine {
     const isInSingleRootSubtree =
       rootBlocks.length === 1 &&
       rootBlocks[0] &&
-      this.isDescendantOf(selectedBlockId, rootBlocks[0].id, graph)
+      isDescendantOf(selectedBlockId, rootBlocks[0].id, graph)
 
     // All other root blocks should be dimmed (for context)
     // Exception: Don't show the single auto-skipped root when viewing its descendants

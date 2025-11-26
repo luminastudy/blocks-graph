@@ -6,6 +6,7 @@ import { edgeLineStyleToDashArray } from '../types/edge-line-style-to-dash-array
 import type { RendererConfig } from './renderer-config.js'
 import { DEFAULT_RENDERER_CONFIG } from './default-renderer-config.js'
 import { wrapTextToLines } from './text-wrapper.js'
+import { calculateViewBox } from './calculate-view-box.js'
 
 /**
  * SVG renderer for block graphs
@@ -18,16 +19,10 @@ export class GraphRenderer {
     this.config = { ...DEFAULT_RENDERER_CONFIG, ...configToUse }
   }
 
-  /**
-   * Update renderer configuration
-   */
   updateConfig(config: Partial<RendererConfig>): void {
     this.config = { ...this.config, ...config }
   }
 
-  /**
-   * Calculate connection points for edges based on orientation
-   */
   private calculateConnectionPoints(
     fromPos: BlockPosition,
     toPos: BlockPosition,
@@ -35,7 +30,6 @@ export class GraphRenderer {
   ): { x1: number; y1: number; x2: number; y2: number } {
     switch (orientation) {
       case 'ttb':
-        // Top-to-bottom: connect from bottom center to top center
         return {
           x1: fromPos.x + fromPos.width / 2,
           y1: fromPos.y + fromPos.height,
@@ -43,7 +37,6 @@ export class GraphRenderer {
           y2: toPos.y,
         }
       case 'btt':
-        // Bottom-to-top: connect from top center to bottom center
         return {
           x1: fromPos.x + fromPos.width / 2,
           y1: fromPos.y,
@@ -51,7 +44,6 @@ export class GraphRenderer {
           y2: toPos.y + toPos.height,
         }
       case 'ltr':
-        // Left-to-right: connect from right center to left center
         return {
           x1: fromPos.x + fromPos.width,
           y1: fromPos.y + fromPos.height / 2,
@@ -59,7 +51,6 @@ export class GraphRenderer {
           y2: toPos.y + toPos.height / 2,
         }
       case 'rtl':
-        // Right-to-left: connect from left center to right center
         return {
           x1: fromPos.x,
           y1: fromPos.y + fromPos.height / 2,
@@ -69,9 +60,6 @@ export class GraphRenderer {
     }
   }
 
-  /**
-   * Render edges (connections between blocks)
-   */
   private renderEdges(
     graph: BlockGraph,
     positioned: PositionedBlock[]
@@ -88,25 +76,17 @@ export class GraphRenderer {
     for (const edge of graph.edges) {
       const fromPos = positionMap.get(edge.from)
       const toPos = positionMap.get(edge.to)
+      if (!fromPos || !toPos) continue
 
-      if (!fromPos || !toPos) {
-        continue
-      }
-
-      // Only render prerequisite edges (parent edges are never shown)
       const shouldRender =
         edge.type === 'prerequisite' && this.config.showPrerequisites
-
-      if (!shouldRender) {
-        continue
-      }
+      if (!shouldRender) continue
 
       const line = document.createElementNS(
         'http://www.w3.org/2000/svg',
         'line'
       )
 
-      // Calculate connection points based on orientation
       const { x1, y1, x2, y2 } = this.calculateConnectionPoints(
         fromPos,
         toPos,
@@ -122,17 +102,14 @@ export class GraphRenderer {
       line.setAttribute('stroke', style.stroke)
       line.setAttribute('stroke-width', String(style.strokeWidth))
 
-      // Use lineStyle if available, otherwise fall back to dashArray for backward compatibility
       const dashArray =
         style.lineStyle !== undefined
           ? edgeLineStyleToDashArray(style.lineStyle)
           : style.dashArray
-
       if (dashArray) {
         line.setAttribute('stroke-dasharray', dashArray)
       }
 
-      // Dim edge if either endpoint is dimmed
       const isFromDimmed = this.config.dimmedBlocks
         ? this.config.dimmedBlocks.has(edge.from)
         : false
@@ -146,16 +123,12 @@ export class GraphRenderer {
       line.setAttribute('class', `edge edge-${edge.type}`)
       line.setAttribute('data-from', edge.from)
       line.setAttribute('data-to', edge.to)
-
       group.appendChild(line)
     }
 
     return group
   }
 
-  /**
-   * Create a block rectangle element
-   */
   private createBlockRect(
     position: BlockPosition,
     isSelected: boolean,
@@ -189,9 +162,6 @@ export class GraphRenderer {
     return rect
   }
 
-  /**
-   * Create block text element with wrapping
-   */
   private createBlockText(
     title: string,
     position: BlockPosition,
@@ -212,6 +182,7 @@ export class GraphRenderer {
         ? this.config.textStyle.maxLines
         : 3
     const maxTextWidth = position.width - 2 * horizontalPadding
+
     const { lines, isTruncated } = wrapTextToLines(
       title,
       maxTextWidth,
@@ -219,6 +190,7 @@ export class GraphRenderer {
       fontFamily,
       maxLines
     )
+
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
     text.setAttribute('x', String(position.x + position.width / 2))
     text.setAttribute('text-anchor', 'middle')
@@ -226,9 +198,11 @@ export class GraphRenderer {
     text.setAttribute('font-size', String(fontSize))
     text.setAttribute('font-family', fontFamily)
     text.setAttribute('opacity', opacity)
+
     const totalTextHeight = lines.length * fontSize * lineHeight
     const startY =
       position.y + position.height / 2 - totalTextHeight / 2 + fontSize / 2
+
     lines.forEach((line, index) => {
       const tspan = document.createElementNS(
         'http://www.w3.org/2000/svg',
@@ -240,15 +214,14 @@ export class GraphRenderer {
       tspan.textContent = line
       text.appendChild(tspan)
     })
+
     return { text, isTruncated, lineCount: lines.length }
   }
 
-  /**
-   * Render blocks (nodes in the graph)
-   */
   private renderBlocks(positioned: PositionedBlock[]): SVGGElement {
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     group.setAttribute('class', 'blocks')
+
     for (const { block, position } of positioned) {
       const blockGroup = document.createElementNS(
         'http://www.w3.org/2000/svg',
@@ -256,13 +229,16 @@ export class GraphRenderer {
       )
       blockGroup.setAttribute('class', 'block')
       blockGroup.setAttribute('data-id', block.id)
+
       const isSelected = this.config.selectedBlockId === block.id
       const isDimmed = this.config.dimmedBlocks
         ? this.config.dimmedBlocks.has(block.id)
         : false
       const opacity = isDimmed ? '0.3' : '1'
+
       const rect = this.createBlockRect(position, isSelected, opacity)
       blockGroup.appendChild(rect)
+
       const title =
         this.config.language === 'he' ? block.title.he : block.title.en
       const { text, isTruncated, lineCount } = this.createBlockText(
@@ -271,6 +247,7 @@ export class GraphRenderer {
         opacity
       )
       blockGroup.appendChild(text)
+
       if (isTruncated || lineCount > 1) {
         const titleElement = document.createElementNS(
           'http://www.w3.org/2000/svg',
@@ -281,52 +258,15 @@ export class GraphRenderer {
       }
       group.appendChild(blockGroup)
     }
+
     return group
   }
 
-  /**
-   * Calculate the bounding box of all positioned blocks
-   */
-  private calculateViewBox(positioned: PositionedBlock[]): {
-    x: number
-    y: number
-    width: number
-    height: number
-  } {
-    if (positioned.length === 0) {
-      return { x: 0, y: 0, width: 800, height: 600 }
-    }
-
-    let minX = Number.POSITIVE_INFINITY
-    let minY = Number.POSITIVE_INFINITY
-    let maxX = Number.NEGATIVE_INFINITY
-    let maxY = Number.NEGATIVE_INFINITY
-
-    for (const { position } of positioned) {
-      minX = Math.min(minX, position.x)
-      minY = Math.min(minY, position.y)
-      maxX = Math.max(maxX, position.x + position.width)
-      maxY = Math.max(maxY, position.y + position.height)
-    }
-
-    const padding = 40
-    return {
-      x: minX - padding,
-      y: minY - padding,
-      width: maxX - minX + 2 * padding,
-      height: maxY - minY + 2 * padding,
-    }
-  }
-
-  /**
-   * Render the complete graph to an SVG element
-   */
   render(graph: BlockGraph, positioned: PositionedBlock[]): SVGSVGElement {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
 
-    // Calculate and set viewBox
-    const viewBox = this.calculateViewBox(positioned)
+    const viewBox = calculateViewBox(positioned)
     svg.setAttribute(
       'viewBox',
       `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`
@@ -334,11 +274,9 @@ export class GraphRenderer {
     svg.setAttribute('width', '100%')
     svg.setAttribute('height', '100%')
 
-    // Render edges first (so they appear behind blocks)
     const edgesGroup = this.renderEdges(graph, positioned)
     svg.appendChild(edgesGroup)
 
-    // Render blocks
     const blocksGroup = this.renderBlocks(positioned)
     svg.appendChild(blocksGroup)
 

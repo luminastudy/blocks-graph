@@ -17,24 +17,9 @@ import { attachBlockClickListeners } from './attach-block-click-listeners.js'
 import { renderGraph } from './render-graph.js'
 import { parseLayoutConfigFromAttributes } from './parse-layout-config-from-attributes.js'
 import { isValidOrientation } from './is-valid-orientation.js'
-
-/**
- * Find duplicate IDs in an array of blocks
- * @returns Array of duplicate IDs, empty if no duplicates
- */
-function findDuplicateIds(blocks: Array<{ id: string }>): string[] {
-  const seen = new Set<string>()
-  const duplicates = new Set<string>()
-
-  for (const block of blocks) {
-    if (seen.has(block.id)) {
-      duplicates.add(block.id)
-    }
-    seen.add(block.id)
-  }
-
-  return Array.from(duplicates)
-}
+import { findDuplicateIds } from './find-duplicate-ids.js'
+import { createBlockSelectedEvent } from './create-block-selected-event.js'
+import { parseMaxNodesPerLevel } from './parse-max-nodes-per-level.js'
 
 /**
  * Custom element for rendering block graphs
@@ -261,36 +246,28 @@ export class BlocksGraph extends HTMLElement {
     // If block has no children, only dispatch event without changing navigation
     if (children.length === 0) {
       this.dispatchEvent(
-        new CustomEvent('block-selected', {
-          detail: {
-            blockId,
-            selectionLevel: this.selectionLevel,
-            navigationStack: [...this.navigationStack],
-          },
-        })
+        createBlockSelectedEvent(
+          blockId,
+          this.selectionLevel,
+          this.navigationStack
+        )
       )
       return
     }
 
     // Block has children - check if it's on top of stack
-    const isTopOfStack = this.selectedBlockId === blockId
-
-    if (isTopOfStack) {
-      // Pop from stack (go up one level)
+    if (this.selectedBlockId === blockId) {
       this.navigationStack.pop()
     } else {
-      // Push to stack (drill down)
       this.navigationStack.push(blockId)
     }
 
     this.dispatchEvent(
-      new CustomEvent('block-selected', {
-        detail: {
-          blockId: this.selectedBlockId,
-          selectionLevel: this.selectionLevel,
-          navigationStack: [...this.navigationStack],
-        },
-      })
+      createBlockSelectedEvent(
+        this.selectedBlockId,
+        this.selectionLevel,
+        this.navigationStack
+      )
     )
 
     this.render()
@@ -390,17 +367,11 @@ export class BlocksGraph extends HTMLElement {
 
   /** Get/set maximum nodes per level for grid wrapping */
   get maxNodesPerLevel(): number | undefined {
-    const value = this.getAttribute('max-nodes-per-level')
-    if (!value) return undefined
-    const parsed = Number.parseInt(value, 10)
-    return !Number.isNaN(parsed) && parsed >= 1 ? parsed : undefined
+    return parseMaxNodesPerLevel(this.getAttribute('max-nodes-per-level'))
   }
   set maxNodesPerLevel(value: number | undefined) {
-    if (value === undefined) {
-      this.removeAttribute('max-nodes-per-level')
-    } else {
-      this.setAttribute('max-nodes-per-level', String(value))
-    }
+    if (value === undefined) this.removeAttribute('max-nodes-per-level')
+    else this.setAttribute('max-nodes-per-level', String(value))
   }
 }
 
