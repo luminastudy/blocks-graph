@@ -1,10 +1,10 @@
 <div class="app">
   <header class="header">
-    <h1>@lumina-study/blocks-graph</h1>
+    <h1>&#64;lumina-study/blocks-graph</h1>
     <p *ngIf="!blocks">Loading data...</p>
     <ng-container *ngIf="blocks">
       <p>The Open University - Combinatorics Course</p>
-      <small>Using Angular Wrapper (No ViewChild needed!)</small>
+      <small>Using Web Component with CUSTOM_ELEMENTS_SCHEMA</small>
     </ng-container>
   </header>
 
@@ -19,15 +19,15 @@
     <div class="controls">
       <div class="control-group">
         <label for="language-select">Language:</label>
-        <select id="language-select" [(ngModel)]="language">
+        <select id="language-select" [(ngModel)]="language" (ngModelChange)="onLanguageChange()">
           <option value="en">English</option>
-          <option value="he">Hebrew (עברית)</option>
+          <option value="he">Hebrew</option>
         </select>
       </div>
 
       <div class="control-group">
         <label for="orientation-select">Orientation:</label>
-        <select id="orientation-select" [(ngModel)]="orientation">
+        <select id="orientation-select" [(ngModel)]="orientation" (ngModelChange)="onOrientationChange()">
           <option value="ttb">Top to Bottom</option>
           <option value="ltr">Left to Right</option>
           <option value="rtl">Right to Left</option>
@@ -37,36 +37,31 @@
 
       <div class="control-group checkbox">
         <label>
-          <input type="checkbox" [(ngModel)]="showPrerequisites" />
+          <input type="checkbox" [(ngModel)]="showPrerequisites" (ngModelChange)="onShowPrerequisitesChange()" />
           Show Prerequisites
         </label>
       </div>
     </div>
 
-    <!-- Angular Wrapper Component - Clean @Input/@Output API! -->
+    <!-- Web Component with ViewChild access -->
     <div class="graph-container">
-      <blocks-graph-angular
-        [blocks]="blocks"
-        [language]="language"
-        [orientation]="orientation"
-        [showPrerequisites]="showPrerequisites"
-        [nodeWidth]="200"
-        [nodeHeight]="80"
-        (blocksRendered)="handleBlocksRendered($event)"
-        (blockSelected)="handleBlockSelected($event)"
-        [style]="{ width: '100%', height: '600px', display: 'block' }"
-      ></blocks-graph-angular>
+      <blocks-graph
+        #graphElement
+        [attr.language]="language"
+        [attr.orientation]="orientation"
+        [attr.show-prerequisites]="showPrerequisites"
+        style="width: 100%; height: 600px; display: block;"
+      ></blocks-graph>
     </div>
 
     <!-- Info Panel -->
     <div class="info-panel">
-      <h3>Angular Wrapper Benefits</h3>
+      <h3>Web Component Integration</h3>
       <ul>
-        <li>✅ No ViewChild needed - just use @Input/@Output</li>
-        <li>✅ Full TypeScript support with autocomplete</li>
-        <li>✅ Angular-style events with EventEmitter</li>
-        <li>✅ Automatic change detection</li>
-        <li>✅ Clean, declarative API</li>
+        <li>Uses CUSTOM_ELEMENTS_SCHEMA for web component support</li>
+        <li>ViewChild for direct element access</li>
+        <li>Event listeners for blocks-rendered and block-selected</li>
+        <li>Works with any web component</li>
       </ul>
       <div class="status">
         <strong>Status:</strong> {{ status }}

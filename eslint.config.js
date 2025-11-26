@@ -36,6 +36,8 @@ export default [
       '**/package.json',
       'src/wrappers/vue/**',
       'src/wrappers/angular/**',
+      'examples/**/dist/**',
+      'examples/**/node_modules/**',
     ],
   },
   ...fixedAgentConfig,
@@ -67,6 +69,10 @@ export default [
       'error/no-generic-error': 'off',
       'error/require-custom-error': 'off',
       'ddd/require-spec-file': 'off',
+      // Examples may need type assertions for framework interop (e.g., DOM events in Angular)
+      'no-restricted-syntax': 'off',
+      // Examples may use optional chaining for convenience
+      'no-optional-chaining/no-optional-chaining': 'off',
     },
   },
 ]
