@@ -1,6 +1,5 @@
 import type { Block } from '../types/block.js'
 import type { BlockGraph } from '../types/block-graph.js'
-import type { BlockPosition } from '../types/block-position.js'
 import type { GraphEdge } from '../types/graph-edge.js'
 import type { PositionedBlock } from '../types/positioned-block.js'
 import type { GraphLayoutConfig } from './graph-layout-config.js'
@@ -8,7 +7,7 @@ import { DEFAULT_LAYOUT_CONFIG } from './default-layout-config.js'
 import { HorizontalRelationships } from './horizontal-relationships.js'
 import { addBlockWithSubBlocks } from './add-block-with-sub-blocks.js'
 import { calculateLevelOffsets } from './calculate-level-offsets.js'
-import { calculateBlockPosition } from './calculate-block-position.js'
+import { calculateParentCenteredPositions } from './calculate-parent-centered-positions.js'
 import { removeTransitiveEdges } from './transitive-reduction.js'
 
 export class GraphEngine {
@@ -105,7 +104,6 @@ export class GraphEngine {
     const maxLevel = isReversed
       ? Math.max(...Array.from(blocksByLevel.keys()))
       : 0
-    const positions = new Map<string, BlockPosition>()
 
     // Pass 1: Calculate level dimensions and offsets
     const levelOffsets = calculateLevelOffsets(
@@ -116,24 +114,16 @@ export class GraphEngine {
       this.config
     )
 
-    // Pass 2: Position individual blocks
-    for (const [level, blockIds] of blocksByLevel.entries()) {
-      const adjustedLevel = isReversed ? maxLevel - level : level
-      const levelOffsetValue = levelOffsets.get(adjustedLevel)
-      const levelOffset = levelOffsetValue !== undefined ? levelOffsetValue : 0
-
-      blockIds.forEach((blockId, index) => {
-        const position = calculateBlockPosition(
-          index,
-          levelOffset,
-          blockIds.length,
-          isVertical,
-          isReversed,
-          this.config
-        )
-        positions.set(blockId, position)
-      })
-    }
+    // Pass 2: Position individual blocks using parent-centered algorithm
+    const positions = calculateParentCenteredPositions(
+      graph,
+      blocksByLevel,
+      levelOffsets,
+      isVertical,
+      isReversed,
+      maxLevel,
+      this.config
+    )
 
     const positionedBlocks: PositionedBlock[] = []
     for (const [blockId, block] of graph.blocks.entries()) {

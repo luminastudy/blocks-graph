@@ -148,6 +148,115 @@ describe('GraphEngine', () => {
       expect(block2Pos).toBeDefined()
       expect(block2Pos!.y).toBeGreaterThan(block1Pos!.y)
     })
+
+    it('should center child under multiple prerequisites', () => {
+      // Three roots at level 0: Algebra, Geometry, Trigonometry
+      // One child at level 1: Advanced Calculus (has all three as prerequisites)
+      // Advanced Calculus should be centered under the three parents
+      const engine = new GraphEngine({
+        nodeWidth: 200,
+        nodeHeight: 80,
+        horizontalSpacing: 80,
+        verticalSpacing: 100,
+      })
+
+      const blocks: Block[] = [
+        {
+          id: 'algebra',
+          title: { he: 'אלגברה', en: 'Basic Algebra' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'geometry',
+          title: { he: 'גאומטריה', en: 'Basic Geometry' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'trig',
+          title: { he: 'טריגונומטריה', en: 'Trigonometry' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'advanced-calc',
+          title: { he: 'חדו״א מתקדם', en: 'Advanced Calculus' },
+          prerequisites: ['algebra', 'geometry', 'trig'],
+          parents: [],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      const algebra = positioned.find(p => p.block.id === 'algebra')!
+      const geometry = positioned.find(p => p.block.id === 'geometry')!
+      const trig = positioned.find(p => p.block.id === 'trig')!
+      const advancedCalc = positioned.find(p => p.block.id === 'advanced-calc')!
+
+      // Calculate expected center: average of parent centers
+      const nodeWidth = 200
+      const parentCenterX =
+        (algebra.position.x +
+          nodeWidth / 2 +
+          geometry.position.x +
+          nodeWidth / 2 +
+          trig.position.x +
+          nodeWidth / 2) /
+        3
+
+      const advancedCalcCenterX = advancedCalc.position.x + nodeWidth / 2
+
+      // Advanced Calculus center should be at the average of parent centers
+      expect(advancedCalcCenterX).toBeCloseTo(parentCenterX, 0)
+
+      // Advanced Calculus should be below the parents
+      expect(advancedCalc.position.y).toBeGreaterThan(algebra.position.y)
+    })
+
+    it('should center child under single prerequisite', () => {
+      const engine = new GraphEngine({
+        nodeWidth: 200,
+        nodeHeight: 80,
+        horizontalSpacing: 80,
+        verticalSpacing: 100,
+      })
+
+      const blocks: Block[] = [
+        {
+          id: 'a',
+          title: { he: 'א', en: 'A' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'b',
+          title: { he: 'ב', en: 'B' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'c',
+          title: { he: 'ג', en: 'C' },
+          prerequisites: ['b'], // Only depends on B (middle block)
+          parents: [],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      const blockB = positioned.find(p => p.block.id === 'b')!
+      const blockC = positioned.find(p => p.block.id === 'c')!
+
+      // C should be centered under B
+      const nodeWidth = 200
+      const bCenterX = blockB.position.x + nodeWidth / 2
+      const cCenterX = blockC.position.x + nodeWidth / 2
+
+      expect(cCenterX).toBeCloseTo(bCenterX, 0)
+    })
   })
 
   describe('process', () => {
