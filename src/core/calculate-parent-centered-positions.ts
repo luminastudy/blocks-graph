@@ -115,46 +115,144 @@ function resolveVerticalOverlaps(
 }
 
 /**
- * Position blocks at a level using parent-centered layout
+ * Generate a unique key for a block's prerequisite set for grouping siblings
  */
-function positionLevelWithParentCentering(
+function getPrerequisiteSignature(blockId: string, graph: BlockGraph): string {
+  const parentIds = getParentIds(blockId, graph)
+  return [...parentIds].sort().join(',')
+}
+
+/**
+ * Group blocks by their shared parent set (prerequisite signature)
+ */
+function groupBlocksByParents(
   blockIds: string[],
-  graph: BlockGraph,
-  positions: Map<string, BlockPosition>,
-  levelOffset: number,
-  nodeSize: number,
-  isVertical: boolean,
-  config: GraphLayoutConfig
-): void {
-  const { nodeWidth, nodeHeight, horizontalSpacing, verticalSpacing } = config
-  const targetPositions = new Map<string, number>()
+  graph: BlockGraph
+): Map<string, string[]> {
+  const groups = new Map<string, string[]>()
 
   for (const blockId of blockIds) {
-    const parentCentroid = calculateParentCentroid(
-      blockId,
+    const signature = getPrerequisiteSignature(blockId, graph)
+    const group = groups.get(signature)
+    if (group !== undefined) {
+      group.push(blockId)
+    } else {
+      groups.set(signature, [blockId])
+    }
+  }
+
+  return groups
+}
+
+/**
+ * Distribute siblings symmetrically around their parent's centroid
+ */
+function distributeSiblingsAroundCentroid(
+  siblings: string[],
+  centroid: number,
+  nodeSize: number,
+  spacing: number
+): Map<string, number> {
+  const positions = new Map<string, number>()
+  const count = siblings.length
+
+  if (count === 0) return positions
+
+  // Calculate total width of all siblings with spacing
+  const totalWidth = count * nodeSize + (count - 1) * spacing
+
+  // Start position so that the group is centered on the centroid
+  const startPos = centroid - totalWidth / 2
+
+  for (let i = 0; i < count; i++) {
+    const sibling = siblings.at(i)
+    if (sibling !== undefined) {
+      positions.set(sibling, startPos + i * (nodeSize + spacing))
+    }
+  }
+
+  return positions
+}
+
+interface SiblingGroup {
+  centroid: number
+  siblings: string[]
+  signature: string
+}
+
+/**
+ * Build sibling group info with centroids for each group
+ */
+function buildSiblingGroupInfos(
+  siblingGroups: Map<string, string[]>,
+  graph: BlockGraph,
+  positions: Map<string, BlockPosition>,
+  nodeSize: number,
+  isVertical: boolean
+): SiblingGroup[] {
+  const groupInfos: SiblingGroup[] = []
+
+  for (const [signature, siblings] of siblingGroups.entries()) {
+    const firstSibling = siblings[0]
+    if (firstSibling === undefined) continue
+
+    const centroid = calculateParentCentroid(
+      firstSibling,
       graph,
       positions,
       nodeSize,
       isVertical
     )
 
-    if (parentCentroid !== undefined) {
-      targetPositions.set(blockId, parentCentroid - nodeSize / 2)
-    } else {
-      targetPositions.set(blockId, 0)
+    groupInfos.push({
+      centroid: centroid !== undefined ? centroid : 0,
+      siblings,
+      signature,
+    })
+  }
+
+  return groupInfos.sort((a, b) => a.centroid - b.centroid)
+}
+
+/**
+ * Calculate target positions for all blocks based on sibling groups
+ */
+function calculateTargetPositions(
+  groupInfos: SiblingGroup[],
+  nodeSize: number,
+  spacing: number
+): Map<string, number> {
+  const targetPositions = new Map<string, number>()
+
+  for (const groupInfo of groupInfos) {
+    const siblingPositions = distributeSiblingsAroundCentroid(
+      groupInfo.siblings,
+      groupInfo.centroid,
+      nodeSize,
+      spacing
+    )
+
+    for (const [blockId, pos] of siblingPositions.entries()) {
+      targetPositions.set(blockId, pos)
     }
   }
 
-  // Sort blocks by their target position for consistent ordering
-  const sortedBlockIds = [...blockIds].sort((a, b) => {
-    const posAValue = targetPositions.get(a)
-    const posBValue = targetPositions.get(b)
-    const posA = posAValue !== undefined ? posAValue : 0
-    const posB = posBValue !== undefined ? posBValue : 0
-    return posA - posB
-  })
+  return targetPositions
+}
 
-  // Assign positions
+/**
+ * Assign block positions from target positions map
+ */
+function assignBlockPositions(
+  sortedBlockIds: string[],
+  targetPositions: Map<string, number>,
+  positions: Map<string, BlockPosition>,
+  levelOffset: number,
+  isVertical: boolean,
+  config: GraphLayoutConfig
+): void {
+  const { nodeWidth, nodeHeight } = config
+
   for (const blockId of sortedBlockIds) {
     const targetPosValue = targetPositions.get(blockId)
     const targetPos = targetPosValue !== undefined ? targetPosValue : 0
@@ -175,8 +273,57 @@ function positionLevelWithParentCentering(
       })
     }
   }
+}
 
-  // Resolve overlaps
+/**
+ * Position blocks at a level using parent-centered layout with symmetric sibling distribution
+ */
+function positionLevelWithParentCentering(
+  blockIds: string[],
+  graph: BlockGraph,
+  positions: Map<string, BlockPosition>,
+  levelOffset: number,
+  nodeSize: number,
+  isVertical: boolean,
+  config: GraphLayoutConfig
+): void {
+  const { nodeWidth, nodeHeight, horizontalSpacing, verticalSpacing } = config
+  const spacing = isVertical ? horizontalSpacing : verticalSpacing
+
+  // Group blocks by their shared parent set and build group info
+  const siblingGroups = groupBlocksByParents(blockIds, graph)
+  const groupInfos = buildSiblingGroupInfos(
+    siblingGroups,
+    graph,
+    positions,
+    nodeSize,
+    isVertical
+  )
+
+  // Calculate target positions with symmetric distribution
+  const targetPositions = calculateTargetPositions(
+    groupInfos,
+    nodeSize,
+    spacing
+  )
+
+  // Sort blocks by target position and assign positions
+  const sortedBlockIds = [...blockIds].sort((a, b) => {
+    const posA = targetPositions.get(a)
+    const posB = targetPositions.get(b)
+    return (posA !== undefined ? posA : 0) - (posB !== undefined ? posB : 0)
+  })
+
+  assignBlockPositions(
+    sortedBlockIds,
+    targetPositions,
+    positions,
+    levelOffset,
+    isVertical,
+    config
+  )
+
+  // Resolve overlaps between different sibling groups
   if (isVertical) {
     resolveOverlaps(sortedBlockIds, positions, nodeWidth, horizontalSpacing)
   } else {

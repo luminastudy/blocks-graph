@@ -257,6 +257,131 @@ describe('GraphEngine', () => {
 
       expect(cCenterX).toBeCloseTo(bCenterX, 0)
     })
+
+    it('should distribute siblings symmetrically around shared parent', () => {
+      // Two siblings (B and C) share the same parent (A)
+      // They should be positioned symmetrically around A's center
+      const nodeWidth = 200
+      const horizontalSpacing = 80
+
+      const engine = new GraphEngine({
+        nodeWidth,
+        nodeHeight: 80,
+        horizontalSpacing,
+        verticalSpacing: 100,
+      })
+
+      const blocks: Block[] = [
+        {
+          id: 'parent',
+          title: { he: 'הורה', en: 'Parent' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'sibling1',
+          title: { he: 'אח 1', en: 'Sibling 1' },
+          prerequisites: ['parent'],
+          parents: [],
+        },
+        {
+          id: 'sibling2',
+          title: { he: 'אח 2', en: 'Sibling 2' },
+          prerequisites: ['parent'],
+          parents: [],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      const parent = positioned.find(p => p.block.id === 'parent')!
+      const sibling1 = positioned.find(p => p.block.id === 'sibling1')!
+      const sibling2 = positioned.find(p => p.block.id === 'sibling2')!
+
+      // Calculate parent's center
+      const parentCenterX = parent.position.x + nodeWidth / 2
+
+      // Calculate center of sibling group
+      const siblingGroupCenterX =
+        (sibling1.position.x + sibling2.position.x + nodeWidth) / 2
+
+      // Sibling group center should match parent center
+      expect(siblingGroupCenterX).toBeCloseTo(parentCenterX, 0)
+
+      // Siblings should be positioned side by side with spacing
+      const siblingLeftX = Math.min(sibling1.position.x, sibling2.position.x)
+      const siblingRightX = Math.max(sibling1.position.x, sibling2.position.x)
+      expect(siblingRightX - siblingLeftX).toBe(nodeWidth + horizontalSpacing)
+    })
+
+    it('should center child below two prerequisites that are symmetric siblings', () => {
+      // Scenario: Parent -> Sibling1, Sibling2 -> Child
+      // Parent is at top, Sibling1 and Sibling2 below it symmetrically
+      // Child has both siblings as prerequisites, should be centered below them
+      const nodeWidth = 200
+      const horizontalSpacing = 80
+
+      const engine = new GraphEngine({
+        nodeWidth,
+        nodeHeight: 80,
+        horizontalSpacing,
+        verticalSpacing: 100,
+      })
+
+      const blocks: Block[] = [
+        {
+          id: 'parent',
+          title: { he: 'הורה', en: 'Parent' },
+          prerequisites: [],
+          parents: [],
+        },
+        {
+          id: 'sibling1',
+          title: { he: 'אח 1', en: 'Sibling 1' },
+          prerequisites: ['parent'],
+          parents: [],
+        },
+        {
+          id: 'sibling2',
+          title: { he: 'אח 2', en: 'Sibling 2' },
+          prerequisites: ['parent'],
+          parents: [],
+        },
+        {
+          id: 'child',
+          title: { he: 'ילד', en: 'Child' },
+          prerequisites: ['sibling1', 'sibling2'],
+          parents: [],
+        },
+      ]
+
+      const graph = engine.buildGraph(blocks)
+      const positioned = engine.layoutGraph(graph)
+
+      const parent = positioned.find(p => p.block.id === 'parent')!
+      const sibling1 = positioned.find(p => p.block.id === 'sibling1')!
+      const sibling2 = positioned.find(p => p.block.id === 'sibling2')!
+      const child = positioned.find(p => p.block.id === 'child')!
+
+      // Parent's center
+      const parentCenterX = parent.position.x + nodeWidth / 2
+
+      // Calculate center of siblings (average of their centers)
+      const sibling1CenterX = sibling1.position.x + nodeWidth / 2
+      const sibling2CenterX = sibling2.position.x + nodeWidth / 2
+      const siblingsCentroid = (sibling1CenterX + sibling2CenterX) / 2
+
+      // Child's center
+      const childCenterX = child.position.x + nodeWidth / 2
+
+      // Child should be centered below its prerequisites (siblings)
+      expect(childCenterX).toBeCloseTo(siblingsCentroid, 0)
+
+      // All three (parent center, siblings centroid, child center) should align
+      expect(parentCenterX).toBeCloseTo(siblingsCentroid, 0)
+      expect(childCenterX).toBeCloseTo(parentCenterX, 0)
+    })
   })
 
   describe('process', () => {
