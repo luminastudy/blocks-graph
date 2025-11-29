@@ -27,8 +27,9 @@ export default [
       'node_modules/**',
       '*.config.js',
       '*.config.mjs',
-      '*.test.ts',
-      '**/*.test.ts',
+      '*.spec.ts',
+      '**/*.spec.ts',
+      '**/*.spec.tsx',
       '**/*.stories.ts',
       '.storybook/**',
       'storybook-static/**',
@@ -52,11 +53,7 @@ export default [
         'error',
         { max: 250, skipBlankLines: true, skipComments: true },
       ],
-      // For a visualization library, most files are either:
-      // 1. Core algorithmic/business logic (tested via integration tests in blocks-graph.spec.ts)
-      // 2. Simple utilities and type definitions (minimal logic, not worth unit testing)
-      // We disable the spec file requirement since integration testing via the main component
-      // provides better coverage for a visualization library than individual unit tests
+      // Project has comprehensive tests but not 1:1 spec files for every source file
       'ddd/require-spec-file': 'off',
     },
   },
@@ -68,7 +65,6 @@ export default [
       'max-lines-per-function': 'off',
       'error/no-generic-error': 'off',
       'error/require-custom-error': 'off',
-      'ddd/require-spec-file': 'off',
       // Examples may need type assertions for framework interop (e.g., DOM events in Angular)
       'no-restricted-syntax': 'off',
       // Examples may use optional chaining for convenience
