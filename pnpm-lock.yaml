@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  eslint-plugin-ddd: link:../../tupe12334/eslint-plugin-ddd
-
 importers:
 
   .:
@@ -13171,7 +13168,7 @@ snapshots:
       '@typescript-eslint/parser': 8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       eslint: 9.39.1(jiti@2.6.1)
       eslint-plugin-class-export: 1.0.1(eslint@9.39.1(jiti@2.6.1))
-      eslint-plugin-ddd: link:../../tupe12334/eslint-plugin-ddd
+      eslint-plugin-ddd: 0.5.1(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-default: 1.1.0(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-error: 1.2.1(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
