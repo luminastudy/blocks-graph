@@ -1,5 +1,5 @@
 ---
-description: Fix all ESLint errors systematically using eslint-config-agent, ensuring tests and builds pass after each fix
+description: Fix all ESLint errors systematically using the project's existing ESLint configuration, ensuring tests and builds pass after each fix
 ---
 
 # Systematic ESLint Error Fixer
@@ -10,11 +10,23 @@ You are an expert ESLint error fixer focused on methodically resolving linting i
 
 Fix ALL ESLint errors in the project systematically, one by one, while ensuring:
 
-1. The project uses the latest `eslint-config-agent` as the only ESLint configuration
+1. **Respect the project's existing ESLint configuration** - DO NOT modify or override it
 2. Tests continue to pass after each fix
 3. Build continues to work after each fix
 4. No new linting errors are introduced
 5. Code logic and functionality remain intact
+
+## Critical: Do NOT Modify ESLint Configuration
+
+**IMPORTANT**: This command fixes lint errors by fixing the CODE, not by changing the rules.
+
+- ❌ DO NOT modify `eslint.config.mjs` or any ESLint configuration files
+- ❌ DO NOT add, remove, or change any ESLint rules
+- ❌ DO NOT install or update `eslint-config-agent` or any ESLint packages
+- ✅ DO fix the actual code to comply with the existing rules
+- ✅ DO respect all project-specific rule customizations
+
+The project's ESLint configuration is intentional. Your job is to make the code comply with it, not to change it.
 
 ## Using the Lint Fixer Agent
 
@@ -45,36 +57,24 @@ The lint-fixer agent provides:
 - Quick autofix scenarios
 - Straightforward single-file fixes
 
-## Phase 1: Setup and Verification
+## Phase 1: Analysis (No Configuration Changes)
 
-### Step 1: Check and Update ESLint Configuration
+### Step 1: Verify ESLint is Available
 
-1. **Check for `eslint.config.mjs`**:
-   - Use the Read tool to check if `eslint.config.mjs` exists
-   - If not, check for other ESLint config files (`.eslintrc.*`, `package.json` eslintConfig)
+1. **Check that ESLint is installed**:
 
-2. **Install/Update eslint-config-agent**:
-
-   ```bash
-   pnpm add -D eslint-config-agent@latest
-   ```
-
-3. **Create/Update `eslint.config.mjs`**:
-   - Replace entire config with:
-
-   ```javascript
-   import agentConfig from 'eslint-config-agent'
-
-   export default agentConfig
-   ```
-
-   - Remove any other ESLint configuration files if they exist
-   - Remove `eslintConfig` from `package.json` if present
-
-4. **Verify Configuration**:
    ```bash
    pnpm exec eslint --version
    ```
+
+2. **If ESLint is not installed**, inform the user and stop:
+   - Do NOT automatically install ESLint packages
+   - Ask the user to run `/tupe:package-setup` first if they need ESLint setup
+
+3. **Read the existing ESLint configuration** (for understanding, NOT for modification):
+   - Check for `eslint.config.mjs`, `.eslintrc.*`, or `package.json` eslintConfig
+   - Understand what rules are enabled so you can fix code appropriately
+   - Note any project-specific customizations
 
 ### Step 2: Initial Analysis
 

@@ -123,9 +123,38 @@ Then ensure it has these essential fields:
   "license": "MIT",
   "engines": {
     "node": ">=20.0.0"
-  }
+  },
+  "packageManager": "pnpm@PNPM_LTS_VERSION"
 }
 ```
+
+**Setting the packageManager field**:
+
+The `packageManager` field enforces a specific pnpm version for the project. To get the current pnpm LTS version:
+
+```bash
+# Get the latest stable pnpm version
+PNPM_LTS_VERSION=$(pnpm --version)
+echo "Current pnpm version: $PNPM_LTS_VERSION"
+
+# Or fetch the latest from npm registry
+PNPM_LTS_VERSION=$(npm view pnpm version)
+echo "Latest pnpm version: $PNPM_LTS_VERSION"
+```
+
+Then set it in package.json:
+
+```bash
+# Update packageManager field with the LTS version
+npm pkg set packageManager="pnpm@$PNPM_LTS_VERSION"
+```
+
+**Why this matters**:
+
+- Ensures all developers use the same pnpm version
+- Corepack uses this field to auto-install the correct version
+- Prevents version-related bugs across different environments
+- CI/CD will use the exact same pnpm version as local development
 
 **For existing package.json**:
 
@@ -137,7 +166,17 @@ Validate and fix:
 4. ✅ `files` includes only necessary files (usually `["dist"]`)
 5. ✅ `engines.node` specifies minimum Node version
 6. ✅ `scripts` includes build, test, lint, format
-7. ✅ If publishable: `publishConfig.access` is set correctly
+7. ✅ `packageManager` is set to pnpm LTS version (e.g., `pnpm@10.x.x`)
+8. ✅ If publishable: `publishConfig.access` is set correctly
+
+**Updating packageManager for existing projects**:
+
+```bash
+# Get and set the latest pnpm LTS version
+PNPM_LTS_VERSION=$(npm view pnpm version)
+npm pkg set packageManager="pnpm@$PNPM_LTS_VERSION"
+echo "✅ Set packageManager to pnpm@$PNPM_LTS_VERSION"
+```
 
 **For publishable packages, add**:
 
@@ -1388,6 +1427,7 @@ Review and confirm:
 - ✅ `main` and `types` fields point to dist/
 - ✅ `files` field includes only necessary files
 - ✅ `engines.node` specifies version requirement
+- ✅ `packageManager` is set to pnpm LTS version (e.g., `pnpm@10.x.x`)
 - ✅ All scripts (build, test, lint, format) work
 - ✅ If publishable: `publishConfig.access` is set
 
@@ -1472,7 +1512,7 @@ Type: [Publishable | Internal]
 Version: X.X.X
 
 ✅ Configuration Files Created:
-  - package.json (ES modules, pnpm)
+  - package.json (ES modules, pnpm, packageManager set to LTS)
   - tsconfig.json (strict TypeScript)
   - vitest.config.ts (testing with coverage thresholds)
   - eslint.config.mjs (eslint-config-agent@latest [+ package.json validation if publishable])
