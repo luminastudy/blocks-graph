@@ -25,6 +25,7 @@
   ],
   "ignoreDependencies": [
     "@angular/core",
+    "eslint-plugin-ddd",
     "@storybook/addon-a11y",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",

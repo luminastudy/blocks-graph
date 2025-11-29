@@ -87,6 +87,9 @@ importers:
       eslint-config-publishable-package-json:
         specifier: ^1.0.0
         version: 1.0.0
+      eslint-plugin-ddd:
+        specifier: ^0.5.1
+        version: 0.5.1(eslint@9.39.1(jiti@2.6.1))
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -4736,6 +4739,12 @@ packages:
   eslint-plugin-class-export@1.0.1:
     resolution: {integrity: sha512-LEfBQ5vOaE4Fl9UVQ8axwPNXMSQNCROr83xn7zjL5D9UoYjhXFZNjQka/2Xmod5U24ZeUI5CxjcAF8d8HHs4cw==}
     engines: {node: '>=12.0.0'}
+    peerDependencies:
+      eslint: '>=9.0.0'
+
+  eslint-plugin-ddd@0.5.1:
+    resolution: {integrity: sha512-XVPNnmBp79tg3LPzvTJg1uKhcG+Dw8FP1kjpjrfNEnxT77OaXJrztAHCWDJe2aa8in82gBik5k6tMp29lhntnA==}
+    engines: {node: '>=20.0.0'}
     peerDependencies:
       eslint: '>=9.0.0'
 
@@ -13198,6 +13207,10 @@ snapshots:
       - supports-color
 
   eslint-plugin-class-export@1.0.1(eslint@9.39.1(jiti@2.6.1)):
+    dependencies:
+      eslint: 9.39.1(jiti@2.6.1)
+
+  eslint-plugin-ddd@0.5.1(eslint@9.39.1(jiti@2.6.1)):
     dependencies:
       eslint: 9.39.1(jiti@2.6.1)
 

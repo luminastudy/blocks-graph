@@ -100,6 +100,7 @@
     "eslint": "^9.39.1",
     "eslint-config-agent": "^1.8.8",
     "eslint-config-publishable-package-json": "^1.0.0",
+    "eslint-plugin-ddd": "^0.5.1",
     "husky": "^9.1.7",
     "jsdom": "^27.2.0",
     "knip": "^5.70.1",
