@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  eslint-plugin-ddd: link:../../tupe12334/eslint-plugin-ddd
+
 importers:
 
   .:
@@ -79,8 +82,8 @@ importers:
         specifier: ^9.39.1
         version: 9.39.1(jiti@2.6.1)
       eslint-config-agent:
-        specifier: ^1.8.7
-        version: 1.8.7(@eslint/eslintrc@3.3.1)(@eslint/js@9.39.1)(@typescript-eslint/eslint-plugin@8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-plugin-class-export@1.0.1(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-n@17.23.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-plugin-react-hooks@5.2.0(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-react@7.37.5(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-security@3.0.1)(eslint-plugin-storybook@9.1.16(eslint@9.39.1(jiti@2.6.1))(storybook@8.6.14(prettier@3.6.2))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript-eslint@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))
+        specifier: ^1.8.8
+        version: 1.8.8(@eslint/eslintrc@3.3.1)(@eslint/js@9.39.1)(@typescript-eslint/eslint-plugin@8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-plugin-class-export@1.0.1(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-n@17.23.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-plugin-react-hooks@5.2.0(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-react@7.37.5(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-security@3.0.1)(eslint-plugin-storybook@9.1.16(eslint@9.39.1(jiti@2.6.1))(storybook@8.6.14(prettier@3.6.2))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript-eslint@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))
       eslint-config-publishable-package-json:
         specifier: ^1.0.0
         version: 1.0.0
@@ -4680,8 +4683,8 @@ packages:
     peerDependencies:
       eslint: '>=6.0.0'
 
-  eslint-config-agent@1.8.7:
-    resolution: {integrity: sha512-TWlGOxomB7c3NOJscmREqW/A44S98CfPZhlMxmgSd49rFtS9pRY3J+qogOo2upWrLtJ9SNXJJbi2Llf7FepsMA==}
+  eslint-config-agent@1.8.8:
+    resolution: {integrity: sha512-An9PA9WLfg5ToqvkJ0qhcsqA/TsCbYYykOdAf2uIoNkhgwdsx0+d+uaowuWJ20VWlZ2qUa7SkHuznB+ekfWTYg==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       '@eslint/eslintrc': ^3.3.1
@@ -4733,12 +4736,6 @@ packages:
   eslint-plugin-class-export@1.0.1:
     resolution: {integrity: sha512-LEfBQ5vOaE4Fl9UVQ8axwPNXMSQNCROr83xn7zjL5D9UoYjhXFZNjQka/2Xmod5U24ZeUI5CxjcAF8d8HHs4cw==}
     engines: {node: '>=12.0.0'}
-    peerDependencies:
-      eslint: '>=9.0.0'
-
-  eslint-plugin-ddd@0.5.0:
-    resolution: {integrity: sha512-wpuBV/MHRw/OMYW1/WrExAtwKBEp40dZ+PB6Ch4KLV6IOcTKu07zSnhulc5k0EZIAuX/JQ1GLEWa3XQCcrRwbg==}
-    engines: {node: '>=16.0.0'}
     peerDependencies:
       eslint: '>=9.0.0'
 
@@ -13157,7 +13154,7 @@ snapshots:
       eslint: 9.39.1(jiti@2.6.1)
       semver: 7.7.3
 
-  eslint-config-agent@1.8.7(@eslint/eslintrc@3.3.1)(@eslint/js@9.39.1)(@typescript-eslint/eslint-plugin@8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-plugin-class-export@1.0.1(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-n@17.23.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-plugin-react-hooks@5.2.0(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-react@7.37.5(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-security@3.0.1)(eslint-plugin-storybook@9.1.16(eslint@9.39.1(jiti@2.6.1))(storybook@8.6.14(prettier@3.6.2))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript-eslint@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)):
+  eslint-config-agent@1.8.8(@eslint/eslintrc@3.3.1)(@eslint/js@9.39.1)(@typescript-eslint/eslint-plugin@8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-plugin-class-export@1.0.1(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-n@17.23.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-plugin-react-hooks@5.2.0(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-react@7.37.5(eslint@9.39.1(jiti@2.6.1)))(eslint-plugin-security@3.0.1)(eslint-plugin-storybook@9.1.16(eslint@9.39.1(jiti@2.6.1))(storybook@8.6.14(prettier@3.6.2))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript-eslint@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)):
     dependencies:
       '@eslint/eslintrc': 3.3.1
       '@eslint/js': 9.39.1
@@ -13165,7 +13162,7 @@ snapshots:
       '@typescript-eslint/parser': 8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       eslint: 9.39.1(jiti@2.6.1)
       eslint-plugin-class-export: 1.0.1(eslint@9.39.1(jiti@2.6.1))
-      eslint-plugin-ddd: 0.5.0(eslint@9.39.1(jiti@2.6.1))
+      eslint-plugin-ddd: link:../../tupe12334/eslint-plugin-ddd
       eslint-plugin-default: 1.1.0(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-error: 1.2.1(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
@@ -13201,10 +13198,6 @@ snapshots:
       - supports-color
 
   eslint-plugin-class-export@1.0.1(eslint@9.39.1(jiti@2.6.1)):
-    dependencies:
-      eslint: 9.39.1(jiti@2.6.1)
-
-  eslint-plugin-ddd@0.5.0(eslint@9.39.1(jiti@2.6.1)):
     dependencies:
       eslint: 9.39.1(jiti@2.6.1)
 

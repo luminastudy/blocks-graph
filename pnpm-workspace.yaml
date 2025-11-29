@@ -5,3 +5,6 @@ packages:
 
 onlyBuiltDependencies:
   - esbuild
+
+overrides:
+  eslint-plugin-ddd: link:../../tupe12334/eslint-plugin-ddd
