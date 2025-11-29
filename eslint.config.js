@@ -53,8 +53,6 @@ export default [
         'error',
         { max: 250, skipBlankLines: true, skipComments: true },
       ],
-      // Project has comprehensive tests but not 1:1 spec files for every source file
-      'ddd/require-spec-file': 'off',
     },
   },
   {
