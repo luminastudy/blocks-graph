@@ -13,6 +13,8 @@
     "dagre",
     "dimmed",
     "dimmedBlocks",
+    "octocat",
+    "tanuki",
     "emitDeclarationOnly",
     "esbenp",
     "esbuild",

@@ -1,5 +1,7 @@
 import type { Orientation } from '../types/orientation.js'
 import type { EdgeLineStyle } from '../types/edge-style.js'
+import type { BlockStyle } from '../types/block-style.js'
+import type { TextStyle } from './text-style.js'
 
 /**
  * Renderer configuration
@@ -11,20 +13,8 @@ export interface RendererConfig {
   selectedBlockId?: string | null
   visibleBlocks?: Set<string>
   dimmedBlocks?: Set<string>
-  blockStyle: {
-    fill: string
-    stroke: string
-    strokeWidth: number
-    cornerRadius: number
-  }
-  textStyle: {
-    fontSize: number
-    fill: string
-    fontFamily: string
-    maxLines?: number
-    lineHeight?: number
-    horizontalPadding?: number
-  }
+  blockStyle: BlockStyle
+  textStyle: TextStyle
   edgeStyle: {
     prerequisite: {
       stroke: string

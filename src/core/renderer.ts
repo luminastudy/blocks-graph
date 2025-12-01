@@ -1,12 +1,13 @@
 import type { BlockGraph } from '../types/block-graph.js'
 import type { PositionedBlock } from '../types/positioned-block.js'
-import type { BlockPosition } from '../types/block-position.js'
-import type { Orientation } from '../types/orientation.js'
 import { edgeLineStyleToDashArray } from '../types/edge-line-style-to-dash-array.js'
 import type { RendererConfig } from './renderer-config.js'
 import { DEFAULT_RENDERER_CONFIG } from './default-renderer-config.js'
-import { wrapTextToLines } from './text-wrapper.js'
 import { calculateViewBox } from './calculate-view-box.js'
+import { calculateConnectionPoints } from './calculate-connection-points.js'
+import { createBlockRect } from './create-block-rect.js'
+import { createBlockText } from './create-block-text.js'
+import { createExternalIcon } from './create-external-icon.js'
 
 /**
  * SVG renderer for block graphs
@@ -21,43 +22,6 @@ export class GraphRenderer {
 
   updateConfig(config: Partial<RendererConfig>): void {
     this.config = { ...this.config, ...config }
-  }
-
-  private calculateConnectionPoints(
-    fromPos: BlockPosition,
-    toPos: BlockPosition,
-    orientation: Orientation
-  ): { x1: number; y1: number; x2: number; y2: number } {
-    switch (orientation) {
-      case 'ttb':
-        return {
-          x1: fromPos.x + fromPos.width / 2,
-          y1: fromPos.y + fromPos.height,
-          x2: toPos.x + toPos.width / 2,
-          y2: toPos.y,
-        }
-      case 'btt':
-        return {
-          x1: fromPos.x + fromPos.width / 2,
-          y1: fromPos.y,
-          x2: toPos.x + toPos.width / 2,
-          y2: toPos.y + toPos.height,
-        }
-      case 'ltr':
-        return {
-          x1: fromPos.x + fromPos.width,
-          y1: fromPos.y + fromPos.height / 2,
-          x2: toPos.x,
-          y2: toPos.y + toPos.height / 2,
-        }
-      case 'rtl':
-        return {
-          x1: fromPos.x,
-          y1: fromPos.y + fromPos.height / 2,
-          x2: toPos.x + toPos.width,
-          y2: toPos.y + toPos.height / 2,
-        }
-    }
   }
 
   private renderEdges(
@@ -87,7 +51,7 @@ export class GraphRenderer {
         'line'
       )
 
-      const { x1, y1, x2, y2 } = this.calculateConnectionPoints(
+      const { x1, y1, x2, y2 } = calculateConnectionPoints(
         fromPos,
         toPos,
         orientation
@@ -129,95 +93,6 @@ export class GraphRenderer {
     return group
   }
 
-  private createBlockRect(
-    position: BlockPosition,
-    isSelected: boolean,
-    opacity: string
-  ): SVGRectElement {
-    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-    rect.setAttribute('x', String(position.x))
-    rect.setAttribute('y', String(position.y))
-    rect.setAttribute('width', String(position.width))
-    rect.setAttribute('height', String(position.height))
-    rect.setAttribute('fill', this.config.blockStyle.fill)
-    if (isSelected) {
-      rect.setAttribute('stroke', '#4a90e2')
-      rect.setAttribute(
-        'stroke-width',
-        String(this.config.blockStyle.strokeWidth + 2)
-      )
-      rect.setAttribute(
-        'filter',
-        'drop-shadow(0 0 8px rgba(74, 144, 226, 0.5))'
-      )
-    } else {
-      rect.setAttribute('stroke', this.config.blockStyle.stroke)
-      rect.setAttribute(
-        'stroke-width',
-        String(this.config.blockStyle.strokeWidth)
-      )
-    }
-    rect.setAttribute('rx', String(this.config.blockStyle.cornerRadius))
-    rect.setAttribute('opacity', opacity)
-    return rect
-  }
-
-  private createBlockText(
-    title: string,
-    position: BlockPosition,
-    opacity: string
-  ): { text: SVGTextElement; isTruncated: boolean; lineCount: number } {
-    const fontSize = this.config.textStyle.fontSize
-    const fontFamily = this.config.textStyle.fontFamily
-    const lineHeight =
-      this.config.textStyle.lineHeight !== undefined
-        ? this.config.textStyle.lineHeight
-        : 1.2
-    const horizontalPadding =
-      this.config.textStyle.horizontalPadding !== undefined
-        ? this.config.textStyle.horizontalPadding
-        : 10
-    const maxLines =
-      this.config.textStyle.maxLines !== undefined
-        ? this.config.textStyle.maxLines
-        : 3
-    const maxTextWidth = position.width - 2 * horizontalPadding
-
-    const { lines, isTruncated } = wrapTextToLines(
-      title,
-      maxTextWidth,
-      fontSize,
-      fontFamily,
-      maxLines
-    )
-
-    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-    text.setAttribute('x', String(position.x + position.width / 2))
-    text.setAttribute('text-anchor', 'middle')
-    text.setAttribute('fill', this.config.textStyle.fill)
-    text.setAttribute('font-size', String(fontSize))
-    text.setAttribute('font-family', fontFamily)
-    text.setAttribute('opacity', opacity)
-
-    const totalTextHeight = lines.length * fontSize * lineHeight
-    const startY =
-      position.y + position.height / 2 - totalTextHeight / 2 + fontSize / 2
-
-    lines.forEach((line, index) => {
-      const tspan = document.createElementNS(
-        'http://www.w3.org/2000/svg',
-        'tspan'
-      )
-      tspan.setAttribute('x', String(position.x + position.width / 2))
-      tspan.setAttribute('y', String(startY + index * fontSize * lineHeight))
-      tspan.setAttribute('dominant-baseline', 'middle')
-      tspan.textContent = line
-      text.appendChild(tspan)
-    })
-
-    return { text, isTruncated, lineCount: lines.length }
-  }
-
   private renderBlocks(positioned: PositionedBlock[]): SVGGElement {
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     group.setAttribute('class', 'blocks')
@@ -230,23 +105,51 @@ export class GraphRenderer {
       blockGroup.setAttribute('class', 'block')
       blockGroup.setAttribute('data-id', block.id)
 
+      // Check if this is an external block
+      const isExternal = block._external === true
+      const externalPlatform =
+        typeof block._externalPlatform === 'string'
+          ? block._externalPlatform
+          : undefined
+
+      if (isExternal) {
+        blockGroup.setAttribute('data-external', 'true')
+        if (externalPlatform) {
+          blockGroup.setAttribute('data-external-platform', externalPlatform)
+        }
+      }
+
       const isSelected = this.config.selectedBlockId === block.id
       const isDimmed = this.config.dimmedBlocks
         ? this.config.dimmedBlocks.has(block.id)
         : false
       const opacity = isDimmed ? '0.3' : '1'
 
-      const rect = this.createBlockRect(position, isSelected, opacity)
+      const rect = createBlockRect(
+        position,
+        isSelected,
+        opacity,
+        this.config.blockStyle
+      )
       blockGroup.appendChild(rect)
 
       const title =
         this.config.language === 'he' ? block.title.he : block.title.en
-      const { text, isTruncated, lineCount } = this.createBlockText(
+      const { text, isTruncated, lineCount } = createBlockText(
         title,
         position,
-        opacity
+        opacity,
+        this.config.textStyle
       )
       blockGroup.appendChild(text)
+
+      // Add external icon if this block references an external repository
+      if (isExternal) {
+        const platformName =
+          externalPlatform !== undefined ? externalPlatform : 'unknown'
+        const icon = createExternalIcon(position, platformName, opacity)
+        blockGroup.appendChild(icon)
+      }
 
       if (isTruncated || lineCount > 1) {
         const titleElement = document.createElementNS(
