@@ -329,78 +329,77 @@
        *
        * This demonstrates how external block references are rendered
        * with platform-specific icons. External references use the format:
-       * "platform:org/repo[#gitRef][/blockId]"
+       * "platform:org/repo[/block-uuid][#gitRef]"
        *
        * Examples:
-       * - "github:luminastudy/math-fundamentals"
-       * - "gitlab:opensource/linear-algebra#v2.0"
-       * - "bitbucket:team/calculus/integral-basics"
+       * - "github:luminastudy/math-fundamentals" - entire repo
+       * - "github:luminastudy/math-fundamentals#v1.0" - specific version
+       * - "gitlab:opensource/linear-algebra#v2.0" - GitLab with version
        */
       const exampleData = [
         {
-          id: 'combinatorics-intro',
+          id: '11111111-1111-1111-1111-111111111111',
           title: {
             he_text: 'מבוא לקומבינטוריקה',
             en_text: 'Introduction to Combinatorics'
           },
           prerequisites: [
-            'github:luminastudy/math-fundamentals#main/set-theory',
-            'github:luminastudy/math-fundamentals#main/counting-basics'
+            'github:luminastudy/math-fundamentals#main',
+            'github:luminastudy/counting-basics#main'
           ],
           parents: []
         },
         {
-          id: 'permutations',
+          id: '22222222-2222-2222-2222-222222222222',
           title: {
             he_text: 'תמורות',
             en_text: 'Permutations'
           },
-          prerequisites: ['combinatorics-intro'],
+          prerequisites: ['11111111-1111-1111-1111-111111111111'],
           parents: []
         },
         {
-          id: 'combinations',
+          id: '33333333-3333-3333-3333-333333333333',
           title: {
             he_text: 'צירופים',
             en_text: 'Combinations'
           },
-          prerequisites: ['combinatorics-intro'],
+          prerequisites: ['11111111-1111-1111-1111-111111111111'],
           parents: []
         },
         {
-          id: 'binomial-theorem',
+          id: '44444444-4444-4444-4444-444444444444',
           title: {
             he_text: 'הבינום של ניוטון',
             en_text: 'Binomial Theorem'
           },
           prerequisites: [
-            'combinations',
-            'gitlab:opensource/algebra-course#v1.0/polynomial-basics'
+            '33333333-3333-3333-3333-333333333333',
+            'gitlab:opensource/algebra-course#v1.0'
           ],
           parents: []
         },
         {
-          id: 'advanced-counting',
+          id: '55555555-5555-5555-5555-555555555555',
           title: {
             he_text: 'שיטות ספירה מתקדמות',
             en_text: 'Advanced Counting Methods'
           },
           prerequisites: [
-            'permutations',
-            'combinations',
-            'bitbucket:mathteam/discrete-math/inclusion-exclusion'
+            '22222222-2222-2222-2222-222222222222',
+            '33333333-3333-3333-3333-333333333333'
           ],
           parents: []
         },
         {
-          id: 'generating-functions',
+          id: '66666666-6666-6666-6666-666666666666',
           title: {
             he_text: 'פונקציות יוצרות',
             en_text: 'Generating Functions'
           },
           prerequisites: [
-            'binomial-theorem',
-            'github:luminastudy/calculus-course#main/power-series'
+            '44444444-4444-4444-4444-444444444444',
+            'github:luminastudy/calculus-course#main'
           ],
           parents: []
         }
