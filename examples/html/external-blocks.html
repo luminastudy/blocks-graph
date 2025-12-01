@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blocks Graph - External Block References Demo</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+
+      header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      header p {
+        font-size: 1.1em;
+        opacity: 0.9;
+      }
+
+      .badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        margin-top: 10px;
+      }
+
+      .controls {
+        padding: 25px 30px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .control-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .control-group label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.95em;
+      }
+
+      select,
+      button {
+        padding: 8px 16px;
+        border: 2px solid #dee2e6;
+        border-radius: 6px;
+        font-size: 0.95em;
+        transition: all 0.2s;
+      }
+
+      select {
+        background: white;
+        cursor: pointer;
+      }
+
+      select:hover {
+        border-color: #667eea;
+      }
+
+      button {
+        background: #667eea;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #5568d3;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      input[type='checkbox'] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+
+      .graph-container {
+        padding: 30px;
+        min-height: 500px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      blocks-graph {
+        width: 100%;
+        height: 500px;
+        display: block;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .info-panel {
+        padding: 25px 30px;
+        background: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+      }
+
+      .info-panel h3 {
+        color: #495057;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+      }
+
+      .feature-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .feature-item {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+      }
+
+      .feature-item h4 {
+        color: #333;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .feature-item p {
+        color: #666;
+        font-size: 0.95em;
+        line-height: 1.5;
+      }
+
+      .icon-preview {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+      }
+
+      .github-icon {
+        color: #24292f;
+      }
+
+      .gitlab-icon {
+        color: #fc6d26;
+      }
+
+      .generic-icon {
+        color: #666;
+      }
+
+      .status {
+        margin-top: 15px;
+        padding: 12px 16px;
+        background: white;
+        border-left: 4px solid #667eea;
+        border-radius: 4px;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: 15px;
+        color: white;
+        text-decoration: none;
+        opacity: 0.9;
+        transition: opacity 0.2s;
+      }
+
+      .back-link:hover {
+        opacity: 1;
+      }
+
+      @media (max-width: 768px) {
+        header h1 {
+          font-size: 1.8em;
+        }
+
+        .controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .control-group {
+          justify-content: space-between;
+        }
+
+        blocks-graph {
+          height: 350px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <a href="./index.html" class="back-link">&larr; Back to main example</a>
+        <h1>External Block References</h1>
+        <p>Demonstrating cross-repository block dependencies with platform icons</p>
+        <span class="badge">Schema v0.2 Feature</span>
+      </header>
+
+      <div class="controls">
+        <div class="control-group">
+          <label for="language">Language:</label>
+          <select id="language">
+            <option value="en">English</option>
+            <option value="he">Hebrew</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="show-prerequisites">
+            <input type="checkbox" id="show-prerequisites" checked />
+            Show Prerequisites
+          </label>
+        </div>
+      </div>
+
+      <div class="graph-container">
+        <blocks-graph
+          id="graph"
+          language="en"
+          show-prerequisites="true"
+        >
+        </blocks-graph>
+      </div>
+
+      <div class="info-panel">
+        <h3>External Block Icon Feature</h3>
+        <div class="feature-list">
+          <div class="feature-item">
+            <h4>
+              <span class="icon-preview github-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+              </span>
+              GitHub Blocks
+            </h4>
+            <p>External blocks from GitHub repositories display a GitHub icon (black) in the top-right corner.</p>
+          </div>
+          <div class="feature-item">
+            <h4>
+              <span class="icon-preview gitlab-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 01-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 014.82 2a.43.43 0 01.58 0 .42.42 0 01.11.18l2.44 7.49h8.1l2.44-7.51A.42.42 0 0118.6 2a.43.43 0 01.58 0 .42.42 0 01.11.18l2.44 7.51L23 13.45a.84.84 0 01-.35.94z"/>
+                </svg>
+              </span>
+              GitLab Blocks
+            </h4>
+            <p>External blocks from GitLab repositories display a GitLab icon (orange) in the top-right corner.</p>
+          </div>
+          <div class="feature-item">
+            <h4>
+              <span class="icon-preview generic-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+              </span>
+              Other Platforms
+            </h4>
+            <p>External blocks from other platforms (Bitbucket, etc.) display a generic link icon.</p>
+          </div>
+        </div>
+        <div class="status" id="status">Status: Ready</div>
+      </div>
+    </div>
+
+    <script type="module">
+      import '../dist/index.js'
+
+      const graph = document.getElementById('graph')
+      const languageSelect = document.getElementById('language')
+      const showPrerequisitesCheckbox = document.getElementById('show-prerequisites')
+      const statusDiv = document.getElementById('status')
+
+      /*
+       * Schema v0.2 Example Data with External References
+       *
+       * This demonstrates how external block references are rendered
+       * with platform-specific icons. External references use the format:
+       * "platform:org/repo[#gitRef][/blockId]"
+       *
+       * Examples:
+       * - "github:luminastudy/math-fundamentals"
+       * - "gitlab:opensource/linear-algebra#v2.0"
+       * - "bitbucket:team/calculus/integral-basics"
+       */
+      const exampleData = [
+        {
+          id: 'combinatorics-intro',
+          title: {
+            he_text: 'מבוא לקומבינטוריקה',
+            en_text: 'Introduction to Combinatorics'
+          },
+          prerequisites: [
+            'github:luminastudy/math-fundamentals#main/set-theory',
+            'github:luminastudy/math-fundamentals#main/counting-basics'
+          ],
+          parents: []
+        },
+        {
+          id: 'permutations',
+          title: {
+            he_text: 'תמורות',
+            en_text: 'Permutations'
+          },
+          prerequisites: ['combinatorics-intro'],
+          parents: []
+        },
+        {
+          id: 'combinations',
+          title: {
+            he_text: 'צירופים',
+            en_text: 'Combinations'
+          },
+          prerequisites: ['combinatorics-intro'],
+          parents: []
+        },
+        {
+          id: 'binomial-theorem',
+          title: {
+            he_text: 'הבינום של ניוטון',
+            en_text: 'Binomial Theorem'
+          },
+          prerequisites: [
+            'combinations',
+            'gitlab:opensource/algebra-course#v1.0/polynomial-basics'
+          ],
+          parents: []
+        },
+        {
+          id: 'advanced-counting',
+          title: {
+            he_text: 'שיטות ספירה מתקדמות',
+            en_text: 'Advanced Counting Methods'
+          },
+          prerequisites: [
+            'permutations',
+            'combinations',
+            'bitbucket:mathteam/discrete-math/inclusion-exclusion'
+          ],
+          parents: []
+        },
+        {
+          id: 'generating-functions',
+          title: {
+            he_text: 'פונקציות יוצרות',
+            en_text: 'Generating Functions'
+          },
+          prerequisites: [
+            'binomial-theorem',
+            'github:luminastudy/calculus-course#main/power-series'
+          ],
+          parents: []
+        }
+      ]
+
+      /**
+       * Load the example data into the graph
+       * Uses schema v0.2 which supports external block references
+       */
+      function loadData() {
+        try {
+          statusDiv.textContent = 'Status: Loading example data...'
+
+          // Load using schema v0.2 to enable external reference parsing
+          graph.loadFromJson(JSON.stringify(exampleData), 'v0.2')
+
+          statusDiv.textContent = 'Status: Loaded - Notice the icons on external blocks!'
+        } catch (error) {
+          console.error('Error loading data:', error)
+          statusDiv.textContent = `Status: Error - ${error.message}`
+        }
+      }
+
+      // Event handlers
+      languageSelect.addEventListener('change', e => {
+        graph.language = e.target.value
+        statusDiv.textContent = `Status: Language changed to ${
+          e.target.value === 'en' ? 'English' : 'Hebrew'
+        }`
+      })
+
+      showPrerequisitesCheckbox.addEventListener('change', e => {
+        graph.showPrerequisites = e.target.checked
+        statusDiv.textContent = `Status: Prerequisites ${
+          e.target.checked ? 'shown' : 'hidden'
+        }`
+      })
+
+      graph.addEventListener('blocks-rendered', event => {
+        console.log('Blocks rendered:', event.detail)
+        if (event.detail && event.detail.blockCount !== undefined) {
+          const externalCount = document.querySelectorAll('[data-external="true"]').length
+          statusDiv.textContent = `Status: Rendered ${event.detail.blockCount} blocks (${externalCount} external)`
+        }
+      })
+
+      graph.addEventListener('block-selected', event => {
+        console.log('Block selected:', event.detail)
+        if (event.detail && event.detail.blockId) {
+          const blockElement = document.querySelector(`[data-id="${event.detail.blockId}"]`)
+          const isExternal = blockElement?.getAttribute('data-external') === 'true'
+          const platform = blockElement?.getAttribute('data-external-platform')
+
+          if (isExternal) {
+            statusDiv.textContent = `Status: Selected external block from ${platform || 'unknown platform'}`
+          } else {
+            statusDiv.textContent = `Status: Selected local block`
+          }
+        } else {
+          statusDiv.textContent = 'Status: Selection cleared'
+        }
+      })
+
+      // Load data on page load
+      loadData()
+    </script>
+  </body>
+</html>
